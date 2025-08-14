@@ -86,6 +86,7 @@ This framework applies to:
 [Legal text as per RFC 7841/5378]
 
 ## Status of This Memo
+[Brief description of the RFC's current status, implementation readiness, and any important context for readers.]
 
 ## Abstract
 
