@@ -11,6 +11,11 @@
 **Supersedes:** [Previous RFC numbers, if any]  
 **Keywords:** [Comma-separated keywords]  
 
+## Copyright Notice
+[Legal text as per RFC 7841/5378]
+
+## Status of This Memo
+
 ## Abstract
 
 [One paragraph summary of the RFC's purpose and key points. Should be clear, concise, and self-contained.]
@@ -18,11 +23,14 @@
 ## Table of Contents
 
 1. [Introduction](#1-introduction)
-2. [Motivation and Use Cases](#2-motivation-and-use-cases)
-3. [Technical Specification](#3-technical-specification)
-4. [Implementation Guidelines](#4-implementation-guidelines)
-5. [Examples and References](#5-examples-and-references)
-6. [Appendix](#6-appendix)
+2. [Conventions and Terminology](#2-conventions-and-terminology)
+3. [Motivation and Use Cases](#3-motivation-and-use-cases)
+4. [Technical Specification](#4-technical-specification)
+5. [Implementation Guidelines](#5-implementation-guidelines)
+6. [IANA Considerations](#6-iana-considerations)
+7. [Examples](#7-examples)
+8. [References](#8-references)
+9. [Appendix](#9-appendix)
 
 ## 1. Introduction
 
@@ -53,37 +61,40 @@
 
 [Define any new terms or clarify existing terms used in this RFC]
 
-## 2. Motivation and Use Cases
+## 2. Conventions and Terminology
+[Keyword interpretation as per RFC 2119/8174]
 
-### 2.1 Business Motivation
+## 3. Motivation and Use Cases
+
+### 3.1 Business Motivation
 
 [Explain why this RFC is needed from a business perspective. Include market needs, user requirements, and business value.]
 
-### 2.2 Technical Motivation
+### 3.2 Technical Motivation
 
 [Describe the technical challenges and opportunities. Include performance, scalability, security, or interoperability considerations.]
 
-### 2.3 Use Cases
+### 3.3 Use Cases
 
 [Provide detailed use cases with user stories. Include both happy path and edge cases.]
 
-#### 2.3.1 Primary Use Case
+#### 3.3.1 Primary Use Case
 [Describe the main use case with a complete user story]
 
-#### 2.3.2 Secondary Use Cases
+#### 3.3.2 Secondary Use Cases
 [Describe additional use cases]
 
-### 2.4 Success Criteria
+### 3.4 Success Criteria
 
 [Define how success will be measured. Include both qualitative and quantitative metrics.]
 
-## 3. Technical Specification
+## 4. Technical Specification
 
-### 3.1 Architecture Overview
+### 4.1 Architecture Overview
 
 [Provide a high-level architectural approach. Include diagrams if helpful.]
 
-### 3.2 Data Models
+### 4.2 Data Models
 
 [Define all new or modified data structures. Use JSON Schema format when possible.]
 
@@ -100,11 +111,11 @@
 }
 ```
 
-### 3.3 API Specifications
+### 4.3 API Specifications
 
 [Define all new or modified APIs. Include request/response schemas and examples.]
 
-#### 3.3.1 [API Name]
+#### 4.3.1 [API Name]
 
 **Endpoint:** `[HTTP_METHOD] /[endpoint_path]`
 
@@ -201,11 +212,11 @@
 }
 ```
 
-### 3.4 Message Flows
+### 4.4 Message Flows
 
 [Describe the message flows using sequence diagrams or flow descriptions.]
 
-#### 3.4.1 [Flow Name]
+#### 4.4.1 [Flow Name]
 
 [Describe the flow step by step, including all participants and message exchanges.]
 
@@ -221,11 +232,11 @@ sequenceDiagram
     Gateway->>BAP: Forward Response
 ```
 
-### 3.5 Error Handling
+### 4.5 Error Handling
 
 [Define error scenarios and handling mechanisms.]
 
-#### 3.5.1 Error Codes
+#### 4.5.1 Error Codes
 
 | Error Code | Description | HTTP Status | Recovery Action |
 |------------|-------------|-------------|-----------------|
@@ -233,7 +244,7 @@ sequenceDiagram
 | 1002 | Missing required field | 400 | Include required field |
 | 1003 | Authentication failed | 401 | Provide valid credentials |
 
-#### 3.5.2 Error Response Format
+#### 4.5.2 Error Response Format
 
 ```json
 {
@@ -250,37 +261,37 @@ sequenceDiagram
 }
 ```
 
-### 3.6 Security Considerations
+### 4.6 Security Considerations
 
 [Address security implications and mitigations.]
 
-#### 3.6.1 Authentication
+#### 4.6.1 Authentication
 [Describe authentication requirements]
 
-#### 3.6.2 Authorization
+#### 4.6.2 Authorization
 [Describe authorization requirements]
 
-#### 3.6.3 Data Protection
+#### 4.6.3 Data Protection
 [Describe data protection measures]
 
-#### 3.6.4 Privacy
+#### 4.6.4 Privacy
 [Describe privacy considerations]
 
-### 3.7 Performance Considerations
+### 4.7 Performance Considerations
 
 [Address performance implications and optimizations.]
 
-### 3.8 Backward Compatibility
+### 4.8 Backward Compatibility
 
 [Describe how this change affects existing implementations.]
 
-## 4. Implementation Guidelines
+## 5. Implementation Guidelines
 
-### 4.1 Prerequisites
+### 5.1 Prerequisites
 
 [What needs to be in place before implementation]
 
-### 4.2 Implementation Steps
+### 5.2 Implementation Steps
 
 [Step-by-step implementation guide]
 
@@ -288,58 +299,65 @@ sequenceDiagram
 2. **Step 2:** [Description]
 3. **Step 3:** [Description]
 
-### 4.3 Testing Requirements
+### 5.3 Testing Requirements
 
 [Testing scenarios and validation criteria]
 
-#### 4.3.1 Unit Tests
+#### 5.3.1 Unit Tests
 [Required unit test scenarios]
 
-#### 4.3.2 Integration Tests
+#### 5.3.2 Integration Tests
 [Required integration test scenarios]
 
-#### 4.3.3 End-to-End Tests
+#### 5.3.3 End-to-End Tests
 [Required end-to-end test scenarios]
 
-### 4.4 Migration Path
+### 5.4 Migration Path
 
 [How to migrate from existing implementations]
 
-### 4.5 Deployment Considerations
+### 5.5 Deployment Considerations
 
 [Deployment requirements and considerations]
 
-## 5. Examples and References
+## 6. IANA Considerations
+[State actions or just add "This document has no IANA actions."]
 
-### 5.1 Complete Examples
+## 7. Examples
+
+### 7.1 Complete Examples
 
 [Full working examples showing complete flows]
 
-### 5.2 Reference Implementations
+### 7.2 Reference Implementations
 
 [Links to reference implementations]
 
-### 5.3 Related Documents
+## 8. References
 
-[Links to related RFCs and documentation]
+### 8.1 Normative References
+[Full working examples]
 
-## 6. Appendix
+### 8.2 Informative References
+[Links to reference implementations]
 
-### 6.1 Change Log
+## 9. Appendix
+
+### 9.1 Change Log
 
 | Version | Date | Description |
 |---------|------|-------------|
 | 0.1.0 | [YYYY-MM-DD] | Initial draft |
 
-### 6.2 Acknowledgments
+### 9.2 Acknowledgments
 
 [Contributors and reviewers]
 
-### 6.3 Glossary
+### 9.3 Glossary
 
 [Definitions of terms used in the RFC]
 
-### 6.4 Open Issues
+### 9.4 Open Issues
 
 [Any unresolved issues or questions]
 

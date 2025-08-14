@@ -13,8 +13,9 @@
 4. [Writing Best Practices](#writing-best-practices)
 5. [Review and Approval](#review-and-approval)
 6. [Common Pitfalls](#common-pitfalls)
-7. [Examples and References](#examples-and-references)
-8. [Tools and Resources](#tools-and-resources)
+7. [Examples](#examples)
+8. [References](#references)
+9. [Tools and Resources](#tools-and-resources)
 
 ## Introduction
 
@@ -302,7 +303,7 @@ RFCs should follow this numbering scheme:
 **Problem**: Not considering performance implications
 **Solution**: Address performance considerations and provide benchmarks
 
-## Examples and References
+## Examples
 
 ### Good RFC Examples
 
@@ -326,6 +327,14 @@ RFCs should follow this numbering scheme:
 - [Technical Writing Best Practices](https://example.com/tech-writing)
 - [API Documentation Guidelines](https://example.com/api-docs)
 - [Markdown Style Guide](https://example.com/markdown-style)
+
+## References
+
+### Normative References
+[Full working examples]
+
+### Informative References
+[Links to reference implementations]
 
 ## Tools and Resources
 

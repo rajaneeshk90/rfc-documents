@@ -28,6 +28,11 @@
 **Reviewers:** [Reviewer Names]  
 **Keywords:** [Comma-separated keywords]  
 
+## Copyright Notice
+[Legal text as per RFC 7841/5378]
+
+## Status of This Memo
+
 ## Abstract
 [One paragraph summary]
 
@@ -37,10 +42,13 @@
 
 ### Core Sections (All Categories)
 1. **Introduction** - Background, problem statement, goals
-2. **Technical Content** - Specifications, guidelines, or research
-3. **Implementation** - How to implement or apply
-4. **Examples** - Working examples and references
-5. **Appendix** - Change log, acknowledgments, glossary
+2. **Conventions and Terminology** - Keyword interpretation as per RFC 2119/8174
+3. **Technical Content** - Specifications, guidelines, or research
+4. **Implementation** - How to implement or apply
+5. **IANA Considerations** - IANA actions or statement of no actions
+6. **Examples** - Working examples and implementations
+7. **References** - Normative and informative references
+8. **Appendix** - Change log, acknowledgments, glossary
 
 ## Development Process
 

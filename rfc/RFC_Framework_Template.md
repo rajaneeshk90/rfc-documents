@@ -82,6 +82,11 @@ This framework applies to:
 **Supersedes:** [Previous RFC numbers, if any]  
 **Keywords:** [Comma-separated keywords]  
 
+## Copyright Notice
+[Legal text as per RFC 7841/5378]
+
+## Status of This Memo
+
 ## Abstract
 
 [One paragraph summary of the RFC's purpose and key points]
@@ -114,88 +119,110 @@ This framework applies to:
 [What is and isn't covered by this RFC]
 ```
 
-#### 2. Motivation and Use Cases
-```markdown
-## 2. Motivation and Use Cases
+### 2. Conventions and Terminology
 
-### 2.1 Business Motivation
+```markdown
+## 2. Conventions and Terminology
+[Keyword interpretation as per RFC 2119/8174]
+```
+
+#### 3. Motivation and Use Cases
+```markdown
+## 3. Motivation and Use Cases
+
+### 3.1 Business Motivation
 [Why this RFC is needed from a business perspective]
 
-### 2.2 Technical Motivation
+### 3.2 Technical Motivation
 [Technical challenges and opportunities]
 
-### 2.3 Use Cases
+### 3.3 Use Cases
 [Detailed use cases with user stories]
 
-### 2.4 Success Criteria
+### 3.4 Success Criteria
 [How success will be measured]
 ```
 
-#### 3. Technical Specification
+#### 4. Technical Specification
 ```markdown
-## 3. Technical Specification
+## 4. Technical Specification
 
-### 3.1 Architecture Overview
+### 4.1 Architecture Overview
 [High-level architectural approach]
 
-### 3.2 Data Models
+### 4.2 Data Models
 [Schema definitions and data structures]
 
-### 3.3 API Specifications
+### 4.3 API Specifications
 [Detailed API definitions with examples]
 
-### 3.4 Message Flows
+### 4.4 Message Flows
 [Sequence diagrams and flow descriptions]
 
-### 3.5 Error Handling
+### 4.5 Error Handling
 [Error scenarios and handling mechanisms]
 
-### 3.6 Security Considerations
+### 4.6 Security Considerations
 [Security implications and mitigations]
 ```
 
-#### 4. Implementation Guidelines
+#### 5. Implementation Guidelines
 ```markdown
-## 4. Implementation Guidelines
+## 5. Implementation Guidelines
 
-### 4.1 Prerequisites
+### 5.1 Prerequisites
 [What needs to be in place before implementation]
 
-### 4.2 Implementation Steps
+### 5.2 Implementation Steps
 [Step-by-step implementation guide]
 
-### 4.3 Testing Requirements
+### 5.3 Testing Requirements
 [Testing scenarios and validation criteria]
 
-### 4.4 Migration Path
+### 5.4 Migration Path
 [How to migrate from existing implementations]
 ```
 
-#### 5. Examples and References
+#### 6. IANA Considerations
 ```markdown
-## 5. Examples and References
-
-### 5.1 Complete Examples
-[Full working examples]
-
-### 5.2 Reference Implementations
-[Links to reference implementations]
-
-### 5.3 Related Documents
-[Links to related RFCs and documentation]
+## 6. IANA Considerations
+[State actions or just add "This document has no IANA actions."]
 ```
 
-#### 6. Appendix
+#### 7. Examples
 ```markdown
-## 6. Appendix
+## 7. Examples
 
-### 6.1 Change Log
+### 7.1 Complete Examples
+[Full working examples]
+
+### 7.2 Reference Implementations
+[Links to reference implementations]
+```
+
+#### 8. References section
+```markdown
+## 8. References
+
+### 8.1 Normative References
+[Full working examples]
+
+### 8.2 Informative References
+[Links to reference implementations]
+
+```
+
+#### 9. Appendix
+```markdown
+## 9. Appendix
+
+### 9.1 Change Log
 [Detailed version history]
 
-### 6.2 Acknowledgments
+### 9.2 Acknowledgments
 [Contributors and reviewers]
 
-### 6.3 Glossary
+### 9.3 Glossary
 [Definitions of terms used in the RFC]
 ```
 

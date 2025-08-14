@@ -11,6 +11,11 @@
 **Supersedes:** [Previous RFC numbers, if any]  
 **Keywords:** [Comma-separated keywords]  
 
+## Copyright Notice
+[Legal text as per RFC 7841/5378]
+
+## Status of This Memo
+
 ## Abstract
 
 [One paragraph summary of the RFC's purpose and key points. Should be clear, concise, and self-contained.]
@@ -18,12 +23,15 @@
 ## Table of Contents
 
 1. [Introduction](#1-introduction)
-2. [Background and Context](#2-background-and-context)
-3. [Implementation Guide](#3-implementation-guide)
-4. [Best Practices](#4-best-practices)
-5. [Case Studies](#5-case-studies)
-6. [Examples and References](#6-examples-and-references)
-7. [Appendix](#7-appendix)
+2. [Conventions and Terminology](#2-conventions-and-terminology)
+3. [Background and Context](#3-background-and-context)
+4. [Implementation Guide](#4-implementation-guide)
+5. [Best Practices](#5-best-practices)
+6. [Case Studies](#6-case-studies)
+7. [IANA Considerations](#7-iana-considerations)
+8. [Examples](#8-examples)
+9. [References](#9-references)
+10. [Appendix](#10-appendix)
 
 ## 1. Introduction
 
@@ -43,35 +51,38 @@
 
 [What knowledge or resources should readers have before reading this RFC?]
 
-## 2. Background and Context
+## 2. Conventions and Terminology
+[Keyword interpretation as per RFC 2119/8174]
 
-### 2.1 Problem Domain
+## 3. Background and Context
+
+### 3.1 Problem Domain
 
 [Describe the problem domain this RFC addresses. What challenges or opportunities exist?]
 
-### 2.2 Current State
+### 3.2 Current State
 
 [Describe the current state of implementations or practices in this area.]
 
-### 2.3 Motivation
+### 3.3 Motivation
 
 [Why is this information needed? What value does it provide?]
 
-## 3. Implementation Guide
+## 4. Implementation Guide
 
-### 3.1 Overview
+### 4.1 Overview
 
 [High-level overview of the implementation approach.]
 
-### 3.2 Prerequisites
+### 4.2 Prerequisites
 
 [What needs to be in place before starting implementation?]
 
-### 3.3 Step-by-Step Implementation
+### 4.3 Step-by-Step Implementation
 
 [Detailed step-by-step implementation guide.]
 
-#### 3.3.1 Step 1: [Step Name]
+#### 4.3.1 Step 1: [Step Name]
 
 [Detailed description of the first step]
 
@@ -85,7 +96,7 @@
 }
 ```
 
-#### 3.3.2 Step 2: [Step Name]
+#### 4.3.2 Step 2: [Step Name]
 
 [Detailed description of the second step]
 
@@ -99,11 +110,11 @@
 }
 ```
 
-### 3.4 Configuration
+### 4.4 Configuration
 
 [Configuration requirements and examples.]
 
-#### 3.4.1 Required Configuration
+#### 4.4.1 Required Configuration
 
 [Configuration that must be set]
 
@@ -116,7 +127,7 @@
 }
 ```
 
-#### 3.4.2 Optional Configuration
+#### 4.4.2 Optional Configuration
 
 [Optional configuration settings]
 
@@ -129,11 +140,11 @@
 }
 ```
 
-### 3.5 Testing
+### 4.5 Testing
 
 [Testing approach and validation criteria.]
 
-#### 3.5.1 Test Scenarios
+#### 4.5.1 Test Scenarios
 
 [Key test scenarios to validate implementation]
 
@@ -145,15 +156,15 @@
    - **Test Case:** [Specific test case]
    - **Expected Result:** [Expected outcome]
 
-#### 3.5.2 Validation Checklist
+#### 4.5.2 Validation Checklist
 
 - [ ] [Validation item 1]
 - [ ] [Validation item 2]
 - [ ] [Validation item 3]
 
-## 4. Best Practices
+## 5. Best Practices
 
-### 4.1 Design Principles
+### 5.1 Design Principles
 
 [Key design principles to follow]
 
@@ -161,11 +172,11 @@
 2. **Principle 2:** [Description and rationale]
 3. **Principle 3:** [Description and rationale]
 
-### 4.2 Common Patterns
+### 5.2 Common Patterns
 
 [Common patterns and approaches]
 
-#### 4.2.1 Pattern 1: [Pattern Name]
+#### 5.2.1 Pattern 1: [Pattern Name]
 
 [Description of the pattern]
 
@@ -178,7 +189,7 @@
 }
 ```
 
-#### 4.2.2 Pattern 2: [Pattern Name]
+#### 5.2.2 Pattern 2: [Pattern Name]
 
 [Description of the pattern]
 
@@ -191,85 +202,88 @@
 }
 ```
 
-### 4.3 Anti-Patterns
+### 5.3 Anti-Patterns
 
 [Common mistakes and anti-patterns to avoid]
 
-#### 4.3.1 Anti-Pattern 1: [Anti-Pattern Name]
+#### 5.3.1 Anti-Pattern 1: [Anti-Pattern Name]
 
 [Description of the anti-pattern]
 
 **Why it's problematic:** [Explanation of why this is bad]
 **Better approach:** [Recommended alternative]
 
-#### 4.3.2 Anti-Pattern 2: [Anti-Pattern Name]
+#### 5.3.2 Anti-Pattern 2: [Anti-Pattern Name]
 
 [Description of the anti-pattern]
 
 **Why it's problematic:** [Explanation of why this is bad]
 **Better approach:** [Recommended alternative]
 
-### 4.4 Performance Considerations
+### 5.4 Performance Considerations
 
 [Performance best practices and considerations]
 
-### 4.5 Security Considerations
+### 5.5 Security Considerations
 
 [Security best practices and considerations]
 
-## 5. Case Studies
+## 6. Case Studies
 
-### 5.1 Case Study 1: [Organization/Project Name]
+### 6.1 Case Study 1: [Organization/Project Name]
 
-#### 5.1.1 Context
-
-[Background and context of the case study]
-
-#### 5.1.2 Challenge
-
-[What challenge or problem was being addressed?]
-
-#### 5.1.3 Solution
-
-[How was the challenge addressed using the approach described in this RFC?]
-
-#### 5.1.4 Results
-
-[What were the outcomes and results?]
-
-#### 5.1.5 Lessons Learned
-
-[Key lessons learned from this implementation]
-
-### 5.2 Case Study 2: [Organization/Project Name]
-
-#### 5.2.1 Context
+#### 6.1.1 Context
 
 [Background and context of the case study]
 
-#### 5.2.2 Challenge
+#### 6.1.2 Challenge
 
 [What challenge or problem was being addressed?]
 
-#### 5.2.3 Solution
+#### 6.1.3 Solution
 
 [How was the challenge addressed using the approach described in this RFC?]
 
-#### 5.2.4 Results
+#### 6.1.4 Results
 
 [What were the outcomes and results?]
 
-#### 5.2.5 Lessons Learned
+#### 6.1.5 Lessons Learned
 
 [Key lessons learned from this implementation]
 
-## 6. Examples and References
+### 6.2 Case Study 2: [Organization/Project Name]
 
-### 6.1 Complete Examples
+#### 6.2.1 Context
+
+[Background and context of the case study]
+
+#### 6.2.2 Challenge
+
+[What challenge or problem was being addressed?]
+
+#### 6.2.3 Solution
+
+[How was the challenge addressed using the approach described in this RFC?]
+
+#### 6.2.4 Results
+
+[What were the outcomes and results?]
+
+#### 6.2.5 Lessons Learned
+
+[Key lessons learned from this implementation]
+
+## 7. IANA Considerations
+[State actions or just add "This document has no IANA actions."]
+
+## 8. Examples
+
+### 8.1 Complete Examples
 
 [Full working examples showing complete implementations]
 
-#### 6.1.1 Example 1: [Example Name]
+#### 8.1.1 Example 1: [Example Name]
 
 [Complete example with explanation]
 
@@ -279,7 +293,7 @@
 }
 ```
 
-#### 6.1.2 Example 2: [Example Name]
+#### 8.1.2 Example 2: [Example Name]
 
 [Complete example with explanation]
 
@@ -289,35 +303,35 @@
 }
 ```
 
-### 6.2 Reference Implementations
+### 8.2 Reference Implementations
 
 [Links to reference implementations and open-source projects]
 
-### 6.3 Related Documents
+## 9. References
 
-[Links to related RFCs, documentation, and resources]
+### 9.1 Normative References
+[Full working examples]
 
-### 6.4 Tools and Resources
+### 9.2 Informative References
+[Links to reference implementations]
 
-[Tools, libraries, and resources that can help with implementation]
+## 10. Appendix
 
-## 7. Appendix
-
-### 7.1 Change Log
+### 10.1 Change Log
 
 | Version | Date | Description |
 |---------|------|-------------|
 | 0.1.0 | [YYYY-MM-DD] | Initial draft |
 
-### 7.2 Acknowledgments
+### 10.2 Acknowledgments
 
 [Contributors and reviewers]
 
-### 7.3 Glossary
+### 10.3 Glossary
 
 [Definitions of terms used in the RFC]
 
-### 7.4 FAQ
+### 10.4 FAQ
 
 [Frequently asked questions and answers]
 
@@ -327,17 +341,17 @@ A: [Answer to the question]
 **Q: [Common question]**
 A: [Answer to the question]
 
-### 7.5 Troubleshooting
+### 10.5 Troubleshooting
 
 [Common issues and their solutions]
 
-#### 7.5.1 Issue 1: [Issue Description]
+#### 10.5.1 Issue 1: [Issue Description]
 
 **Symptoms:** [How to identify this issue]
 **Cause:** [What causes this issue]
 **Solution:** [How to resolve this issue]
 
-#### 7.5.2 Issue 2: [Issue Description]
+#### 10.5.2 Issue 2: [Issue Description]
 
 **Symptoms:** [How to identify this issue]
 **Cause:** [What causes this issue]

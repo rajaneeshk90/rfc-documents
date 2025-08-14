@@ -11,6 +11,11 @@
 **Supersedes:** [Previous RFC numbers, if any]  
 **Keywords:** [Comma-separated keywords]  
 
+## Copyright Notice
+[Legal text as per RFC 7841/5378]
+
+## Status of This Memo
+
 ## Abstract
 
 [One paragraph summary of the policy RFC's purpose and key points. Should be clear, concise, and self-contained.]
@@ -18,13 +23,17 @@
 ## Table of Contents
 
 1. [Introduction](#1-introduction)
-2. [Policy Context](#2-policy-context)
-3. [Policy Framework](#3-policy-framework)
-4. [Compliance Requirements](#4-compliance-requirements)
-5. [Implementation Guidelines](#5-implementation-guidelines)
-6. [Enforcement and Monitoring](#6-enforcement-and-monitoring)
-7. [Review and Updates](#7-review-and-updates)
-8. [Appendix](#8-appendix)
+2. [Conventions and Terminology](#2-conventions-and-terminology)
+3. [Policy Context](#3-policy-context)
+4. [Policy Framework](#4-policy-framework)
+5. [Compliance Requirements](#5-compliance-requirements)
+6. [Implementation Guidelines](#6-implementation-guidelines)
+7. [Enforcement and Monitoring](#7-enforcement-and-monitoring)
+8. [Review and Updates](#8-review-and-updates)
+9. [IANA Considerations](#9-iana-considerations)
+10. [Examples](#10-examples)
+11. [References](#11-references)
+12. [Appendix](#12-appendix)
 
 ## 1. Introduction
 
@@ -56,43 +65,46 @@
 
 [When does this policy become effective?]
 
-## 2. Policy Context
+## 2. Conventions and Terminology
+[Keyword interpretation as per RFC 2119/8174]
 
-### 2.1 Background
+## 3. Policy Context
+
+### 3.1 Background
 
 [Historical context and reasons for creating this policy]
 
-### 2.2 Legal and Regulatory Context
+### 3.2 Legal and Regulatory Context
 
 [Legal and regulatory requirements that inform this policy]
 
-#### 2.2.1 Applicable Laws
+#### 3.2.1 Applicable Laws
 
 [Laws and regulations that apply to this policy area]
 
-#### 2.2.2 Regulatory Requirements
+#### 3.2.2 Regulatory Requirements
 
 [Specific regulatory requirements that must be met]
 
-### 2.3 Industry Standards
+### 3.3 Industry Standards
 
 [Industry standards and best practices that inform this policy]
 
-### 2.4 Risk Assessment
+### 3.4 Risk Assessment
 
 [Risk assessment that led to the creation of this policy]
 
-#### 2.4.1 Identified Risks
+#### 3.4.1 Identified Risks
 
 [Specific risks that this policy addresses]
 
-#### 2.4.2 Risk Mitigation
+#### 3.4.2 Risk Mitigation
 
 [How this policy mitigates the identified risks]
 
-## 3. Policy Framework
+## 4. Policy Framework
 
-### 3.1 Policy Principles
+### 4.1 Policy Principles
 
 [Core principles that guide this policy]
 
@@ -100,11 +112,11 @@
 2. **Principle 2:** [Description and rationale]
 3. **Principle 3:** [Description and rationale]
 
-### 3.2 Policy Statements
+### 4.2 Policy Statements
 
 [Specific policy statements and requirements]
 
-#### 3.2.1 [Policy Area 1]
+#### 4.2.1 [Policy Area 1]
 
 [Detailed policy requirements for the first area]
 
@@ -118,7 +130,7 @@
 - **Implementation:** [How to implement this requirement]
 - **Compliance:** [How compliance is measured]
 
-#### 3.2.2 [Policy Area 2]
+#### 4.2.2 [Policy Area 2]
 
 [Detailed policy requirements for the second area]
 
@@ -127,97 +139,97 @@
 - **Implementation:** [How to implement this requirement]
 - **Compliance:** [How compliance is measured]
 
-### 3.3 Roles and Responsibilities
+### 4.3 Roles and Responsibilities
 
 [Define roles and responsibilities for policy implementation]
 
-#### 3.3.1 Policy Owner
+#### 4.3.1 Policy Owner
 
 [Role and responsibilities of the policy owner]
 
-#### 3.3.2 Policy Enforcers
+#### 4.3.2 Policy Enforcers
 
 [Roles and responsibilities of policy enforcers]
 
-#### 3.3.3 Policy Subjects
+#### 4.3.3 Policy Subjects
 
 [Roles and responsibilities of those subject to the policy]
 
-### 3.4 Policy Exceptions
+### 4.4 Policy Exceptions
 
 [When and how exceptions to this policy may be granted]
 
-#### 3.4.1 Exception Criteria
+#### 4.4.1 Exception Criteria
 
 [Criteria for granting exceptions]
 
-#### 3.4.2 Exception Process
+#### 4.4.2 Exception Process
 
 [Process for requesting and approving exceptions]
 
-## 4. Compliance Requirements
+## 5. Compliance Requirements
 
-### 4.1 Compliance Standards
+### 5.1 Compliance Standards
 
 [Standards that define compliance with this policy]
 
-### 4.2 Compliance Metrics
+### 5.2 Compliance Metrics
 
 [Specific metrics for measuring compliance]
 
-#### 4.2.1 Quantitative Metrics
+#### 5.2.1 Quantitative Metrics
 
 [Numerical metrics for compliance measurement]
 
 1. **Metric 1:** [Description and measurement method]
 2. **Metric 2:** [Description and measurement method]
 
-#### 4.2.2 Qualitative Metrics
+#### 5.2.2 Qualitative Metrics
 
 [Qualitative metrics for compliance assessment]
 
 1. **Metric 1:** [Description and assessment method]
 2. **Metric 2:** [Description and assessment method]
 
-### 4.3 Compliance Reporting
+### 5.3 Compliance Reporting
 
 [Requirements for compliance reporting]
 
-#### 4.3.1 Reporting Frequency
+#### 5.3.1 Reporting Frequency
 
 [How often compliance reports must be submitted]
 
-#### 4.3.2 Reporting Format
+#### 5.3.2 Reporting Format
 
 [Format and content requirements for compliance reports]
 
-#### 4.3.3 Reporting Recipients
+#### 5.3.3 Reporting Recipients
 
 [Who receives compliance reports]
 
-### 4.4 Compliance Audits
+### 5.4 Compliance Audits
 
 [Requirements for compliance audits]
 
-#### 4.4.1 Audit Frequency
+#### 5.4.1 Audit Frequency
 
 [How often audits must be conducted]
 
-#### 4.4.2 Audit Scope
+#### 5.4.2 Audit Scope
 
 [What is covered in compliance audits]
 
-#### 4.4.3 Audit Process
+#### 5.4.3 Audit Process
 
 [Process for conducting compliance audits]
 
-## 5. Implementation Guidelines
+## 6. Implementation Guidelines
 
-### 5.1 Implementation Timeline
+### 6.1 Implementation Timeline
 
 [Timeline for implementing this policy]
 
-#### 5.1.1 Phase 1: [Phase Name]
+#### 6.1.1 Phase 1: [Phase Name]
 
 [Description of the first implementation phase]
 
@@ -225,7 +237,7 @@
 **Activities:** [List of activities]
 **Deliverables:** [Expected outputs]
 
-#### 5.1.2 Phase 2: [Phase Name]
+#### 6.1.2 Phase 2: [Phase Name]
 
 [Description of the second implementation phase]
 
@@ -233,7 +245,7 @@
 **Activities:** [List of activities]
 **Deliverables:** [Expected outputs]
 
-### 5.2 Implementation Steps
+### 6.2 Implementation Steps
 
 [Step-by-step implementation guide]
 
@@ -241,69 +253,69 @@
 2. **Step 2:** [Description]
 3. **Step 3:** [Description]
 
-### 5.3 Resource Requirements
+### 6.3 Resource Requirements
 
 [Resources needed for policy implementation]
 
-#### 5.3.1 Human Resources
+#### 6.3.1 Human Resources
 
 [Human resources required for implementation]
 
-#### 5.3.2 Technical Resources
+#### 6.3.2 Technical Resources
 
 [Technical resources required for implementation]
 
-#### 5.3.3 Financial Resources
+#### 6.3.3 Financial Resources
 
 [Financial resources required for implementation]
 
-### 5.4 Training Requirements
+### 6.4 Training Requirements
 
 [Training requirements for policy implementation]
 
-#### 5.4.1 Training Content
+#### 6.4.1 Training Content
 
 [Content that must be covered in training]
 
-#### 5.4.2 Training Frequency
+#### 6.4.2 Training Frequency
 
 [How often training must be conducted]
 
-#### 5.4.3 Training Documentation
+#### 6.4.3 Training Documentation
 
 [Documentation requirements for training]
 
-## 6. Enforcement and Monitoring
+## 7. Enforcement and Monitoring
 
-### 6.1 Enforcement Mechanisms
+### 7.1 Enforcement Mechanisms
 
 [Mechanisms for enforcing this policy]
 
-#### 6.1.1 Automated Enforcement
+#### 7.1.1 Automated Enforcement
 
 [Automated mechanisms for policy enforcement]
 
-#### 6.1.2 Manual Enforcement
+#### 7.1.2 Manual Enforcement
 
 [Manual mechanisms for policy enforcement]
 
-### 6.2 Monitoring and Surveillance
+### 7.2 Monitoring and Surveillance
 
 [How policy compliance will be monitored]
 
-#### 6.2.1 Continuous Monitoring
+#### 7.2.1 Continuous Monitoring
 
 [Continuous monitoring approaches]
 
-#### 6.2.2 Periodic Reviews
+#### 7.2.2 Periodic Reviews
 
 [Periodic review processes]
 
-### 6.3 Violation Handling
+### 7.3 Violation Handling
 
 [How policy violations will be handled]
 
-#### 6.3.1 Violation Categories
+#### 7.3.1 Violation Categories
 
 [Categories of policy violations]
 
@@ -311,109 +323,130 @@
 2. **Major Violation:** [Description and handling]
 3. **Critical Violation:** [Description and handling]
 
-#### 6.3.2 Escalation Process
+#### 7.3.2 Escalation Process
 
 [Process for escalating policy violations]
 
-#### 6.3.3 Remediation Actions
+#### 7.3.3 Remediation Actions
 
 [Actions required to remediate violations]
 
-### 6.4 Disciplinary Actions
+### 7.4 Disciplinary Actions
 
 [Disciplinary actions for policy violations]
 
-#### 6.4.1 Action Levels
+#### 7.4.1 Action Levels
 
 [Levels of disciplinary actions]
 
-#### 6.4.2 Action Process
+#### 7.4.2 Action Process
 
 [Process for applying disciplinary actions]
 
-## 7. Review and Updates
+## 8. Review and Updates
 
-### 7.1 Review Schedule
+### 8.1 Review Schedule
 
 [Schedule for reviewing and updating this policy]
 
-#### 7.1.1 Annual Review
+#### 8.1.1 Annual Review
 
 [Annual review process and requirements]
 
-#### 7.1.2 Ad Hoc Review
+#### 8.1.2 Ad Hoc Review
 
 [When ad hoc reviews may be conducted]
 
-### 7.2 Update Process
+### 8.2 Update Process
 
 [Process for updating this policy]
 
-#### 7.2.1 Update Triggers
+#### 8.2.1 Update Triggers
 
 [Events that trigger policy updates]
 
-#### 7.2.2 Update Approval
+#### 8.2.2 Update Approval
 
 [Process for approving policy updates]
 
-#### 7.2.3 Update Communication
+#### 8.2.3 Update Communication
 
 [How policy updates are communicated]
 
-### 7.3 Version Control
+### 8.3 Version Control
 
 [Version control for policy documents]
 
-#### 7.3.1 Version Numbering
+#### 8.3.1 Version Numbering
 
 [Version numbering scheme]
 
-#### 7.3.2 Change Tracking
+#### 8.3.2 Change Tracking
 
 [How changes are tracked]
 
-## 8. Appendix
+## 9. IANA Considerations
+[State actions or just add "This document has no IANA actions."]
 
-### 8.1 Change Log
+## 10. Examples
+
+### 10.1 Complete Examples
+
+[Full working examples showing complete implementations]
+
+### 10.2 Reference Implementations
+
+[Links to reference implementations and open-source projects]
+
+## 11. References
+
+### 11.1 Normative References
+[Full working examples]
+
+### 11.2 Informative References
+[Links to reference implementations]
+
+## 12. Appendix
+
+### 12.1 Change Log
 
 | Version | Date | Description |
 |---------|------|-------------|
 | 0.1.0 | [YYYY-MM-DD] | Initial policy draft |
 
-### 8.2 Acknowledgments
+### 12.2 Acknowledgments
 
 [Contributors and reviewers]
 
-### 8.3 Glossary
+### 12.3 Glossary
 
 [Definitions of policy terms and concepts]
 
-### 8.4 Related Documents
+### 12.4 Related Documents
 
 [Links to related policies, procedures, and documents]
 
-### 8.5 Contact Information
+### 12.5 Contact Information
 
 [Contact information for policy questions and concerns]
 
-### 8.6 Policy Templates
+### 12.6 Policy Templates
 
 [Templates for policy-related documents]
 
-#### 8.6.1 Exception Request Template
+#### 12.6.1 Exception Request Template
 
 [Template for requesting policy exceptions]
 
-#### 8.6.2 Compliance Report Template
+#### 12.6.2 Compliance Report Template
 
 [Template for compliance reports]
 
-#### 8.6.3 Violation Report Template
+#### 12.6.3 Violation Report Template
 
 [Template for reporting policy violations]
 
-### 8.7 Frequently Asked Questions
+### 12.7 Frequently Asked Questions
 
 [Common questions about this policy]
 
