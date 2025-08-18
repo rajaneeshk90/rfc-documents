@@ -1,0 +1,35 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+We are creating an RFC for how to use Beckn Protocol to implement Demand Flexibility program in electricity consumption in India. BRPL is implementeting it with Bus Depots in Delhi. Bus depots are the consumer and BRPL is a producer.
+
+Here are some resources to learn about demand flexibility in genral:
+    - https://buildings.lbl.gov/demand-flexibility
+    - https://www.neso.energy/industry-information/balancing-services/demand-flexibility-service-dfs
+    - https://www.seforall.org/news/unlocking-indias-demand-flexibility-potential-through-collaborative-action
+    - https://www.energy-transitions.org/bitesize/demand-side-flexibility-an-important-route-alongside-electricity-grids-and-storage/
+    - https://www.sciencedirect.com/topics/engineering/demand-flexibility
+
+Here are some resource to learn about Beckn Protocol:
+    - https://github.com/beckn/protocol-specifications/blob/master/api/transaction/build/transaction.yaml
+    - https://github.com/beckn/missions/blob/main/Generic-Implementation-Guide/generic_implementation_guide.md
+
+Our use case specific context are in guides/DF/knowledge/ folder. Use this knowledge as a context to create the RFC.
+
+we have already defined a framework for creating these RFCs. The related RFC documents are under rfc/ folder at the root of this project.
+    - use this file as the RFC framework: RFC_Framework_Template.md
+    - use this template for this RFC: templates/informational-template.md
+   
+
+Now, your job is to:
+    - Go through the Demand Flexibility resources provided above to gain an understanding of Demand flexibility.
+    - - Go through the Beckn Protocol resources provided above to gain an understanding of Beckn Protocol.
+    - Understand our use case by going through the guides/DF/knowledge/ folder.
+    - Use the provided framework and template to create our use case specific RFC.
+    - All the example JSONs used MUST be as per the Beckn Protocol specification. Provied above, but here is the link: https://github.com/beckn/protocol-specifications/blob/master/api/transaction/build/transaction.yaml
+    - If you are generating any example Beckn protocol JSON, please follow the Beckn Protocol schema.
+    - The JSON examples in the "knowledge" folder might not be necessarily in Beckn Schema format. If you have to use those examples, you might need to convert it to Beckn Schema format and then use it in RFC.
+    - use approach 2.3 from architecture.md file to create the RFC.
+    - Put the RFC in new file in DF directory.
