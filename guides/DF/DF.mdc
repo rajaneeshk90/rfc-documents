@@ -33,3 +33,18 @@ Now, your job is to:
     - The JSON examples in the "knowledge" folder might not be necessarily in Beckn Schema format. If you have to use those examples, you might need to convert it to Beckn Schema format and then use it in RFC.
     - use approach 2.3 from architecture.md file to create the RFC.
     - Put the RFC in new file in DF directory.
+
+Improvement tips iteration 1:
+    - Date should be 18th August 2025
+    - Updated: Date on which you make updates
+    - Authors: Rajaneesh Kumar
+    - Reviewers: Ravi Prakash
+    - Remove any mention of BRPL and Bus depot. The reason is that while as of now BRPL and Bus Depot are implementing it, in future other players can implement it too. 
+    - The RFC must be generic and not specific to any particular implementor. since the RFC is a generic guideline, brainstorm on what are the other details or corner cases we can add in the RFC that other implementor might need. put these thoughts in a separate file for review.
+
+Improvement tips iteration 2:
+    - There are usage of India in the RFC. This RFC is not limited for an implementation in India, It can be used anywhere in the world. While ypur examples are correct, just make it generic, not specific to india. quoted below are some examples I could find. If there are other usage of any country specific language, make those generic.
+        - "This approach supports India's energy transition"
+        - "Understanding of India's electricity market structure"
+        - India's electricity system faces several challenges:
+    - "renewable energy integration": This phase of DF does not cover renewable energy, remove this for now.
