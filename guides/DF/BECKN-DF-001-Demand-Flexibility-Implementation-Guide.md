@@ -1124,6 +1124,8 @@ Customer receives a catalog of DF programs:
 }
 ```
 
+**Understanding the on_search Response:**
+TBC - Will explain the catalog structure, provider details, and available DF programs.
 
 ### 7.2 DF program subscription Examples
 
@@ -1189,6 +1191,9 @@ Customer receives a catalog of DF programs:
   }
 }
 ```
+
+**Understanding the Program Subscription Request:**
+TBC - Will explain the subscription details, commitment parameters, and fulfillment structure.
 
 #### 7.2.2 DF program Subscription confirmation (on_confirm API)
 
@@ -1367,6 +1372,9 @@ Customer receives a catalog of DF programs:
   }
 }
 ```
+
+**Understanding the Program Subscription Acknowledgement:**
+TBC - Will explain how BPP acknowledges the subscription and confirms program details.
 
 ### 7.3 DF Event Management Examples
 
@@ -1547,6 +1555,9 @@ Utility initiates DF event when grid conditions require demand reduction:
 }
 ```
 
+**Understanding the Event Notification:**
+TBC - Will explain the event request structure, baseline calculation, and response requirements.
+
 #### 7.3.2 DF Event Participation Confirmation (confirm API)
 
 Consumer confirms participation in the DF event:
@@ -1682,6 +1693,8 @@ Consumer confirms participation in the DF event:
 }
 ```
 
+**Understanding the Event Participation Confirmation:**
+TBC - Will explain how BAP confirms participation with committed reduction and target load.
 
 #### 7.3.3 DF Event Participation Acknowledgement (on_confirm API)
 
@@ -1850,6 +1863,9 @@ Consumer confirms participation in the DF event:
   }
 }
 ```
+
+**Understanding the Event Participation Acknowledgement:**
+TBC - Will explain how BPP acknowledges the participation commitment and provides incentive estimates.
 
 ### 7.4 Settlement and Monitoring Examples
 
@@ -2056,6 +2072,9 @@ Consumer confirms participation in the DF event:
 }
 ```
 
+**Understanding the Settlement and Performance Metrics:**
+TBC - Will explain the performance calculation, incentive computation, and settlement status.
+
 ### 7.5 Cancelling a subscription
 TBC
 
@@ -2209,5 +2228,4 @@ A: The system includes penalty structures for non-performance, but also recogniz
 
 ---
 
-**Note:** This RFC provides comprehensive guidance for implementing Demand Flexibility programs using Beckn Protocol. Implementations should be carefully adapted to specific regulatory and operational requirements in different jurisdictions. Feedback from initial implementations will help evolve this specification. 
 **Note:** This RFC provides comprehensive guidance for implementing Demand Flexibility programs using Beckn Protocol. Implementations should be carefully adapted to specific regulatory and operational requirements in different jurisdictions. Feedback from initial implementations will help evolve this specification. 
