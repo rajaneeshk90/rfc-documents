@@ -9,7 +9,7 @@
 **Authors:** Rajaneesh Kumar  
 **Reviewers:** Ravi Prakash  
 **Supersedes:** None  
-**Keywords:** Demand Flexibility, Electricity Grid, Energy Management, Beckn Protocol, Distribution Companies, Commercial Consumers  
+**Keywords:** Demand Flexibility, Electricity Grid, Energy Management, Beckn Protocol, Distribution Companies, Commercial Consumers, Residential Consumers, Retail Consumers  
 
 ## Copyright Notice
 This work is licensed under Creative Commons Attribution-ShareAlike 4.0 International License
@@ -19,9 +19,9 @@ This document is a draft RFC for implementation guidance on using Beckn Protocol
 
 ## Abstract
 
-This RFC presents a paradigm shift in electricity grid management by leveraging the Beckn Protocol's distributed commerce architecture for Demand Flexibility (DF) programs. Rather than traditional top-down utility control, this approach creates a **marketplace for grid flexibility** where commercial consumers become active participants in grid stability through automated discovery, intelligent bidding, and performance-based compensation. 
+This RFC presents a paradigm shift in electricity grid management by leveraging the Beckn Protocol's distributed commerce architecture for Demand Flexibility (DF) programs. Rather than traditional top-down utility control, this approach creates a **marketplace for grid flexibility** where consumers become active participants in grid stability through automated discovery, subscription-based participation, and performance-based compensation. 
 
-The architecture transforms electricity demand from a passive consumption model to an active grid resource, enabling utilities to harness distributed flexibility at scale while providing consumers with revenue opportunities. This marketplace-driven approach addresses the growing complexity of modern grids—renewable intermittency, peak demand challenges, and infrastructure constraints—through coordinated, incentive-aligned participation rather than emergency load shedding.
+The architecture transforms electricity demand from a passive consumption model to an active grid resource, enabling utilities to harness distributed flexibility at scale while providing all consumer types—from residential households to large industrial facilities—with revenue opportunities. This marketplace-driven approach addresses the growing complexity of modern grids—renewable intermittency, peak demand challenges, and infrastructure constraints—through coordinated, incentive-aligned participation rather than emergency load shedding.
 
 ## Table of Contents
 
@@ -39,7 +39,7 @@ The architecture transforms electricity demand from a passive consumption model 
 
 ### 1.1 Purpose
 
-This RFC provides implementation guidance for deploying Demand Flexibility (DF) programs using the Beckn Protocol. It specifically addresses how energy utilities can implement demand response programs that enable commercial and industrial consumers to participate in grid flexibility services while receiving economic incentives for their participation.
+This RFC provides implementation guidance for deploying Demand Flexibility (DF) programs using the Beckn Protocol. It specifically addresses how energy utilities can implement demand response programs that enable all types of consumers—residential, commercial, and industrial—to participate in grid flexibility services while receiving economic incentives for their participation.
 
 ### 1.2 Scope
 
@@ -58,8 +58,10 @@ This document does not cover:
 
 ### 1.3 Target Audience
 
-- **Energy Utilities**: Implementing demand flexibility programs
-- **Commercial/Industrial Consumers**: Participating in DF programs
+- **Energy Utilities**: Implementing demand flexibility programs across all customer segments
+- **Residential Consumers**: Households participating in DF programs through smart devices and energy management systems
+- **Commercial/Industrial Consumers**: Businesses and facilities participating in DF programs
+- **Aggregators**: Third-party service providers managing DF participation for multiple consumers
 - **Technology Integrators**: Building Beckn-based energy solutions
 - **Policymakers**: Understanding technical implementation options
 - **Developers**: Implementing energy management applications
@@ -80,8 +82,9 @@ Readers should have:
 - **DF Program**: Demand Flexibility Program offering grid services
 - **DF Event**: Specific demand response event with time-bound requirements
 - **Distribution Company (DISCOM)**: Utility responsible for electricity distribution
-- **Commercial Consumer**: Large commercial facility participating in DF programs
-- **BAP**: Beckn Application Platform (Consumer facility in this context)
+- **Consumer**: Any electricity end-user participating in DF programs (residential, commercial, or industrial)
+- **Aggregator**: Third-party entity that manages DF participation for multiple consumers
+- **BAP**: Beckn Application Platform (Consumer or Aggregator in this context)
 - **BPP**: Beckn Provider Platform (Utility/DISCOM in this context)
 - **Load Flexibility**: Ability to adjust electricity consumption patterns
 - **Incentive**: Financial or non-financial benefit for DF participation
@@ -102,7 +105,7 @@ Modern electricity grids face an unprecedented convergence of challenges that tr
 
 **The Hidden Flexibility Goldmine**
 
-Commercial and industrial consumers represent an untapped reservoir of grid flexibility that dwarfs most power plants:
+Electricity consumers across all segments—residential, commercial, and industrial—represent an untapped reservoir of grid flexibility that collectively dwarfs most power plants:
 
 **Commercial Buildings**: A typical shopping mall with 200 stores consumes 2-5 MW continuously. During peak demand periods, reducing HVAC load by 20% for two hours provides the same grid relief as a small power plant—without the environmental impact or capital investment.
 
@@ -111,6 +114,10 @@ Commercial and industrial consumers represent an untapped reservoir of grid flex
 **Cold Storage and Data Centers**: These facilities are essentially "thermal batteries" and "computational batteries." A cold storage warehouse can pre-cool to lower temperatures when electricity is cheap, then coast on thermal inertia during peak periods. Data centers can shift non-urgent computational workloads to other locations or time periods.
 
 **Transportation Hubs**: Bus depots, train stations, and airports have massive energy footprints with significant scheduling flexibility. Electric bus charging can be optimized around grid conditions. Airport terminals can adjust lighting, escalators, and air conditioning without impacting passenger experience.
+
+**Residential Households**: While individual homes consume 1-5 kW on average, their collective impact is enormous. A neighborhood of 1,000 homes represents 3-5 MW of potential flexibility through smart thermostats, water heaters, electric vehicle charging, and battery storage systems. Smart home technologies enable automated participation without compromising comfort or convenience.
+
+**Residential Aggregation**: The key to residential participation lies in aggregation—combining thousands of small, individually insignificant loads into grid-scale resources. A residential aggregator managing 50,000 homes can deliver 50-100 MW of flexibility, equivalent to a traditional power plant, but distributed across the grid and inherently more resilient.
 
 ### 3.2 Current State
 
@@ -155,18 +162,19 @@ Before implementation:
 
 Demand Flexibility fundamentally reimagines grid operations as a **distributed intelligence network** rather than centralized command-and-control. Each participant—whether utility or consumer—operates as an autonomous agent capable of making intelligent decisions while coordinating with the broader grid ecosystem.
 
-**Commercial Facility (BAP) - The Intelligent Edge Node:**
+**Consumer Entity (BAP) - The Intelligent Edge Node:**
 
-Think of each commercial facility as a "smart grid edge node" with decision-making capabilities:
+Think of each participating entity—whether a household, commercial building, industrial facility, or aggregator managing multiple consumers—as a "smart grid edge node" with decision-making capabilities:
 
-- **Client Endpoint**: Acts as the facility's "brain stem," interfacing with internal energy systems (SCADA, Building Management Systems, IoT sensors) and translating business operations into grid-language communication. This endpoint understands both "facility speak" (equipment schedules, production targets, comfort requirements) and "grid speak" (load reduction requests, baseline calculations, incentive structures).
+- **Client Endpoint**: Acts as the entity's "brain stem," interfacing with internal energy systems (home automation, Building Management Systems, IoT sensors, aggregator platforms) and translating operational requirements into grid-language communication. This endpoint understands both "consumer speak" (comfort settings, production schedules, lifestyle preferences) and "grid speak" (load reduction requests, baseline calculations, incentive structures).
 
-- **Network Endpoint**: Functions as the facility's "diplomatic channel" to the grid community. It receives market signals, participates in grid events, and negotiates capacity commitments. This endpoint must balance grid service opportunities with operational constraints in real-time.
+- **Network Endpoint**: Functions as the entity's "diplomatic channel" to the grid community. It receives market signals, participates in grid events, and negotiates capacity commitments. This endpoint must balance grid service opportunities with operational constraints and consumer preferences in real-time.
 
 - **Intelligence Layer**: The critical missing piece in traditional demand response—a local decision engine that considers:
-  - Current operational priorities (production schedules, occupancy patterns, equipment maintenance)
-  - Economic opportunities (electricity prices, incentive rates, demand charges)
-  - Technical constraints (equipment ramp rates, minimum run times, safety interlocks)
+  - Current operational priorities (production schedules, occupancy patterns, comfort settings, equipment maintenance)
+  - Economic opportunities (electricity prices, incentive rates, demand charges, bill savings)
+  - Technical constraints (equipment ramp rates, minimum run times, safety interlocks, comfort bounds)
+  - Consumer preferences (participation willingness, priority loads, override capabilities)
   - Historical performance (baseline accuracy, commitment reliability, revenue optimization)
 
 **Utility/DISCOM (BPP) - The Grid Orchestrator:**
@@ -246,36 +254,37 @@ Grid operators must enhance their existing Energy Management Systems (EMS) to:
 
 #### 4.4.1 Step 1: Program Discovery
 
-Commercial consumers discover available DF programs using search APIs.
+Consumers (residential, commercial, or through aggregators) discover available DF programs using search APIs.
 
 **Process:**
-- Commercial facility sends search request to find available DF programs
-- Search criteria include location, load capacity, and participant type
+- Consumer entity (household, business, or aggregator) sends search request to find available DF programs
+- Search criteria include location, load capacity, participant type, and consumer segment
 - Gateway broadcasts the search to all relevant utilities in the network
-- Utilities respond with available programs matching the criteria
+- Utilities respond with available programs matching the criteria and consumer characteristics
 
 **Key Information Exchanged:**
 - Geographic location and coverage area
-- Load capacity and flexibility capabilities
-- Program types and incentive structures
-- Participation requirements and terms
+- Load capacity and flexibility capabilities (individual or aggregated)
+- Consumer segment (residential, commercial, industrial)
+- Program types and incentive structures tailored to consumer size
+- Participation requirements, terms, and minimum commitment levels
 
 #### 4.4.2 Step 2: Program Subscription
 
-Commercial consumer subscribes to selected DF program.
+Consumer subscribes to selected DF program (directly or through aggregator).
 
 **Process:**
-- Commercial facility selects a DF program from search results
-- Submits subscription request with commitment details and capabilities
-- Utility reviews application and confirms subscription
-- Subscription becomes active with defined terms and conditions
+- Consumer entity selects a DF program from search results based on their capacity and preferences
+- Submits subscription request with commitment details, capabilities, and participation constraints
+- Utility reviews application, validates technical requirements, and confirms subscription
+- Subscription becomes active with defined terms, conditions, and consumer-specific parameters
 
 **Key Information Exchanged:**
-- Maximum load reduction capacity commitment
-- Available flexibility timeframes and notice periods
-- Incentive rates and payment terms
-- Program duration and renewal options
-- Performance requirements and penalties
+- Maximum load reduction capacity commitment (individual household or aggregated portfolio)
+- Available flexibility timeframes, notice periods, and seasonal variations
+- Incentive rates and payment terms appropriate to consumer segment
+- Program duration, renewal options, and opt-out procedures
+- Performance requirements, penalties, and consumer protection measures
 
 #### 4.4.3 Step 3: DF Event Notification
 
