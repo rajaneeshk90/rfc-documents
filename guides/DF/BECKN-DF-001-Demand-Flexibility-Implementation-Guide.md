@@ -69,10 +69,22 @@ This document does not cover:
 ### 1.4 Prerequisites
 
 Readers should have:
-- Basic understanding of Beckn Protocol concepts and APIs
-- Knowledge of electricity grid operations and demand response
-- Familiarity with JSON schema and RESTful APIs
-- Understanding of electricity market structures
+- **Basic understanding of Beckn Protocol concepts and APIs**
+  - [Beckn Protocol Specification v1.1.0](https://github.com/beckn/protocol-specifications)
+  - [Beckn Protocol Developer Documentation](https://developers.becknprotocol.io/)
+  - [Generic Implementation Guide](https://github.com/beckn/missions/blob/main/Generic-Implementation-Guide/generic_implementation_guide.md)
+- **Knowledge of electricity grid operations and demand response**
+  - [Demand Response and Smart Grid - US Department of Energy](https://www.energy.gov/oe/demand-response-and-smart-grid)
+  - [Grid Modernization - IEEE Power & Energy Society](https://ieee-pes.org/)
+  - [Understanding the Grid - Electric Power Research Institute (EPRI)](https://www.epri.com/)
+- **Familiarity with JSON schema and RESTful APIs**
+  - [JSON Schema Specification](https://json-schema.org/)
+  - [RESTful API Design Guidelines](https://restfulapi.net/)
+  - [OpenAPI Specification](https://swagger.io/specification/)
+- **Understanding of electricity market structures**
+  - [Electricity Market Fundamentals - FERC](https://www.ferc.gov/market-assessments/overview)
+  - [Energy Markets 101 - International Energy Agency](https://www.iea.org/)
+  - [Smart Grid and Demand Response - Lawrence Berkeley National Laboratory](https://eta.lbl.gov/)
 
 ## 2. Conventions and Terminology
 
