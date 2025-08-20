@@ -74,9 +74,11 @@ Readers should have:
   - [Beckn Protocol Developer Documentation](https://developers.becknprotocol.io/)
   - [Generic Implementation Guide](https://github.com/beckn/missions/blob/main/Generic-Implementation-Guide/generic_implementation_guide.md)
 - **Knowledge of electricity grid operations and demand response**
-  - [Demand Response and Smart Grid - US Department of Energy](https://www.energy.gov/oe/demand-response-and-smart-grid)
-  - [Grid Modernization - IEEE Power & Energy Society](https://ieee-pes.org/)
-  - [Understanding the Grid - Electric Power Research Institute (EPRI)](https://www.epri.com/)
+  - [Grid Modernization and Smart Grid - US Department of Energy](https://www.energy.gov/oe/grid-modernization-and-smart-grid)
+  - [Demand Response - Federal Energy Regulatory Commission](https://www.ferc.gov/electric-power-markets/demand-response)
+  - [IEEE Power & Energy Society](https://www.ieee-pes.org/)
+  - [Electric Power Research Institute (EPRI)](https://www.epri.com/)
+  - [Demand Flexibility - Lawrence Berkeley National Laboratory](https://buildings.lbl.gov/demand-flexibility)
 - **Familiarity with JSON schema and RESTful APIs**
   - [JSON Schema Specification](https://json-schema.org/)
   - [RESTful API Design Guidelines](https://restfulapi.net/)
