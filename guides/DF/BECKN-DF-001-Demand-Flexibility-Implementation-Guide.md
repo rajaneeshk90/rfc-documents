@@ -1124,6 +1124,9 @@ Customer receives a catalog of DF programs:
 }
 ```
 
+**Understanding the Search Request:**
+TBC - Will explain how BAP structures the search query with location, capacity, and timing requirements.
+
 **Understanding the on_search Response:**
 TBC - Will explain the catalog structure, provider details, and available DF programs.
 
