@@ -5,7 +5,7 @@
 **Status:** Draft  
 **Version:** 0.1.0  
 **Date:** 2025-08-18  
-**Updated:** 2025-01-15  
+**Updated:** 2025-08-20  
 **Authors:** Rajaneesh Kumar  
 **Reviewers:** Ravi Prakash  
 **Supersedes:** None  
@@ -19,7 +19,9 @@ This document is a draft RFC for implementation guidance on using Beckn Protocol
 
 ## Abstract
 
-This RFC provides a comprehensive implementation guide for Demand Flexibility (DF) programs using the Beckn Protocol. The document outlines how the Beckn Protocol can enable discovery, subscription, and management of DF programs while ensuring grid stability and providing economic incentives to participants. This approach supports energy transition by enabling intelligent demand management across various types of utilities and commercial/industrial consumers.
+This RFC presents a paradigm shift in electricity grid management by leveraging the Beckn Protocol's distributed commerce architecture for Demand Flexibility (DF) programs. Rather than traditional top-down utility control, this approach creates a **marketplace for grid flexibility** where commercial consumers become active participants in grid stability through automated discovery, intelligent bidding, and performance-based compensation. 
+
+The architecture transforms electricity demand from a passive consumption model to an active grid resource, enabling utilities to harness distributed flexibility at scale while providing consumers with revenue opportunities. This marketplace-driven approach addresses the growing complexity of modern grids—renewable intermittency, peak demand challenges, and infrastructure constraints—through coordinated, incentive-aligned participation rather than emergency load shedding.
 
 ## Table of Contents
 
@@ -28,11 +30,10 @@ This RFC provides a comprehensive implementation guide for Demand Flexibility (D
 3. [Background and Context](#3-background-and-context)
 4. [Implementation Guide](#4-implementation-guide)
 5. [Best Practices](#5-best-practices)
-6. [Case Studies](#6-case-studies)
-7. [IANA Considerations](#7-iana-considerations)
-8. [Examples](#8-examples)
-9. [References](#9-references)
-10. [Appendix](#10-appendix)
+6. [IANA Considerations](#6-iana-considerations)
+7. [Examples](#7-examples)
+8. [References](#8-references)
+9. [Appendix](#9-appendix)
 
 ## 1. Introduction
 
@@ -89,17 +90,27 @@ Readers should have:
 
 ### 3.1 Problem Domain
 
-Electricity systems globally face several challenges:
-- **Peak Load Management**: Growing peak demand requiring expensive peaker plants
-- **Grid Reliability**: Need for real-time demand response during emergencies
-- **Economic Efficiency**: High cost of maintaining reserve capacity
+**The Grid's Growing Complexity Crisis**
 
-Commercial consumers such as manufacturing facilities, shopping malls, office complexes, and transport depots have significant load flexibility potential through:
-- Equipment scheduling optimization
-- HVAC system load management
-- Non-critical equipment load shifting
-- Battery storage system coordination
-- Process optimization
+Modern electricity grids face an unprecedented convergence of challenges that traditional centralized control cannot effectively address:
+
+**Peak Demand Explosion**: Global electricity demand peaks are growing 3-4% annually, driven by electrification of transport, heating, and industrial processes. Utilities must maintain expensive "peaker" plants that operate only a few hundred hours per year but represent billions in capital costs. A single 100MW peaker plant costs $50-100 million but may only run during the hottest 50 afternoons of the year.
+
+**The Renewable Intermittency Paradox**: While renewable energy is abundant and cheap when available, its variability creates grid management nightmares. Solar generation peaks at noon but demand peaks at 6 PM. Wind can drop from 80% to 10% capacity within hours. Grid operators need flexible resources that can respond in minutes, not the hours required for traditional power plants.
+
+**Infrastructure at Breaking Point**: Many electricity networks operate close to capacity limits. A single transmission line failure can cascade into blackouts affecting millions. The 2003 Northeast blackout started with tree contact on a single Ohio transmission line but ultimately left 55 million people without power, demonstrating how fragile our interconnected grid has become.
+
+**The Hidden Flexibility Goldmine**
+
+Commercial and industrial consumers represent an untapped reservoir of grid flexibility that dwarfs most power plants:
+
+**Commercial Buildings**: A typical shopping mall with 200 stores consumes 2-5 MW continuously. During peak demand periods, reducing HVAC load by 20% for two hours provides the same grid relief as a small power plant—without the environmental impact or capital investment.
+
+**Manufacturing Facilities**: Industrial processes often have inherent flexibility. Aluminum smelters can modulate their load within minutes. Food processing facilities can shift energy-intensive operations to off-peak hours. A single steel mill can adjust its consumption by 50-100 MW based on production scheduling.
+
+**Cold Storage and Data Centers**: These facilities are essentially "thermal batteries" and "computational batteries." A cold storage warehouse can pre-cool to lower temperatures when electricity is cheap, then coast on thermal inertia during peak periods. Data centers can shift non-urgent computational workloads to other locations or time periods.
+
+**Transportation Hubs**: Bus depots, train stations, and airports have massive energy footprints with significant scheduling flexibility. Electric bus charging can be optimized around grid conditions. Airport terminals can adjust lighting, escalators, and air conditioning without impacting passenger experience.
 
 ### 3.2 Current State
 
@@ -136,15 +147,379 @@ Before implementation:
 - **Authorization Framework**: Authentication and authorization systems
 - **Data Management**: Systems to track consumption and flexibility resources
 
-### 4.3 Step-by-Step Implementation
+### 4.3 Configuration
 
-#### 4.3.1 Step 1: Program Discovery
+#### 4.3.1 Network Architecture Setup
+
+**The Distributed Intelligence Paradigm**
+
+Demand Flexibility fundamentally reimagines grid operations as a **distributed intelligence network** rather than centralized command-and-control. Each participant—whether utility or consumer—operates as an autonomous agent capable of making intelligent decisions while coordinating with the broader grid ecosystem.
+
+**Commercial Facility (BAP) - The Intelligent Edge Node:**
+
+Think of each commercial facility as a "smart grid edge node" with decision-making capabilities:
+
+- **Client Endpoint**: Acts as the facility's "brain stem," interfacing with internal energy systems (SCADA, Building Management Systems, IoT sensors) and translating business operations into grid-language communication. This endpoint understands both "facility speak" (equipment schedules, production targets, comfort requirements) and "grid speak" (load reduction requests, baseline calculations, incentive structures).
+
+- **Network Endpoint**: Functions as the facility's "diplomatic channel" to the grid community. It receives market signals, participates in grid events, and negotiates capacity commitments. This endpoint must balance grid service opportunities with operational constraints in real-time.
+
+- **Intelligence Layer**: The critical missing piece in traditional demand response—a local decision engine that considers:
+  - Current operational priorities (production schedules, occupancy patterns, equipment maintenance)
+  - Economic opportunities (electricity prices, incentive rates, demand charges)
+  - Technical constraints (equipment ramp rates, minimum run times, safety interlocks)
+  - Historical performance (baseline accuracy, commitment reliability, revenue optimization)
+
+**Utility/DISCOM (BPP) - The Grid Orchestrator:**
+
+The utility transforms from a traditional "power deliverer" to a "flexibility marketplace operator":
+
+- **Client Endpoint**: Interfaces with traditional grid operations (SCADA, Energy Management Systems, Market Operations) while adding new capabilities for distributed resource coordination. This endpoint must integrate DF resources into traditional grid operations seamlessly.
+
+- **Network Endpoint**: Operates the "flexibility marketplace," broadcasting grid needs, evaluating participant responses, and orchestrating coordinated actions. Think of this as running a real-time auction where the commodity is grid stability and the currency is flexibility.
+
+- **Grid Intelligence Amplification**: Modern utilities must evolve from reactive grid operators to proactive grid optimizers, using participant network effects to enhance overall system performance.
+
+#### 4.3.2 Required Infrastructure Components
+
+**Registry Service:**
+Each DF network requires a central registry where all participants register their endpoints and capabilities. The registry maintains the authoritative list of network participants and their subscription status.
+
+**Gateway Service:**
+Discovery requests flow through gateways that broadcast search queries to all relevant providers in the network. Gateways filter and route messages based on domain and geographic criteria.
+
+**Security Infrastructure:**
+- Digital signature capabilities for message authentication
+- Public key management system for participant verification
+- Certificate authorities for endpoint validation
+- Secure storage for cryptographic keys
+
+**Communication Infrastructure:**
+- HTTPS endpoints for all network communication
+- Reverse proxy configuration (typically Nginx) for routing internal services
+- Load balancing for high-availability deployments
+- Message queuing for asynchronous processing
+
+#### 4.3.3 Domain Configuration
+
+**Layer 2 Configuration:**
+DF programs require domain-specific configuration files that define:
+- Energy domain vocabularies and taxonomies
+- Measurement units and conversion factors
+- Baseline calculation methodologies
+- Incentive calculation rules
+- Regional grid codes and standards
+
+**Participant Registration:**
+- Unique participant identifiers across the network
+- Endpoint URLs for client and network communication
+- Service capabilities and capacity declarations
+- Geographic coverage and operational hours
+- Subscription status and access permissions
+
+#### 4.3.4 Integration Requirements
+
+**Energy Management System Integration:**
+Commercial facilities must integrate their energy management systems with the BAP client endpoint to:
+- Monitor real-time energy consumption
+- Control flexible loads and equipment
+- Calculate available flexibility capacity
+- Execute load reduction commands
+
+**Grid Operations Integration - The Mission-Critical Interface:**
+This integration represents the most technically challenging aspect of DF implementation because it bridges two fundamentally different worlds: traditional power system operations (millisecond response times, N-1 contingency planning, physical laws of power flow) and modern digital marketplaces (API calls, data validation, distributed decision-making).
+
+Grid operators must enhance their existing Energy Management Systems (EMS) to:
+- **Real-time Grid Monitoring**: Continuously assess grid frequency (typically 50 or 60 Hz with tolerances of ±0.2 Hz), transmission line loadings (percentage of thermal capacity), and reserve margins (MW of available generation above current load)
+- **Predictive Analytics**: Use machine learning models to forecast system stress 15 minutes to 24 hours ahead, accounting for weather forecasts, historical patterns, and planned outages
+- **Resource Optimization**: Calculate optimal DF event sizing and timing by modeling the grid impact of distributed load reductions, considering transmission constraints and voltage stability
+- **Emergency Procedures**: Integrate DF resources into established grid emergency protocols, including automatic load shedding sequences and black start procedures
+
+**The Engineering Challenge**: Traditional grid operations think in terms of "firm capacity" (guaranteed available power), but DF resources are probabilistic (dependent on participant availability and response). Grid operators must develop new reliability frameworks that account for the statistical nature of distributed flexibility while maintaining the same N-1 contingency standards required for grid stability.
+
+**Data Management:**
+- Real-time data collection from smart meters
+- Historical data storage for baseline calculations
+- Performance monitoring and reporting
+- Compliance and audit trail maintenance
+
+### 4.4 Step-by-Step Implementation
+
+#### 4.4.1 Step 1: Program Discovery
 
 Commercial consumers discover available DF programs using search APIs.
 
-**Input:** Search criteria (location, load capacity, program preferences)
-**Output:** List of available DF programs with details
-**Example:**
+**Process:**
+- Commercial facility sends search request to find available DF programs
+- Search criteria include location, load capacity, and participant type
+- Gateway broadcasts the search to all relevant utilities in the network
+- Utilities respond with available programs matching the criteria
+
+**Key Information Exchanged:**
+- Geographic location and coverage area
+- Load capacity and flexibility capabilities
+- Program types and incentive structures
+- Participation requirements and terms
+
+#### 4.4.2 Step 2: Program Subscription
+
+Commercial consumer subscribes to selected DF program.
+
+**Process:**
+- Commercial facility selects a DF program from search results
+- Submits subscription request with commitment details and capabilities
+- Utility reviews application and confirms subscription
+- Subscription becomes active with defined terms and conditions
+
+**Key Information Exchanged:**
+- Maximum load reduction capacity commitment
+- Available flexibility timeframes and notice periods
+- Incentive rates and payment terms
+- Program duration and renewal options
+- Performance requirements and penalties
+
+#### 4.4.3 Step 3: DF Event Notification
+
+**The Moment of Truth: When the Grid Calls for Help**
+
+This step represents the convergence of sophisticated grid engineering and market dynamics. Unlike traditional power plant dispatch (where utilities own and control generation resources), DF events require **negotiating with independent actors** who have their own business priorities and technical constraints.
+
+**The Grid Operator's Decision Matrix:**
+When system stress is detected, grid operators must make rapid decisions balancing multiple factors:
+- **Technical Requirements**: How much load reduction is needed, where on the grid, and for how long?
+- **Economic Optimization**: Which participants can deliver flexibility most cost-effectively?
+- **Reliability Assurance**: What's the confidence level that participants will actually perform?
+- **System Impact**: How will reduced consumption affect voltage profiles and power flows?
+
+**Process:**
+- **Grid Condition Assessment**: Operators analyze real-time data from thousands of sensors across the transmission and distribution network, identifying stress patterns that may lead to equipment overloads or frequency deviations
+- **Optimization Algorithm Execution**: Advanced algorithms simultaneously solve for optimal participant selection, event timing, and incentive levels while respecting grid constraints and participant availability
+- **Multi-Participant Coordination**: The system constructs event notifications for potentially hundreds of participants, each receiving customized requests based on their location, capacity, and contract terms
+- **Real-time Validation**: Before sending notifications, the system validates that the proposed DF event will actually resolve the grid constraint without creating new problems elsewhere
+
+**Key Information Exchanged:**
+- **Grid Context**: Current frequency (e.g., "49.8 Hz, declining"), transmission loading percentages, and projected stress duration
+- **Locational Signals**: Specific grid areas where load reduction is most valuable (transmission constraints are highly location-dependent)
+- **Economic Signals**: Real-time pricing that reflects both grid need and participant availability
+- **Technical Requirements**: Precise timing (including required ramp rates), duration, and any operational constraints
+
+#### 4.4.4 Step 4: Event Participation Confirmation
+
+Commercial consumer confirms participation in DF event.
+
+**Process:**
+- Commercial facility evaluates event requirements against operational constraints
+- Determines available load reduction capacity for the event timeframe
+- Commits to specific load reduction amount with confidence level
+- Confirms participation with baseline and target consumption details
+
+**Key Information Exchanged:**
+- Committed load reduction amount and confidence level
+- Baseline consumption and target consumption during event
+- Confirmation of participation timing and constraints
+- Equipment and systems to be controlled during event
+- Emergency override and safety procedures
+
+### 4.5 Testing
+
+#### 4.5.1 Test Scenarios
+
+Key validation scenarios for DF implementation:
+
+1. **Program Discovery Test**
+   - **Test Case:** Search for DF programs with various criteria
+   - **Expected Result:** Relevant programs returned with accurate details
+
+2. **Subscription Flow Test**
+   - **Test Case:** Complete subscription process for multiple programs
+   - **Expected Result:** Successful enrollment with proper terms
+
+3. **Event Response Test**
+   - **Test Case:** Respond to DF events under different conditions
+   - **Expected Result:** Appropriate load reduction achieved
+
+4. **Settlement Verification**
+   - **Test Case:** Calculate and verify incentive payments
+   - **Expected Result:** Accurate calculation based on actual performance
+
+#### 4.5.2 Validation Checklist
+
+- [ ] API endpoints respond within timeout limits
+- [ ] Digital signatures validate correctly
+- [ ] Load reduction targets are achievable
+- [ ] Baseline calculations are accurate
+- [ ] Incentive calculations match contract terms
+- [ ] Data privacy requirements are met
+- [ ] Emergency override procedures work
+
+## 5. Best Practices
+
+### 5.1 Design Principles
+
+1. **Reliability First**: DF systems must maintain grid stability as primary objective
+2. **Transparent Incentives**: Clear calculation methods and timely payments
+3. **Participant Autonomy**: Consumers retain control over their participation decisions
+4. **Scalable Architecture**: Support growth from pilots to system-wide deployment
+
+### 5.2 Common Patterns
+
+#### 5.2.1 Pattern 1: Baseline Calculation
+
+**What is a Baseline?**
+A baseline is the **financial and technical foundation** of any demand flexibility program—imagine it as the "truth serum" that determines whether participants actually delivered the grid services they promised, and consequently, whether they get paid.
+
+Think of it like a performance athlete's personal best time. Before you can claim you ran faster, everyone needs to agree on your normal running speed. In the electricity world, before you can claim you reduced 200 kW of demand, everyone needs to agree on how much electricity you normally use.
+
+But here's where it gets technically fascinating: electricity consumption patterns are incredibly complex. A shopping mall's "normal" consumption depends on weather (hotter = more air conditioning), day of week (weekends = different tenant operations), season (holiday shopping = higher loads), and even local events (nearby concert = parking lot lighting). Creating an accurate baseline requires sophisticated statistical analysis that accounts for all these variables.
+
+**The Engineering Reality:** Grid operators need baselines that are forensically accurate because they're the basis for million-dollar settlements. A 1% error in baseline calculation across a 50 MW demand response portfolio could result in $50,000+ in incorrect payments annually. This is why baseline calculation isn't just math—it's engineering economics.
+
+**Why Baselines Matter:**
+Without accurate baselines, the system falls apart:
+- **Fair Payment**: How do you pay someone for reducing electricity if you don't know their normal usage?
+- **Gaming Prevention**: Without baselines, participants could artificially use more electricity on normal days to make their "reductions" look bigger
+- **Performance Verification**: Utilities need proof that load reduction actually happened
+
+**How Baseline Calculation Works:**
+The BPP (Grid/Utility) must have a mechanism to calculate accurate baselines for all participants. One commonly used method is the "3-of-5 Average" approach, which uses historical consumption data to establish normal usage patterns.
+
+**When to Use This Pattern:** Every demand flexibility program that pays participants based on their actual electricity reduction performance.
+
+#### 5.2.2 Pattern 2: Graduated Response
+
+**What is Graduated Response?**
+Graduated response is like a traffic light system for electricity emergencies. Just as traffic lights have green (go normally), yellow (caution), and red (stop), the electricity grid has different levels of urgency requiring different responses.
+
+Think of it like a hospital emergency system:
+- **Green Zone**: Normal operations, no action needed
+- **Yellow Zone**: Busy but manageable, voluntary help appreciated  
+- **Red Zone**: Critical situation, all available help needed immediately
+
+**Why Graduated Response is Needed:**
+The electricity grid faces different levels of stress:
+- **Minor Peak**: Slightly higher than normal demand (like a busy shopping day)
+- **Significant Strain**: Notable supply shortage (like a hot summer afternoon when everyone uses air conditioning)
+- **Emergency**: Potential blackout risk (like when a power plant unexpectedly shuts down)
+
+Each situation requires a different level of response and offers different compensation.
+
+**How Graduated Response Works:**
+
+**Level 1 - Advisory (Green Light):**
+- **Situation**: "We're getting busy, but manageable"
+- **Request**: "Please reduce 5% of your electricity use if convenient"
+- **Participation**: Voluntary - you can say no without penalty
+- **Payment**: Low rate, like a "thank you" bonus
+- **Example**: "We're seeing higher demand today. If you can turn off some non-essential lights, we'll give you a small credit."
+
+**Level 2 - Warning (Yellow Light):**
+- **Situation**: "We need help to maintain stability"
+- **Request**: "Please reduce 15% of your electricity use"
+- **Participation**: Mandatory for enrolled participants
+- **Payment**: Standard rate you agreed to when you joined
+- **Example**: "Grid demand is high. Please reduce HVAC load and non-critical equipment as committed."
+
+**Level 3 - Emergency (Red Light):**
+- **Situation**: "Risk of blackouts, all hands on deck"
+- **Request**: "Please reduce 25% or more of your electricity use immediately"
+- **Participation**: Mandatory, with penalties for non-compliance
+- **Payment**: Premium rate - highest compensation
+- **Example**: "Major power plant offline. Implement maximum load reduction to prevent system collapse."
+
+**When to Use This Pattern:** When your demand flexibility program needs to handle both routine peak management (happens regularly) and genuine emergency situations (rare but critical).
+
+### 5.3 Anti-Patterns
+
+#### 5.3.1 Anti-Pattern 1: Over-Promising Flexibility
+
+Committing to load reductions beyond actual capability.
+
+**Why it's problematic:** Can compromise grid reliability and damage program credibility
+**Better approach:** Conservative estimates with confidence intervals and backup plans
+
+#### 5.3.2 Anti-Pattern 2: Ignoring Baseline Accuracy
+
+Using inaccurate or manipulated baselines for incentive calculation.
+
+**Why it's problematic:** Creates perverse incentives and unfair compensation
+**Better approach:** Robust baseline methodologies with independent verification
+
+### 5.4 Performance Considerations
+
+- **Response Time**: DF events have varying notification periods depending on type - week-ahead (planned maintenance), day-ahead (weather forecasts), intraday (equipment failures), to real-time emergency response
+- **Data Accuracy**: Real-time monitoring needed for verification
+- **System Reliability**: 99.9% uptime requirement for critical grid services
+- **Scalability**: Architecture must support hundreds of participants per utility
+
+### 5.5 Language and Conventions
+
+#### 5.5.1 Naming Conventions
+
+**API Endpoints:**
+- Use lowercase with hyphens for domain names: `energy:demand-flexibility`
+- Action names follow Beckn standard: `search`, `confirm`, `on_init`, `on_status`
+- Resource IDs use descriptive names: `df-program-subscription-001`, `load-reduction-request`
+
+**JSON Field Naming:**
+- Use snake_case for custom fields: `event_type`, `max_reduction_kw`, `baseline_kw`
+- Follow Beckn core schema for standard fields: `transaction_id`, `message_id`, `timestamp`
+- Energy-specific units clearly specified: `kW`, `kWh`, `Hz`
+
+**Identifier Patterns:**
+- Transaction IDs: `df-[action]-[sequence]` (e.g., `df-search-001`)
+- Event IDs: `df-event-[YYYYMMDD]-[sequence]` (e.g., `df-event-20250818-001`)
+- Participant IDs: Domain-based (e.g., `commercial-facility.example.com`)
+
+#### 5.5.2 Data Validation Rules
+
+**Required Fields:**
+- All Beckn context fields (domain, action, version, timestamp, etc.)
+- Energy-specific tags for measurement units and calculations
+- Baseline and target consumption values for performance tracking
+
+**Value Constraints:**
+- Timestamps in ISO 8601 format with timezone information
+- Energy measurements with appropriate units (kW, kWh, MW, MWh)
+- Grid frequency in Hz with decimal precision (e.g., "49.7Hz")
+- Currency codes following ISO 4217 standard
+
+**Schema Compliance:**
+- All messages must validate against Beckn Protocol core schema
+- Energy domain extensions follow consistent patterns
+- Custom tags documented with clear semantic meaning
+
+#### 5.5.3 Error Handling Standards
+
+**Error Response Format:**
+- Use standard Beckn error structure in context and message fields
+- Include specific error codes for DF-related failures
+- Provide human-readable error descriptions for debugging
+
+**Common Error Scenarios:**
+- Insufficient load reduction capacity available
+- Baseline calculation failures or disputes
+- Communication timeouts during critical events
+- Authorization failures for sensitive grid operations
+
+### 5.6 Security Considerations
+
+- **Data Privacy**: Energy consumption data requires strict privacy protection
+- **Authentication**: Digital signatures and PKI for all transactions
+- **Authorization**: Role-based access control for different participants
+- **Audit Trail**: Complete logging of all DF events and responses
+
+## 6. IANA Considerations
+
+This document has no IANA actions.
+
+## 7. Examples
+
+This section provides comprehensive JSON examples for all Demand Flexibility API interactions. These examples follow the Beckn Protocol specification and demonstrate production-ready message formats.
+
+### 7.1 Discovery and Subscription Examples
+
+#### 7.1.1 Program Discovery (Search API)
+
+Commercial facility searches for available DF programs:
 
 ```json
 {
@@ -189,13 +564,9 @@ Commercial consumers discover available DF programs using search APIs.
 }
 ```
 
-#### 4.3.2 Step 2: Program Subscription
+#### 7.1.2 Program Subscription (Confirm API)
 
-Commercial consumer subscribes to selected DF program.
-
-**Input:** Program selection and subscription details
-**Output:** Subscription confirmation with terms
-**Example:**
+Commercial facility subscribes to a selected DF program:
 
 ```json
 {
@@ -263,7 +634,7 @@ Commercial consumer subscribes to selected DF program.
       ],
       "quote": {
         "price": {
-          "currency": "INR",
+          "currency": "USD",
           "value": "0"
         },
         "breakup": [
@@ -273,7 +644,7 @@ Commercial consumer subscribes to selected DF program.
             },
             "title": "Demand Response Incentive",
             "price": {
-              "currency": "INR",
+              "currency": "USD",
               "value": "5.00"
             },
             "tags": [
@@ -290,13 +661,11 @@ Commercial consumer subscribes to selected DF program.
 }
 ```
 
-#### 4.3.3 Step 3: DF Event Notification
+### 7.2 Event Management Examples
 
-Utility initiates DF event when grid conditions require demand reduction.
+#### 7.2.1 DF Event Notification (on_init API)
 
-**Input:** Grid conditions and event requirements
-**Output:** Event notification to subscribed participants
-**Example:**
+Utility initiates DF event when grid conditions require demand reduction:
 
 ```json
 {
@@ -377,7 +746,7 @@ Utility initiates DF event when grid conditions require demand reduction.
       ],
       "quote": {
         "price": {
-          "currency": "INR",
+          "currency": "USD",
           "value": "1500.00"
         },
         "breakup": [
@@ -387,13 +756,13 @@ Utility initiates DF event when grid conditions require demand reduction.
             },
             "title": "Emergency Response Incentive",
             "price": {
-              "currency": "INR",
+              "currency": "USD",
               "value": "1500.00"
             },
             "tags": [
               {
                 "name": "calculation",
-                "value": "150kW × 2hours × 5INR/kWh"
+                "value": "150kW × 2hours × $5/kWh"
               }
             ]
           }
@@ -404,13 +773,9 @@ Utility initiates DF event when grid conditions require demand reduction.
 }
 ```
 
-#### 4.3.4 Step 4: Event Participation Confirmation
+#### 7.2.2 Event Participation Confirmation (Confirm API)
 
-Commercial consumer confirms participation in DF event.
-
-**Input:** Event details and participation decision
-**Output:** Participation confirmation with commitment details
-**Example:**
+Commercial facility confirms participation in DF event:
 
 ```json
 {
@@ -485,358 +850,9 @@ Commercial consumer confirms participation in DF event.
 }
 ```
 
-### 4.4 Configuration
+### 7.3 Settlement and Monitoring Examples
 
-#### 4.4.1 Required Configuration
-
-Essential configuration parameters for DF implementation:
-
-```json
-{
-  "df_program_config": {
-    "utility_id": "utility-discom",
-    "participant_id": "commercial-facility-001",
-    "api_endpoints": {
-      "bpp_uri": "https://utility-discom.example.com/beckn",
-      "bap_uri": "https://commercial-facility.example.com/beckn"
-    },
-    "security": {
-      "authentication_method": "digital_signature",
-      "key_management": "public_key_registry"
-    },
-    "communication": {
-      "default_ttl": "PT30S",
-      "retry_attempts": 3,
-      "timeout_seconds": 30
-    }
-  }
-}
-```
-
-#### 4.4.2 Optional Configuration
-
-Enhanced features and customization options:
-
-```json
-{
-  "optional_config": {
-    "auto_participation": {
-      "enabled": true,
-      "max_reduction_kw": 200,
-      "min_notice_hours": 1
-    },
-    "settlement": {
-      "payment_method": "bank_transfer",
-      "settlement_frequency": "monthly"
-    },
-    "telemetry": {
-      "real_time_monitoring": true,
-      "data_granularity": "15min",
-      "baseline_calculation": "3of5_average"
-    }
-  }
-}
-```
-
-### 4.5 Testing
-
-#### 4.5.1 Test Scenarios
-
-Key validation scenarios for DF implementation:
-
-1. **Program Discovery Test**
-   - **Test Case:** Search for DF programs with various criteria
-   - **Expected Result:** Relevant programs returned with accurate details
-
-2. **Subscription Flow Test**
-   - **Test Case:** Complete subscription process for multiple programs
-   - **Expected Result:** Successful enrollment with proper terms
-
-3. **Event Response Test**
-   - **Test Case:** Respond to DF events under different conditions
-   - **Expected Result:** Appropriate load reduction achieved
-
-4. **Settlement Verification**
-   - **Test Case:** Calculate and verify incentive payments
-   - **Expected Result:** Accurate calculation based on actual performance
-
-#### 4.5.2 Validation Checklist
-
-- [ ] API endpoints respond within timeout limits
-- [ ] Digital signatures validate correctly
-- [ ] Load reduction targets are achievable
-- [ ] Baseline calculations are accurate
-- [ ] Incentive calculations match contract terms
-- [ ] Data privacy requirements are met
-- [ ] Emergency override procedures work
-
-## 5. Best Practices
-
-### 5.1 Design Principles
-
-1. **Reliability First**: DF systems must maintain grid stability as primary objective
-2. **Transparent Incentives**: Clear calculation methods and timely payments
-3. **Participant Autonomy**: Consumers retain control over their participation decisions
-4. **Scalable Architecture**: Support growth from pilots to system-wide deployment
-
-### 5.2 Common Patterns
-
-#### 5.2.1 Pattern 1: Baseline Calculation
-
-Accurate baseline calculation is essential for fair incentive payments.
-
-**When to Use:** For all DF programs requiring load reduction measurement
-**Example:**
-
-```json
-{
-  "baseline_calculation": {
-    "method": "3of5_average",
-    "reference_days": [
-      "2025-08-11", "2025-08-12", "2025-08-13", 
-      "2025-08-14", "2025-08-15"
-    ],
-    "exclusions": ["2025-08-16", "2025-08-17"],
-    "adjustment_factors": {
-      "weather": 0.95,
-      "business_operations": 1.02
-    }
-  }
-}
-```
-
-#### 5.2.2 Pattern 2: Graduated Response
-
-Different response levels based on grid conditions severity.
-
-**When to Use:** For programs offering multiple service tiers
-**Example:**
-
-```json
-{
-  "response_levels": {
-    "advisory": {
-      "load_reduction_percent": 5,
-      "incentive_rate": 2.0,
-      "mandatory": false
-    },
-    "warning": {
-      "load_reduction_percent": 15,
-      "incentive_rate": 5.0,
-      "mandatory": true
-    },
-    "emergency": {
-      "load_reduction_percent": 25,
-      "incentive_rate": 10.0,
-      "mandatory": true
-    }
-  }
-}
-```
-
-### 5.3 Anti-Patterns
-
-#### 5.3.1 Anti-Pattern 1: Over-Promising Flexibility
-
-Committing to load reductions beyond actual capability.
-
-**Why it's problematic:** Can compromise grid reliability and damage program credibility
-**Better approach:** Conservative estimates with confidence intervals and backup plans
-
-#### 5.3.2 Anti-Pattern 2: Ignoring Baseline Accuracy
-
-Using inaccurate or manipulated baselines for incentive calculation.
-
-**Why it's problematic:** Creates perverse incentives and unfair compensation
-**Better approach:** Robust baseline methodologies with independent verification
-
-### 5.4 Performance Considerations
-
-- **Response Time**: DF events require rapid response (typically 15-30 minutes)
-- **Data Accuracy**: Real-time monitoring needed for verification
-- **System Reliability**: 99.9% uptime requirement for critical grid services
-- **Scalability**: Architecture must support hundreds of participants per utility
-
-### 5.5 Security Considerations
-
-- **Data Privacy**: Energy consumption data requires strict privacy protection
-- **Authentication**: Digital signatures and PKI for all transactions
-- **Authorization**: Role-based access control for different participants
-- **Audit Trail**: Complete logging of all DF events and responses
-
-## 6. Case Studies
-
-### 6.1 Case Study 1: Utility Distribution Company DF Pilot
-
-#### 6.1.1 Context
-
-A distribution company implemented a pilot DF program with 10 commercial facilities during summer 2024, targeting peak load reduction during high-demand periods when grid frequency dropped below 49.8 Hz.
-
-#### 6.1.2 Challenge
-
-- Peak electricity demand exceeded available generation capacity
-- Manual coordination of demand response was slow and unreliable
-- Commercial facilities had flexible loads but no systematic way to participate
-- Need for real-time coordination and fair incentive distribution
-
-#### 6.1.3 Solution
-
-Implemented Beckn-based DF system with:
-- Automated program discovery and subscription
-- Real-time event notifications based on grid conditions
-- Automated load reduction through smart control systems
-- Transparent incentive calculation and payment
-
-#### 6.1.4 Results
-
-- **Peak Reduction**: 2.5 MW average reduction during 15 events
-- **Response Time**: Average 12 minutes from notification to action
-- **Participant Satisfaction**: 90% satisfaction rate with transparency
-- **Grid Impact**: Improved frequency stability during peak hours
-- **Economic Benefits**: Total incentives paid to participants
-
-#### 6.1.5 Lessons Learned
-
-- **Technology Integration**: Existing SCADA systems needed API development
-- **Baseline Accuracy**: Weather adjustments critical for fair measurement
-- **Communication**: Clear event notifications reduced manual coordination
-- **Incentive Design**: Performance-based payments encouraged reliable participation
-
-### 6.2 Case Study 2: Industrial Consumer DF Program
-
-#### 6.2.1 Context
-
-Medium-scale manufacturing facility participating in a utility's industrial DF program, offering load curtailment from non-critical equipment during grid emergencies.
-
-#### 6.2.2 Challenge
-
-- Complex industrial processes with varying flexibility across equipment
-- Need to maintain production schedules while participating in DF
-- Integration with existing energy management systems
-- Balancing economic incentives with operational constraints
-
-#### 6.2.3 Solution
-
-- **Flexible Load Identification**: Categorized equipment by criticality and flexibility
-- **Automated Controls**: Integration with existing BMS for seamless load management
-- **Predictive Participation**: AI-based decision making for event participation
-- **Performance Monitoring**: Real-time tracking of load reductions and impacts
-
-#### 6.2.4 Results
-
-- **Flexibility Offered**: 800 kW peak reduction capability
-- **Participation Rate**: 85% of eligible events over 6 months
-- **Production Impact**: Less than 2% impact on overall production output
-- **Revenue Generation**: Annual revenue from DF participation
-
-#### 6.2.5 Lessons Learned
-
-- **Operational Integration**: DF systems must integrate with existing operations
-- **Staff Training**: Operations team needed training on DF procedures
-- **Economic Modeling**: Clear ROI analysis essential for management buy-in
-- **Technology Reliability**: Backup systems needed for critical equipment protection
-
-## 7. IANA Considerations
-
-This document has no IANA actions.
-
-## 8. Examples
-
-### 8.1 Complete Examples
-
-#### 8.1.1 Example 1: Complete DF Event Workflow
-
-This example shows the complete flow from event initiation to settlement:
-
-**Step 1: Event Initiation (Utility to Commercial Facility)**
-```json
-{
-  "context": {
-    "domain": "energy:demand-flexibility",
-    "action": "on_init",
-    "version": "1.1.0",
-    "bap_id": "commercial-facility.example.com",
-    "bpp_id": "utility-discom.example.com",
-    "transaction_id": "df-peak-event-20250818-14",
-    "message_id": "evt-init-001",
-    "timestamp": "2025-08-18T14:00:00Z"
-  },
-  "message": {
-    "order": {
-      "id": "peak-emergency-001",
-      "provider": {
-        "id": "utility-grid-ops",
-        "descriptor": {
-          "name": "Utility Grid Operations"
-        }
-      },
-      "items": [
-        {
-          "id": "load-curtailment-request",
-          "descriptor": {
-            "name": "Peak Emergency Load Reduction"
-          },
-          "quantity": {
-            "measure": {
-              "unit": "kW",
-              "value": "200"
-            }
-          }
-        }
-      ],
-      "fulfillments": [
-        {
-          "start": {
-            "time": {
-              "timestamp": "2025-08-18T16:00:00Z"
-            }
-          },
-          "end": {
-            "time": {
-              "timestamp": "2025-08-18T18:00:00Z"
-            }
-          }
-        }
-      ]
-    }
-  }
-}
-```
-
-**Step 2: Event Confirmation (Commercial Facility to Utility)**
-```json
-{
-  "context": {
-    "domain": "energy:demand-flexibility",
-    "action": "confirm",
-    "version": "1.1.0",
-    "bap_id": "commercial-facility.example.com",
-    "bpp_id": "utility-discom.example.com",
-    "transaction_id": "df-peak-event-20250818-14",
-    "message_id": "evt-confirm-001",
-    "timestamp": "2025-08-18T14:15:00Z"
-  },
-  "message": {
-    "order": {
-      "id": "peak-emergency-001",
-      "status": "CONFIRMED",
-      "items": [
-        {
-          "id": "load-curtailment-commitment",
-          "quantity": {
-            "measure": {
-              "unit": "kW",
-              "value": "180"
-            }
-          }
-        }
-      ]
-    }
-  }
-}
-```
-
-#### 8.1.2 Example 2: Settlement and Incentive Calculation
+#### 7.3.1 Settlement and Incentive Calculation (on_status API)
 
 ```json
 {
@@ -901,22 +917,24 @@ This example shows the complete flow from event initiation to settlement:
 }
 ```
 
-### 8.2 Reference Implementations
+### 7.4 Reference Implementations
 
-- **Open-source DF Platform**: Generic implementation available for utilities
-- **Commercial Facility Integration**: Sample code for various facility types
-- **Simulation Environment**: Test framework for DF program development
+- **Open-source DF Platform**: Generic implementation available for utilities to deploy Beckn-based DF programs
+- **Commercial Facility Integration**: Sample code and SDKs for integrating various facility types with BAP endpoints
+- **Simulation Environment**: Test framework and mock services for DF program development and validation
+- **Postman Collections**: Ready-to-use API collections for testing DF workflows
+- **Docker Containers**: Containerized reference implementations for quick deployment
 
-## 9. References
+## 8. References
 
-### 9.1 Normative References
+### 8.1 Normative References
 
 - [RFC 2119] Bradner, S., "Key words for use in RFCs to Indicate Requirement Levels", BCP 14, RFC 2119, March 1997
 - [RFC 8174] Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words", BCP 14, RFC 8174, May 2017
 - [BECKN-CORE] Beckn Protocol Core Specification v1.1.0
 - [BECKN-ENERGY] Beckn Protocol Energy Domain Specification (Draft)
 
-### 9.2 Informative References
+### 8.2 Informative References
 
 - [DF-GLOBAL] "Demand Flexibility: A Global Perspective", International Energy Agency, 2024
 - [GRID-CODES] "Electricity Grid Codes and Standards", International Electrotechnical Commission, 2023
@@ -924,22 +942,22 @@ This example shows the complete flow from event initiation to settlement:
 - [LBL-DF] "Demand Flexibility: A Key Enabler of Electricity System Resilience", Lawrence Berkeley National Laboratory, 2024
 - [DR-STANDARDS] "Demand Response Standards and Best Practices", Global Energy Council, 2023
 
-## 10. Appendix
+## 9. Appendix
 
-### 10.1 Change Log
+### 9.1 Change Log
 
 | Version | Date | Description |
 |---------|------|-------------|
 | 0.1.0 | 2025-08-18 | Initial draft with complete implementation guide |
 
-### 10.2 Acknowledgments
+### 9.2 Acknowledgments
 
 - Beckn Foundation for protocol specifications and community support
 - Energy industry experts who provided domain knowledge and insights
 - Commercial facility operators for operational requirements input
 - Technology partners for implementation feedback
 
-### 10.3 Glossary
+### 9.3 Glossary
 
 - **Baseline**: Historical electricity consumption pattern used to measure load reductions
 - **Demand Flexibility**: Ability to adjust electricity consumption in response to grid conditions
@@ -948,7 +966,7 @@ This example shows the complete flow from event initiation to settlement:
 - **Grid Frequency**: Measure of electrical supply-demand balance (typically 50 Hz or 60 Hz depending on region)
 - **Distribution Company (DISCOM)**: Utility responsible for electricity distribution to end consumers
 
-### 10.4 FAQ
+### 9.4 FAQ
 
 **Q: How does this approach differ from traditional demand response programs?**
 A: Traditional programs rely on manual coordination and phone/email communication. This Beckn-based approach enables automated discovery, subscription, and real-time event coordination with transparent incentive calculations.
@@ -962,19 +980,124 @@ A: The system uses standardized baseline methodologies (such as 3-of-5 average) 
 **Q: What happens if a participant cannot fulfill their commitment?**
 A: The system includes penalty structures for non-performance, but also recognizes that some factors (equipment failures, operational emergencies) are beyond participant control.
 
-### 10.5 Troubleshooting
+### 9.5 RFC Evolution and Maintenance
 
-#### 10.5.1 Issue 1: API Response Timeouts
+#### 9.5.1 Version Management
+
+**Version Numbering:**
+- **Major versions (X.0.0)**: Breaking changes to API structure or fundamental concepts
+- **Minor versions (X.Y.0)**: New features, additional use cases, backward-compatible enhancements
+- **Patch versions (X.Y.Z)**: Bug fixes, clarifications, documentation improvements
+
+**Release Process:**
+- Draft versions for community review and feedback
+- Public comment period of minimum 30 days for major changes
+- Implementation testing with reference platforms
+- Final approval by maintainers and domain experts
+
+#### 9.5.2 Community Contribution Guidelines
+
+**How to Contribute:**
+- Submit issues via GitHub for bugs, clarifications, or enhancement requests
+- Propose changes through pull requests with detailed explanations
+- Participate in community discussions and working group meetings
+- Provide feedback from real-world implementations
+
+**Contribution Requirements:**
+- All proposals must include implementation considerations
+- Changes should maintain backward compatibility when possible
+- Include updated examples and test cases
+- Document migration paths for breaking changes
+
+**Review Process:**
+- Technical review by energy domain experts
+- Beckn Protocol compliance validation
+- Community feedback integration
+- Implementation feasibility assessment
+
+#### 9.5.3 Maintenance Procedures
+
+**Regular Maintenance:**
+- Quarterly review of open issues and community feedback
+- Annual alignment with Beckn Protocol core specification updates
+- Bi-annual review of examples and reference implementations
+- Continuous monitoring of real-world deployment experiences
+
+**Maintenance Responsibilities:**
+- **Core Authors**: Major architectural decisions and breaking changes
+- **Domain Experts**: Energy industry best practices and regulatory compliance
+- **Community Maintainers**: Documentation updates, example maintenance, issue triage
+- **Implementation Partners**: Real-world validation and feedback
+
+#### 9.5.4 Deprecation and Migration Policy
+
+**Deprecation Process:**
+- Minimum 12-month notice for breaking changes
+- Clear migration paths and tools provided
+- Support for legacy versions during transition period
+- Documentation of deprecated features and alternatives
+
+**Migration Support:**
+- Step-by-step migration guides for each major version
+- Automated migration tools where possible
+- Community support channels for implementation questions
+- Reference implementations for new versions
+
+### 9.6 Enhanced Use Cases
+
+#### 9.6.1 Residential Aggregator Programs
+
+**Scenario:** Third-party aggregators managing demand flexibility for residential customers
+- **Participants**: Aggregator as BAP, Utility as BPP, hundreds of households
+- **Challenges**: Small individual loads, complex aggregation algorithms, consumer privacy
+- **Adaptations**: Aggregated baselines, simplified participation confirmations, privacy-preserving data
+
+#### 9.6.2 Industrial Process Optimization
+
+**Scenario:** Large industrial facilities with complex production schedules
+- **Participants**: Manufacturing facility as BAP, Industrial utility as BPP
+- **Challenges**: Production impact assessment, equipment startup costs, process constraints
+- **Adaptations**: Multi-stage load reduction profiles, production schedule integration, cost-benefit optimization
+
+#### 9.6.3 Emergency Grid Stabilization
+
+**Scenario:** Real-time response to sudden generation loss or transmission failures
+- **Participants**: Grid operator as BPP, multiple facility types as BAPs
+- **Challenges**: Sub-minute response times, automated decision making, cascading failure prevention
+- **Adaptations**: Pre-authorized emergency responses, automated load shedding, priority participant classification
+
+#### 9.6.4 Regional Grid Coordination
+
+**Scenario:** Multi-utility coordination across interconnected grid regions
+- **Participants**: Multiple utilities as both BAPs and BPPs, regional grid operator coordination
+- **Challenges**: Cross-jurisdictional regulations, different market structures, coordinated responses
+- **Adaptations**: Multi-party transactions, regional baseline calculations, coordinated event management
+
+### 9.7 Troubleshooting
+
+#### 9.7.1 Issue 1: API Response Timeouts
 
 **Symptoms:** DF event notifications not received within expected timeframe
 **Cause:** Network connectivity issues or overloaded servers during peak events
 **Solution:** Implement retry mechanisms with exponential backoff and backup communication channels
 
-#### 10.5.2 Issue 2: Baseline Calculation Discrepancies
+#### 9.7.2 Issue 2: Baseline Calculation Discrepancies
 
 **Symptoms:** Disputed incentive payments due to baseline disagreements
 **Cause:** Different calculation methods or data sources between utility and participant
 **Solution:** Use standardized calculation APIs with shared data sources and transparent audit logs
+
+#### 9.7.3 Issue 3: Schema Validation Failures
+
+**Symptoms:** Messages rejected due to schema validation errors
+**Cause:** Incorrect field names, missing required fields, or invalid data formats
+**Solution:** Implement comprehensive validation testing, use schema validation tools, maintain updated field documentation
+
+#### 9.7.4 Issue 4: Performance Measurement Disputes
+
+**Symptoms:** Disagreements about actual load reduction achieved during events
+**Cause:** Different measurement methodologies, data synchronization issues, or equipment failures
+**Solution:** Establish standardized measurement protocols, implement real-time data reconciliation, maintain audit trails for all measurements
 
 ---
 
