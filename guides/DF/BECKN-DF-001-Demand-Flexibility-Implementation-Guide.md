@@ -171,7 +171,7 @@ An implementation follows a **discovery-first marketplace approach** where each 
 
 1. **Discovery Phase**: Consumers discover available DF programs through search APIs, finding opportunities matched to their capabilities
 2. **Subscription Phase**: Enrollment in suitable programs using confirm APIs, establishing clear terms and commitments  
-3. **Event Phase**: Real-time coordination of DF events via notification APIs, enabling dynamic grid response
+3. **Event Phase**: Real-time coordination of DF events via on_init (BPP to BAP) and confirm (BAP to BPP) APIs, enabling dynamic grid response
 4. **Settlement Phase**: Performance verification and incentive distribution through status APIs, ensuring transparent compensation
 
 Each phase leverages **native Beckn Protocol capabilities**—search, select, init, confirm, status, update, support, cancel, rating-adapted specifically for the energy domain while maintaining full protocol compliance and interoperability.
@@ -205,19 +205,19 @@ Demand Flexibility fundamentally reimagines grid operations as a **distributed i
 
 Think of each participating entity—whether a household, commercial building, industrial facility, or aggregator managing multiple consumers—as a "smart grid edge node" with decision-making capabilities. A BAP implementation consists of three logical components:
 
-**1. Client-Side Interface (Internal Systems Integration):**
-This component interfaces with the consumer's internal energy systems—home automation platforms, Building Management Systems, SCADA, IoT sensors, or aggregator platforms. It translates between "consumer language" (comfort settings, production schedules, operational constraints) and "DF program language" (load reduction commitments, baseline calculations, participation decisions).
-
-**2. Network-Side Interface (Beckn Protocol Communication):**
+**1. Network-Side Interface (Beckn Protocol Communication):**
 This component handles all Beckn Protocol API communications with the utility network. It processes search requests, subscription confirmations, event notifications, and status updates. This is the standard Beckn BAP endpoint that accepts BPP callbacks following the protocol specification.
 
-**3. Decision Engine (Local Intelligence):**
+**2. Decision Engine (Local Intelligence):**
 This is the business logic component that makes participation decisions by considering:
   - Current operational priorities (production schedules, occupancy patterns, comfort settings, equipment maintenance)
   - Economic opportunities (electricity prices, incentive rates, demand charges, bill savings)
   - Technical constraints (equipment ramp rates, minimum run times, safety interlocks, comfort bounds)
   - Consumer preferences (participation willingness, priority loads, override capabilities)
   - Historical performance (baseline accuracy, commitment reliability, revenue optimization)
+
+**3. Client-Side Interface (Internal Systems Integration):**
+This component interfaces with the consumer's internal energy systems—home automation platforms, Building Management Systems, SCADA, IoT sensors, or aggregator platforms. It translates between "consumer language" (comfort settings, production schedules, operational constraints) and "DF program language" (load reduction commitments, baseline calculations, participation decisions).
 
 **Note:** These are **logical components within a single BAP application**, not separate physical services. They can be implemented as modules within one software system or as separate microservices depending on the deployment architecture.
 
@@ -228,16 +228,16 @@ The utility transforms from a traditional "power deliverer" to a "flexibility ma
 **1. Grid Operations Interface (Internal Systems Integration):**
 This component interfaces with traditional utility systems—SCADA, Energy Management Systems (EMS), Market Operations, demand forecasting, and billing systems. It translates between "grid operations language" (MW requirements, frequency deviations, transmission constraints) and "DF marketplace language" (event notifications, participant capacity, incentive calculations).
 
-**2. Network-Side Interface (Beckn Protocol Communication):**
-This component handles all Beckn Protocol API communications with consumer BAPs. It processes search responses, subscription management, event dispatch, and status collection. This is the standard Beckn BPP endpoint that serves BAP requests following the protocol specification.
-
-**3. DF Program Management Engine (Grid Intelligence):**
+**2. DF Program Management Engine (Grid Intelligence):**
 This is the business logic component that orchestrates DF programs by:
   - Monitoring grid conditions and forecasting flexibility needs
   - Managing participant portfolios and capacity tracking
   - Optimizing event dispatch across multiple participants
   - Calculating baselines, measuring performance, and processing settlements
   - Coordinating with traditional grid operations and market systems
+
+**3. Network-Side Interface (Beckn Protocol Communication):**
+This component handles all Beckn Protocol API communications with consumer BAPs. It processes search responses, subscription management, event dispatch, and status collection. This is the standard Beckn BPP endpoint that serves BAP requests following the protocol specification.
 
 **Note:** Like BAP components, these are **logical components within a single BPP application**. The implementation can range from integrated modules within existing utility systems to standalone DF marketplace platforms depending on utility architecture and integration requirements.
 
@@ -246,6 +246,13 @@ Discovery requests flow through gateways(Beckn Gateway) that broadcast search qu
 
 **Registry Service:**
 Each DF network or Energy network requires a registry where all participants(BAP, BPP, BG) register themselves with details such as network endpoint, domains, region of operation, public keys. The registry maintains the authoritative list of network participants and their subscription status.
+
+**Participant Registration:**
+- Unique participant identifiers across the network
+- Endpoint URLs for client and network communication
+- Service capabilities and capacity declarations
+- Geographic coverage and operational hours
+- Subscription status and access permissions
 
 #### 4.3.2 Security and Communication Infrastructure
 
@@ -282,13 +289,6 @@ Layer 2 configurations define and enforce:
 - **Field Inclusion Policies**: Mandatory vs. optional fields for different transaction types and participant categories
 
 These configurations are applied automatically to **every API call** within the DF network, ensuring that all participants—whether residential aggregators or industrial facilities—operate within consistent technical and business parameters while maintaining full Beckn Protocol compatibility.
-
-**Participant Registration:**
-- Unique participant identifiers across the network
-- Endpoint URLs for client and network communication
-- Service capabilities and capacity declarations
-- Geographic coverage and operational hours
-- Subscription status and access permissions
 
 #### 4.3.4 Integration Requirements
 
