@@ -152,45 +152,46 @@ Using Beckn Protocol for DF programs enables:
 
 ### 4.1 Overview
 
-**What We're Building: A Living, Breathing Grid Ecosystem**
+**Beckn Protocol as the Foundation for Grid Communication**
 
-This implementation guide will walk you through building a **distributed demand flexibility marketplace** that fundamentally transforms how electricity grids operate. Instead of the traditional model where utilities desperately scramble to build more power plants every time demand grows, we're creating a system where millions of electricity consumers become active grid participants, providing flexibility services that keep the lights on while earning revenue.
+This implementation guide demonstrates how to harness the **Beckn open source protocol** as the unified communication backbone for Demand Flexibility programs. We leverage Beckn's proven distributed commerce architecture to create seamless interactions between utilities and their diverse consumer base.
 
-**The Vision in Action:**
-Imagine a summer afternoon when air conditioning demand is pushing the grid to its limits. In the traditional model, utilities would fire up expensive, polluting "peaker" plants or implement rolling blackouts. In our Beckn-based DF system:
+The Beckn Protocol serves as our **digital lingua franca**, enabling standardized communication for:
+- **Program discovery and subscription**: Utilities publishing available DF programs and consumers discovering and enrolling in suitable offerings
+- **Demand signals**: Utilities broadcasting grid needs and flexibility requirements
+- **Response coordination**: Consumers communicating availability, capacity, and participation decisions  
+- **Event notifications**: Real-time grid event dispatch and status updates
+- **Incentive flows**: Transparent performance verification and compensation processing
 
-- **Residential aggregators** automatically adjust smart thermostats across 50,000 homes by 2°F, reducing demand by 100 MW
-- **Commercial buildings** shift non-critical equipment loads for 2 hours, providing another 150 MW of relief
-- **Industrial facilities** reschedule energy-intensive processes, contributing 200 MW of flexibility
-- **All participants** receive performance-based compensation for their contributions
+This approach transforms complex utility-consumer interactions into **standardized API conversations** that any participant can understand and implement, whether they're managing a single household or coordinating thousands of industrial facilities.
 
-The result: **450 MW of grid relief** provided by willing participants earning money, instead of emergency measures or expensive generation.
+**Implementation Architecture: Four-Phase Orchestration**
 
-**The Technical Challenge:**
-Building this system requires orchestrating complex interactions between:
-- **Millions of diverse participants** (homes, businesses, factories) with different capabilities and constraints
-- **Multiple utilities** operating different grid regions with varying technical requirements
-- **Real-time grid conditions** that change by the second and require coordinated responses
-- **Economic incentives** that fairly compensate participants while maintaining grid reliability
+An implementation follows a **discovery-first marketplace approach** where each phase builds upon standardized Beckn API interactions:
 
-**Our Implementation Approach:**
-The implementation follows a **discovery-first marketplace approach** where:
+1. **Discovery Phase**: Consumers discover available DF programs through search APIs, finding opportunities matched to their capabilities
+2. **Subscription Phase**: Enrollment in suitable programs using confirm APIs, establishing clear terms and commitments  
+3. **Event Phase**: Real-time coordination of DF events via notification APIs, enabling dynamic grid response
+4. **Settlement Phase**: Performance verification and incentive distribution through status APIs, ensuring transparent compensation
 
-1. **Discovery Phase**: Consumers discover available DF programs matched to their capabilities and preferences
-2. **Subscription Phase**: Enrollment in suitable programs with clear terms, commitments, and compensation structures
-3. **Event Phase**: Real-time coordination of DF events based on actual grid conditions and participant availability
-4. **Settlement Phase**: Performance verification, incentive calculation, and payment processing based on delivered flexibility
-
-**Why This Architecture Matters:**
-Traditional demand response programs are centrally managed, inflexible, and limited to large commercial customers. Our Beckn-based approach creates a **decentralized, scalable, and inclusive** system that can accommodate everyone from apartment dwellers to aluminum smelters, all participating in the same flexibility marketplace through standardized protocols.
+Each phase leverages **native Beckn Protocol capabilities**—search, select, init, confirm, status, update, support, cancel, rating-adapted specifically for the energy domain while maintaining full protocol compliance and interoperability.
 
 ### 4.2 Prerequisites
 
-Before implementation:
-- **Smart Infrastructure**: Smart meters and controllable devices installed
-- **Communication Systems**: Reliable internet connectivity for API calls
-- **Authorization Framework**: Authentication and authorization systems
-- **Data Management**: Systems to track consumption and flexibility resources
+Before implementation, the following infrastructure must be in place:
+
+**For Participating Consumers:**
+- **Smart Metering**: Advanced metering infrastructure (AMI) with 15-minute or hourly interval data capability
+- **Controllable Devices** (recommended): Smart thermostats, automated equipment controls, or energy management systems capable of load adjustment, or manual procedures for load modification
+- **Communication Infrastructure**: Reliable internet connectivity for receiving API calls and sending responses
+- **Local Intelligence**: Basic automation or manual procedures to execute load reduction commands
+
+**For Utilities/DISCOMs:**
+- **Grid Operations Integration**: Existing SCADA, Energy Management Systems (EMS), and demand forecasting capabilities
+- **Communication Systems**: API infrastructure capable of handling real-time message exchange with multiple participants
+- **Authorization Framework**: Digital signature capabilities, participant authentication, and access control systems
+- **Data Management**: Baseline calculation engines, performance measurement systems, and billing/settlement infrastructure
+- **Regulatory Compliance**: Appropriate approvals for demand response programs and consumer participation frameworks
 
 ### 4.3 Configuration
 
@@ -202,36 +203,51 @@ Demand Flexibility fundamentally reimagines grid operations as a **distributed i
 
 **Consumer Entity (BAP) - The Intelligent Edge Node:**
 
-Think of each participating entity—whether a household, commercial building, industrial facility, or aggregator managing multiple consumers—as a "smart grid edge node" with decision-making capabilities:
+Think of each participating entity—whether a household, commercial building, industrial facility, or aggregator managing multiple consumers—as a "smart grid edge node" with decision-making capabilities. A BAP implementation consists of three logical components:
 
-- **Client Endpoint**: Acts as the entity's "brain stem," interfacing with internal energy systems (home automation, Building Management Systems, IoT sensors, aggregator platforms) and translating operational requirements into grid-language communication. This endpoint understands both "consumer speak" (comfort settings, production schedules, lifestyle preferences) and "grid speak" (load reduction requests, baseline calculations, incentive structures).
+**1. Client-Side Interface (Internal Systems Integration):**
+This component interfaces with the consumer's internal energy systems—home automation platforms, Building Management Systems, SCADA, IoT sensors, or aggregator platforms. It translates between "consumer language" (comfort settings, production schedules, operational constraints) and "DF program language" (load reduction commitments, baseline calculations, participation decisions).
 
-- **Network Endpoint**: Functions as the entity's "diplomatic channel" to the grid community. It receives market signals, participates in grid events, and negotiates capacity commitments. This endpoint must balance grid service opportunities with operational constraints and consumer preferences in real-time.
+**2. Network-Side Interface (Beckn Protocol Communication):**
+This component handles all Beckn Protocol API communications with the utility network. It processes search requests, subscription confirmations, event notifications, and status updates. This is the standard Beckn BAP endpoint that accepts BPP callbacks following the protocol specification.
 
-- **Intelligence Layer**: The critical missing piece in traditional demand response—a local decision engine that considers:
+**3. Decision Engine (Local Intelligence):**
+This is the business logic component that makes participation decisions by considering:
   - Current operational priorities (production schedules, occupancy patterns, comfort settings, equipment maintenance)
   - Economic opportunities (electricity prices, incentive rates, demand charges, bill savings)
   - Technical constraints (equipment ramp rates, minimum run times, safety interlocks, comfort bounds)
   - Consumer preferences (participation willingness, priority loads, override capabilities)
   - Historical performance (baseline accuracy, commitment reliability, revenue optimization)
 
+**Note:** These are **logical components within a single BAP application**, not separate physical services. They can be implemented as modules within one software system or as separate microservices depending on the deployment architecture.
+
 **Utility/DISCOM (BPP) - The Grid Orchestrator:**
 
-The utility transforms from a traditional "power deliverer" to a "flexibility marketplace operator":
+The utility transforms from a traditional "power deliverer" to a "flexibility marketplace operator". A BPP implementation consists of three logical components:
 
-- **Client Endpoint**: Interfaces with traditional grid operations (SCADA, Energy Management Systems, Market Operations) while adding new capabilities for distributed resource coordination. This endpoint must integrate DF resources into traditional grid operations seamlessly.
+**1. Grid Operations Interface (Internal Systems Integration):**
+This component interfaces with traditional utility systems—SCADA, Energy Management Systems (EMS), Market Operations, demand forecasting, and billing systems. It translates between "grid operations language" (MW requirements, frequency deviations, transmission constraints) and "DF marketplace language" (event notifications, participant capacity, incentive calculations).
 
-- **Network Endpoint**: Operates the "flexibility marketplace," broadcasting grid needs, evaluating participant responses, and orchestrating coordinated actions. Think of this as running a real-time auction where the commodity is grid stability and the currency is flexibility.
+**2. Network-Side Interface (Beckn Protocol Communication):**
+This component handles all Beckn Protocol API communications with consumer BAPs. It processes search responses, subscription management, event dispatch, and status collection. This is the standard Beckn BPP endpoint that serves BAP requests following the protocol specification.
 
-- **Grid Intelligence Amplification**: Modern utilities must evolve from reactive grid operators to proactive grid optimizers, using participant network effects to enhance overall system performance.
+**3. DF Program Management Engine (Grid Intelligence):**
+This is the business logic component that orchestrates DF programs by:
+  - Monitoring grid conditions and forecasting flexibility needs
+  - Managing participant portfolios and capacity tracking
+  - Optimizing event dispatch across multiple participants
+  - Calculating baselines, measuring performance, and processing settlements
+  - Coordinating with traditional grid operations and market systems
 
-#### 4.3.2 Required Infrastructure Components
-
-**Registry Service:**
-Each DF network requires a central registry where all participants register their endpoints and capabilities. The registry maintains the authoritative list of network participants and their subscription status.
+**Note:** Like BAP components, these are **logical components within a single BPP application**. The implementation can range from integrated modules within existing utility systems to standalone DF marketplace platforms depending on utility architecture and integration requirements.
 
 **Gateway Service:**
-Discovery requests flow through gateways that broadcast search queries to all relevant providers in the network. Gateways filter and route messages based on domain and geographic criteria.
+Discovery requests flow through gateways(Beckn Gateway) that broadcast search queries to all relevant providers in the network. Gateways filter and route messages based on domain and geographic criteria.
+
+**Registry Service:**
+Each DF network or Energy network requires a registry where all participants(BAP, BPP, BG) register themselves with details such as network endpoint, domains, region of operation, public keys. The registry maintains the authoritative list of network participants and their subscription status.
+
+#### 4.3.2 Security and Communication Infrastructure
 
 **Security Infrastructure:**
 - Digital signature capabilities for message authentication
@@ -245,15 +261,27 @@ Discovery requests flow through gateways that broadcast search queries to all re
 - Load balancing for high-availability deployments
 - Message queuing for asynchronous processing
 
+**Data Management Infrastructure:**
+- Real-time data collection from smart meters
+- Historical data storage for baseline calculations
+- Performance monitoring and reporting
+- Compliance and audit trail maintenance
+
 #### 4.3.3 Domain Configuration
 
 **Layer 2 Configuration:**
-DF programs require domain-specific configuration files that define:
-- Energy domain vocabularies and taxonomies
-- Measurement units and conversion factors
-- Baseline calculation methodologies
-- Incentive calculation rules
-- Regional grid codes and standards
+DF networks require domain-specific configuration files that enforce network-wide rules and standards across all DF transactions. These Layer 2 configurations act as **governance mechanisms** that ensure protocol compliance, data consistency, and semantic interoperability throughout the network.
+
+Layer 2 configurations define and enforce:
+- **Schema Compliance Rules**: Mandatory field validations, data type constraints, and API payload structure requirements
+- **Energy Domain Vocabularies**: Standardized taxonomies for equipment types, load categories, and flexibility services
+- **Measurement Standards**: Required units (kW, kWh, Hz), precision requirements, and conversion factors
+- **Baseline Methodology Enforcement**: Approved calculation methods, data requirements, and validation criteria  
+- **Incentive Calculation Standards**: Compensation formulas, payment timing rules, and settlement procedures
+- **Regional Grid Compliance**: Local grid codes, regulatory requirements, and operational constraints
+- **Field Inclusion Policies**: Mandatory vs. optional fields for different transaction types and participant categories
+
+These configurations are applied automatically to **every API call** within the DF network, ensuring that all participants—whether residential aggregators or industrial facilities—operate within consistent technical and business parameters while maintaining full Beckn Protocol compatibility.
 
 **Participant Registration:**
 - Unique participant identifiers across the network
@@ -281,12 +309,6 @@ Grid operators must enhance their existing Energy Management Systems (EMS) to:
 - **Emergency Procedures**: Integrate DF resources into established grid emergency protocols, including automatic load shedding sequences and black start procedures
 
 **The Engineering Challenge**: Traditional grid operations think in terms of "firm capacity" (guaranteed available power), but DF resources are probabilistic (dependent on participant availability and response). Grid operators must develop new reliability frameworks that account for the statistical nature of distributed flexibility while maintaining the same N-1 contingency standards required for grid stability.
-
-**Data Management:**
-- Real-time data collection from smart meters
-- Historical data storage for baseline calculations
-- Performance monitoring and reporting
-- Compliance and audit trail maintenance
 
 ### 4.4 Step-by-Step Implementation
 
@@ -366,6 +388,42 @@ Commercial consumer confirms participation in DF event.
 - Equipment and systems to be controlled during event
 - Emergency override and safety procedures
 
+#### 4.4.5 Step 5: Performance Verification
+
+Utility verifies actual load reduction delivered during the DF event.
+
+**Process:**
+- Utility collects real-time meter data during event period
+- Compares actual consumption against calculated baseline
+- Validates load reduction against commitment
+- Assesses any deviations or operational constraints reported
+- Calculates final performance metrics
+
+**Key Information Exchanged:**
+- Actual consumption data with timestamps
+- Baseline consumption for comparison
+- Load reduction achieved (kW and duration)
+- Performance percentage against commitment
+- Any qualifying events or exceptions
+
+#### 4.4.6 Step 6: Incentive Settlement
+
+Utility processes incentive payments based on verified performance.
+
+**Process:**
+- Utility calculates incentive amount based on verified performance
+- Applies any adjustments for partial performance or exceptions
+- Sends settlement notification with performance details
+- Processes payment according to program terms
+- Updates participant performance history
+
+**Key Information Exchanged:**
+- Performance verification results
+- Incentive calculation breakdown
+- Payment amount and timing
+- Settlement status and confirmation
+- Updated performance metrics for future events
+
 ### 4.5 Testing
 
 #### 4.5.1 Test Scenarios
@@ -384,7 +442,11 @@ Key validation scenarios for DF implementation:
    - **Test Case:** Respond to DF events under different conditions
    - **Expected Result:** Appropriate load reduction achieved
 
-4. **Settlement Verification**
+4. **Performance Verification Test**
+   - **Test Case:** Verify actual load reduction against baseline and commitments
+   - **Expected Result:** Accurate measurement of delivered flexibility with proper exception handling
+
+5. **Settlement Verification**
    - **Test Case:** Calculate and verify incentive payments
    - **Expected Result:** Accurate calculation based on actual performance
 
@@ -533,6 +595,8 @@ Using inaccurate or manipulated baselines for incentive calculation.
 - All messages must validate against Beckn Protocol core schema
 - Energy domain extensions follow consistent patterns
 - Custom tags documented with clear semantic meaning
+
+**Note:** A comprehensive list of data validation rules, including field requirements, data types, and validation logic, is configured in the Layer 2 configurations (see Section 4.3.3). These configurations serve as the single source of truth for all data validation across the DF network.
 
 #### 5.5.3 Error Handling Standards
 
@@ -964,13 +1028,9 @@ Commercial facility confirms participation in DF event:
 }
 ```
 
-### 7.4 Reference Implementations
+### 7.4 Future Reference Implementations
 
-- **Open-source DF Platform**: Generic implementation available for utilities to deploy Beckn-based DF programs
-- **Commercial Facility Integration**: Sample code and SDKs for integrating various facility types with BAP endpoints
-- **Simulation Environment**: Test framework and mock services for DF program development and validation
-- **Postman Collections**: Ready-to-use API collections for testing DF workflows
-- **Docker Containers**: Containerized reference implementations for quick deployment
+As this is the first implementation guide for Demand Flexibility using Beckn Protocol, reference implementations will be developed as part of pilot programs and early adopter deployments. These implementations will be added to this section once validated in production environments.
 
 ## 8. References
 
@@ -1090,57 +1150,27 @@ A: The system includes penalty structures for non-performance, but also recogniz
 - Community support channels for implementation questions
 - Reference implementations for new versions
 
-### 9.6 Enhanced Use Cases
+### 9.6 Troubleshooting
 
-#### 9.6.1 Residential Aggregator Programs
-
-**Scenario:** Third-party aggregators managing demand flexibility for residential customers
-- **Participants**: Aggregator as BAP, Utility as BPP, hundreds of households
-- **Challenges**: Small individual loads, complex aggregation algorithms, consumer privacy
-- **Adaptations**: Aggregated baselines, simplified participation confirmations, privacy-preserving data
-
-#### 9.6.2 Industrial Process Optimization
-
-**Scenario:** Large industrial facilities with complex production schedules
-- **Participants**: Manufacturing facility as BAP, Industrial utility as BPP
-- **Challenges**: Production impact assessment, equipment startup costs, process constraints
-- **Adaptations**: Multi-stage load reduction profiles, production schedule integration, cost-benefit optimization
-
-#### 9.6.3 Emergency Grid Stabilization
-
-**Scenario:** Real-time response to sudden generation loss or transmission failures
-- **Participants**: Grid operator as BPP, multiple facility types as BAPs
-- **Challenges**: Sub-minute response times, automated decision making, cascading failure prevention
-- **Adaptations**: Pre-authorized emergency responses, automated load shedding, priority participant classification
-
-#### 9.6.4 Regional Grid Coordination
-
-**Scenario:** Multi-utility coordination across interconnected grid regions
-- **Participants**: Multiple utilities as both BAPs and BPPs, regional grid operator coordination
-- **Challenges**: Cross-jurisdictional regulations, different market structures, coordinated responses
-- **Adaptations**: Multi-party transactions, regional baseline calculations, coordinated event management
-
-### 9.7 Troubleshooting
-
-#### 9.7.1 Issue 1: API Response Timeouts
+#### 9.6.1 Issue 1: API Response Timeouts
 
 **Symptoms:** DF event notifications not received within expected timeframe
 **Cause:** Network connectivity issues or overloaded servers during peak events
 **Solution:** Implement retry mechanisms with exponential backoff and backup communication channels
 
-#### 9.7.2 Issue 2: Baseline Calculation Discrepancies
+#### 9.6.2 Issue 2: Baseline Calculation Discrepancies
 
 **Symptoms:** Disputed incentive payments due to baseline disagreements
 **Cause:** Different calculation methods or data sources between utility and participant
 **Solution:** Use standardized calculation APIs with shared data sources and transparent audit logs
 
-#### 9.7.3 Issue 3: Schema Validation Failures
+#### 9.6.3 Issue 3: Schema Validation Failures
 
 **Symptoms:** Messages rejected due to schema validation errors
 **Cause:** Incorrect field names, missing required fields, or invalid data formats
 **Solution:** Implement comprehensive validation testing, use schema validation tools, maintain updated field documentation
 
-#### 9.7.4 Issue 4: Performance Measurement Disputes
+#### 9.6.4 Issue 4: Performance Measurement Disputes
 
 **Symptoms:** Disagreements about actual load reduction achieved during events
 **Cause:** Different measurement methodologies, data synchronization issues, or equipment failures
@@ -1148,4 +1178,4 @@ A: The system includes penalty structures for non-performance, but also recogniz
 
 ---
 
-**Note:** This RFC provides comprehensive guidance for implementing Demand Flexibility programs using Beckn Protocol. The approach has been validated through pilot implementations but should be adapted to specific regulatory and operational requirements in different jurisdictions. 
+**Note:** This RFC provides comprehensive guidance for implementing Demand Flexibility programs using Beckn Protocol. Implementations should be carefully adapted to specific regulatory and operational requirements in different jurisdictions. Feedback from initial implementations will help evolve this specification. 
