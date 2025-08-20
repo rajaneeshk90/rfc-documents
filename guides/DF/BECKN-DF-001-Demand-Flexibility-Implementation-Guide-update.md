@@ -1146,7 +1146,6 @@ Customer receives a catalog of DF programs:
   },
   "message": {
     "order": {
-      "type": "program_subscription",
       "provider": {
         "id": "brpl_df_001"
       },
@@ -1208,7 +1207,6 @@ Customer receives a catalog of DF programs:
   },
   "message": {
     "order": {
-      "type": "program_subscription",
       "id": "df-program-subscription-001",
       "provider": {
         "id": "brpl_df_001",
@@ -1377,45 +1375,37 @@ Utility initiates DF event when grid conditions require demand reduction:
 ```json
 {
   "context": {
-    "domain": "demand-flexibility",
+    "domain": "energy:demand-flexibility",
     "action": "on_init",
     "version": "1.1.0",
-    "bap_id": "consumer-app.example.com",
-    "bap_uri": "https://consumer-app.example.com",
-    "bpp_id": "brpl.co.in",
-    "bpp_uri": "https://brpl.co.in",
-    "transaction_id": "df-txn-1003",
-    "message_id": "df-msg-2003",
-    "timestamp": "2025-08-20T14:45:00+05:30"
+    "bap_id": "commercial-facility.example.com",
+    "bap_uri": "https://commercial-facility.example.com/beckn",
+    "bpp_id": "utility-discom.example.com",
+    "bpp_uri": "https://utility-discom.example.com/beckn",
+    "transaction_id": "df-event-001",
+    "message_id": "msg-event-001",
+    "timestamp": "2025-08-18T14:00:00Z",
+    "ttl": "PT30S"
   },
   "message": {
     "order": {
-      "id": "df-event-20250820-001",
-      "type": "event_participation",
+      "id": "df-event-20250818-001",
+      "status": "REQUESTED",
       "provider": {
-        "id": "brpl_df_001",
+        "id": "utility-df-programs",
         "descriptor": {
-          "name": "BRPL",
-          "short_desc": "BRPL Demand Flexibility Programs for Delhi NCR",
-          "images": [
-            {
-              "url": "https://brpl.co.in/assets/logo.png"
-            }
-          ]
+          "name": "Utility Grid Operations"
         }
       },
       "items": [
         {
-          "id": "brpl_peak_saver_001_event_001",
+          "id": "load-reduction-request",
           "descriptor": {
-            "name": "Evening Peak Saver Program - Event",
-            "short_desc": "Load reduction request for 150kW during peak hours",
-            "long_desc": "Users will receive app notifications during afternoon peak hours (2–5 PM). Please reduce load by 150kW from your baseline during this event window.",
-            "additional_desc": {
-              "url": "https://brpl.co.in/flexibility/peak-saver"
-            }
+            "name": "Emergency Load Reduction"
           },
+          "category_id": "peak-emergency",
           "quantity": {
+            "count": 150,
             "measure": {
               "unit": "kW",
               "value": "150"
@@ -1423,125 +1413,66 @@ Utility initiates DF event when grid conditions require demand reduction:
           },
           "tags": [
             {
-              "descriptor": {
-                "name": "Event Details"
-              },
-              "list": [
-                {
-                  "descriptor": {
-                    "code": "status",
-                    "name": "Event Status"
-                  },
-                  "value": "REQUESTED"
-                },
-                {
-                  "descriptor": {
-                    "code": "event_type",
-                    "name": "Event Type"
-                  },
-                  "value": "event_participation"
-                },
-                {
-                  "descriptor": {
-                    "code": "subscription_id",
-                    "name": "Program Subscription ID"
-                  },
-                  "value": "df-program-subscription-001"
-                },
-                {
-                  "descriptor": {
-                    "code": "program_id",
-                    "name": "Program ID"
-                  },
-                  "value": "brpl_peak_saver_001"
-                },
-                {
-                  "descriptor": {
-                    "code": "priority",
-                    "name": "Event Priority"
-                  },
-                  "value": "high"
-                },
-                {
-                  "descriptor": {
-                    "code": "grid_frequency",
-                    "name": "Grid Frequency"
-                  },
-                  "value": "49.7Hz"
-                },
-                {
-                  "descriptor": {
-                    "code": "response_deadline",
-                    "name": "Response Required By"
-                  },
-                  "value": "2025-08-20T15:00:00+05:30"
-                },
-                {
-                  "descriptor": {
-                    "code": "baseline_kw",
-                    "name": "Calculated Baseline Load"
-                  },
-                  "value": "400"
-                },
-                {
-                  "descriptor": {
-                    "code": "baseline_method",
-                    "name": "Baseline Calculation Method"
-                  },
-                  "value": "3-of-5_average"
-                }
-              ]
+              "name": "event_type",
+              "value": "event_participation"
             },
             {
-              "descriptor": {
-                "name": "Incentive Parameters"
-              },
-              "list": [
-                {
-                  "descriptor": {
-                    "code": "incentive_rate",
-                    "name": "Incentive Rate"
-                  },
-                  "value": "5.00"
-                },
-                {
-                  "descriptor": {
-                    "code": "incentive_currency",
-                    "name": "Incentive Currency"
-                  },
-                  "value": "INR"
-                },
-                {
-                  "descriptor": {
-                    "code": "incentive_type",
-                    "name": "Incentive Type"
-                  },
-                  "value": "per_kWh_reduced"
-                }
-              ]
+              "name": "priority",
+              "value": "high"
+            },
+            {
+              "name": "grid_frequency",
+              "value": "49.7Hz"
             }
           ]
         }
       ],
       "fulfillments": [
         {
-          "stops": [
+          "id": "df-event-execution",
+          "type": "LOAD_REDUCTION",
+          "start": {
+            "time": {
+              "timestamp": "2025-08-18T16:00:00Z"
+            }
+          },
+          "end": {
+            "time": {
+              "timestamp": "2025-08-18T18:00:00Z"
+            }
+          },
+          "tags": [
             {
-              "time": {
-                "range": {
-                  "start": "2025-08-26T00:00:00.000Z",
-                  "end": "2025-08-26T23:59:59.999Z"
-                }
-              }
+              "name": "ramp_time_minutes",
+              "value": "15"
             }
-          ],
-          "state": {
-            "descriptor": {
-              "code": "REQUESTED"
-            }
-          }
+          ]
         }
-      ]
+      ],
+      "quote": {
+        "price": {
+          "currency": "USD",
+          "value": "1500.00"
+        },
+        "breakup": [
+          {
+            "item": {
+              "id": "load-reduction-incentive"
+            },
+            "title": "Emergency Response Incentive",
+            "price": {
+              "currency": "USD",
+              "value": "1500.00"
+            },
+            "tags": [
+              {
+                "name": "calculation",
+                "value": "150kW × 2hours × $5/kWh"
+              }
+            ]
+          }
+        ]
+      }
     }
   }
 }
@@ -1549,7 +1480,7 @@ Utility initiates DF event when grid conditions require demand reduction:
 
 #### 7.3.2 DF Event Participation Confirmation (confirm API)
 
-Consumer confirms participation in the DF event:
+Commercial facility confirms participation in DF event:
 
 ```json
 {
@@ -1562,37 +1493,19 @@ Consumer confirms participation in the DF event:
     "bpp_id": "brpl.co.in",
     "bpp_uri": "https://brpl.co.in",
     "transaction_id": "df-txn-1003",
-    "message_id": "df-msg-2004",
-    "timestamp": "2025-08-20T14:50:00+05:30"
+    "message_id": "df-msg-2003",
+    "timestamp": "2025-08-20T14:45:00+05:30",
+    "ttl": "PT30S"
   },
   "message": {
     "order": {
-      "id": "df-event-20250820-001",
-      "type": "event_participation",
-      "provider": {
-        "id": "brpl_df_001",
-        "descriptor": {
-          "name": "BRPL",
-          "short_desc": "BRPL Demand Flexibility Programs for Delhi NCR",
-          "images": [
-            {
-              "url": "https://brpl.co.in/assets/logo.png"
-            }
-          ]
-        }
-      },
+      "id": "df-event-20250818-001",
+      "status": "CONFIRMED",
       "items": [
         {
-          "id": "brpl_peak_saver_001_event_001",
-          "descriptor": {
-            "name": "Evening Peak Saver Program - Event",
-            "short_desc": "Load reduction request for 150kW during peak hours",
-            "long_desc": "Users will receive app notifications during afternoon peak hours (2–5 PM). Please reduce load by 150kW from your baseline during this event window.",
-            "additional_desc": {
-              "url": "https://brpl.co.in/flexibility/peak-saver"
-            }
-          },
+          "id": "load-reduction-commitment",
           "quantity": {
+            "count": 120,
             "measure": {
               "unit": "kW",
               "value": "120"
@@ -1600,79 +1513,39 @@ Consumer confirms participation in the DF event:
           },
           "tags": [
             {
-              "descriptor": {
-                "name": "Event Details"
-              },
-              "list": [
-                {
-                  "descriptor": {
-                    "code": "status",
-                    "name": "Event Status"
-                  },
-                  "value": "CONFIRMED"
-                },
-                {
-                  "descriptor": {
-                    "code": "event_type",
-                    "name": "Event Type"
-                  },
-                  "value": "event_participation"
-                },
-                {
-                  "descriptor": {
-                    "code": "subscription_id",
-                    "name": "Program Subscription ID"
-                  },
-                  "value": "df-program-subscription-001"
-                },
-                {
-                  "descriptor": {
-                    "code": "program_id",
-                    "name": "Program ID"
-                  },
-                  "value": "brpl_peak_saver_001"
-                },
-                {
-                  "descriptor": {
-                    "code": "commitment_confidence",
-                    "name": "Commitment Confidence"
-                  },
-                  "value": "high"
-                },
-                {
-                  "descriptor": {
-                    "code": "baseline_kw",
-                    "name": "Baseline Load"
-                  },
-                  "value": "400"
-                },
-                {
-                  "descriptor": {
-                    "code": "target_kw",
-                    "name": "Target Load"
-                  },
-                  "value": "280"
-                }
-              ]
+              "name": "event_type",
+              "value": "event_participation"
+            },
+            {
+              "name": "commitment_confidence",
+              "value": "high"
+            },
+            {
+              "name": "baseline_kw",
+              "value": "400"
+            },
+            {
+              "name": "target_kw",
+              "value": "280"
             }
           ]
         }
       ],
       "fulfillments": [
         {
-          "stops": [
-            {
-              "time": {
-                "range": {
-                  "start": "2025-08-26T00:00:00.000Z",
-                  "end": "2025-08-26T23:59:59.999Z"
-                }
-              }
-            }
-          ],
+          "id": "load-reduction-execution",
+          "type": "LOAD_REDUCTION",
           "state": {
             "descriptor": {
-              "code": "CONFIRMED"
+              "code": "COMMITTED"
+            }
+          },
+          "tracking": {
+            "location": {
+              "gps": "28.6139,77.2090"
+            },
+            "time": {
+              "timestamp": "2025-08-20T14:45:00+05:30"
             }
           }
         }
@@ -1685,172 +1558,6 @@ Consumer confirms participation in the DF event:
 
 #### 7.3.3 DF Event Participation Acknowledgement (on_confirm API)
 
-```json
-{
-  "context": {
-    "domain": "demand-flexibility",
-    "action": "on_confirm",
-    "version": "1.1.0",
-    "bap_id": "consumer-app.example.com",
-    "bap_uri": "https://consumer-app.example.com",
-    "bpp_id": "brpl.co.in",
-    "bpp_uri": "https://brpl.co.in",
-    "transaction_id": "df-txn-1003",
-    "message_id": "df-msg-2005",
-    "timestamp": "2025-08-20T14:51:00+05:30"
-  },
-  "message": {
-    "order": {
-      "id": "df-event-20250820-001",
-      "type": "event_participation",
-      "provider": {
-        "id": "brpl_df_001",
-        "descriptor": {
-          "name": "BRPL",
-          "short_desc": "BRPL Demand Flexibility Programs for Delhi NCR",
-          "images": [
-            {
-              "url": "https://brpl.co.in/assets/logo.png"
-            }
-          ]
-        }
-      },
-      "items": [
-        {
-          "id": "brpl_peak_saver_001_event_001",
-          "descriptor": {
-            "name": "Evening Peak Saver Program - Event",
-            "short_desc": "Load reduction request for 150kW during peak hours",
-            "long_desc": "Users will receive app notifications during afternoon peak hours (2–5 PM). Please reduce load by 150kW from your baseline during this event window.",
-            "additional_desc": {
-              "url": "https://brpl.co.in/flexibility/peak-saver"
-            }
-          },
-          "quantity": {
-            "measure": {
-              "unit": "kW",
-              "value": "120"
-            }
-          },
-          "tags": [
-            {
-              "descriptor": {
-                "name": "Event Details"
-              },
-              "list": [
-                {
-                  "descriptor": {
-                    "code": "status",
-                    "name": "Event Status"
-                  },
-                  "value": "ACCEPTED"
-                },
-                {
-                  "descriptor": {
-                    "code": "event_type",
-                    "name": "Event Type"
-                  },
-                  "value": "event_participation"
-                },
-                {
-                  "descriptor": {
-                    "code": "subscription_id",
-                    "name": "Program Subscription ID"
-                  },
-                  "value": "df-program-subscription-001"
-                },
-                {
-                  "descriptor": {
-                    "code": "program_id",
-                    "name": "Program ID"
-                  },
-                  "value": "brpl_peak_saver_001"
-                },
-                {
-                  "descriptor": {
-                    "code": "commitment_confidence",
-                    "name": "Commitment Confidence"
-                  },
-                  "value": "high"
-                },
-                {
-                  "descriptor": {
-                    "code": "baseline_kw",
-                    "name": "Baseline Load"
-                  },
-                  "value": "400"
-                },
-                {
-                  "descriptor": {
-                    "code": "target_kw",
-                    "name": "Target Load"
-                  },
-                  "value": "280"
-                }
-              ]
-            },
-            {
-              "descriptor": {
-                "name": "Incentive Parameters"
-              },
-              "list": [
-                {
-                  "descriptor": {
-                    "code": "incentive_rate",
-                    "name": "Incentive Rate"
-                  },
-                  "value": "5.00"
-                },
-                {
-                  "descriptor": {
-                    "code": "incentive_currency",
-                    "name": "Incentive Currency"
-                  },
-                  "value": "INR"
-                },
-                {
-                  "descriptor": {
-                    "code": "incentive_type",
-                    "name": "Incentive Type"
-                  },
-                  "value": "per_kWh_reduced"
-                },
-                {
-                  "descriptor": {
-                    "code": "estimated_incentive",
-                    "name": "Estimated Incentive"
-                  },
-                  "value": "1800.00"
-                }
-              ]
-            }
-          ]
-        }
-      ],
-      "fulfillments": [
-        {
-          "stops": [
-            {
-              "time": {
-                "range": {
-                  "start": "2025-08-26T00:00:00.000Z",
-                  "end": "2025-08-26T23:59:59.999Z"
-                }
-              }
-            }
-          ],
-          "state": {
-            "descriptor": {
-              "code": "ACCEPTED"
-            }
-          }
-        }
-      ]
-    }
-  }
-}
-```
-
 ### 7.4 Settlement and Monitoring Examples
 
 #### 7.4.1 Settlement and Incentive Calculation against participation in a DF event (on_status API)
@@ -1862,204 +1569,63 @@ Consumer confirms participation in the DF event:
     "action": "on_status",
     "version": "1.1.0",
     "bap_id": "consumer-app.example.com",
-    "bap_uri": "https://consumer-app.example.com",
     "bpp_id": "brpl.co.in",
-    "bpp_uri": "https://brpl.co.in",
-    "transaction_id": "df-txn-1003",
-    "message_id": "df-msg-2006",
-    "timestamp": "2025-08-26T17:30:00+05:30"
+    "transaction_id": "df-txn-1004",
+    "message_id": "df-msg-2004",
+    "timestamp": "2025-08-20T19:30:00+05:30"
   },
   "message": {
     "order": {
-      "id": "df-event-20250820-001",
-      "type": "event_participation",
-      "provider": {
-        "id": "brpl_df_001",
-        "descriptor": {
-          "name": "BRPL",
-          "short_desc": "BRPL Demand Flexibility Programs for Delhi NCR",
-          "images": [
-            {
-              "url": "https://brpl.co.in/assets/logo.png"
-            }
-          ]
-        }
-      },
-      "items": [
-        {
-          "id": "brpl_peak_saver_001_event_001",
-          "descriptor": {
-            "name": "Evening Peak Saver Program - Event",
-            "short_desc": "Load reduction request for 150kW during peak hours",
-            "long_desc": "Users will receive app notifications during afternoon peak hours (2–5 PM). Please reduce load by 150kW from your baseline during this event window.",
-            "additional_desc": {
-              "url": "https://brpl.co.in/flexibility/peak-saver"
+      "id": "peak-emergency-001",
+      "status": "COMPLETED",
+      "quote": {
+        "price": {
+          "currency": "INR",
+          "value": "1620.00"
+        },
+        "breakup": [
+          {
+            "title": "Baseline Load (Average)",
+            "price": {
+              "currency": "kWh",
+              "value": "450"
             }
           },
-          "quantity": {
-            "measure": {
-              "unit": "kW",
-              "value": "120"
+          {
+            "title": "Actual Load (Measured)",
+            "price": {
+              "currency": "kWh",
+              "value": "288"
             }
           },
-          "tags": [
-            {
-              "descriptor": {
-                "name": "Event Details"
-              },
-              "list": [
-                {
-                  "descriptor": {
-                    "code": "status",
-                    "name": "Event Status"
-                  },
-                  "value": "COMPLETED"
-                },
-                {
-                  "descriptor": {
-                    "code": "event_type",
-                    "name": "Event Type"
-                  },
-                  "value": "event_participation"
-                },
-                {
-                  "descriptor": {
-                    "code": "subscription_id",
-                    "name": "Program Subscription ID"
-                  },
-                  "value": "df-program-subscription-001"
-                },
-                {
-                  "descriptor": {
-                    "code": "program_id",
-                    "name": "Program ID"
-                  },
-                  "value": "brpl_peak_saver_001"
-                },
-                {
-                  "descriptor": {
-                    "code": "baseline_kw",
-                    "name": "Baseline Load"
-                  },
-                  "value": "400"
-                },
-                {
-                  "descriptor": {
-                    "code": "target_kw",
-                    "name": "Target Load"
-                  },
-                  "value": "280"
-                }
-              ]
-            },
-            {
-              "descriptor": {
-                "name": "Performance Metrics"
-              },
-              "list": [
-                {
-                  "descriptor": {
-                    "code": "actual_avg_load",
-                    "name": "Actual Average Load"
-                  },
-                  "value": "288"
-                },
-                {
-                  "descriptor": {
-                    "code": "load_reduction_achieved",
-                    "name": "Load Reduction Achieved"
-                  },
-                  "value": "112"
-                },
-                {
-                  "descriptor": {
-                    "code": "performance_percentage",
-                    "name": "Performance Against Commitment"
-                  },
-                  "value": "93.33"
-                }
-              ]
-            },
-            {
-              "descriptor": {
-                "name": "Settlement Details"
-              },
-              "list": [
-                {
-                  "descriptor": {
-                    "code": "incentive_rate",
-                    "name": "Incentive Rate"
-                  },
-                  "value": "5.00"
-                },
-                {
-                  "descriptor": {
-                    "code": "incentive_currency",
-                    "name": "Incentive Currency"
-                  },
-                  "value": "INR"
-                },
-                {
-                  "descriptor": {
-                    "code": "incentive_type",
-                    "name": "Incentive Type"
-                  },
-                  "value": "per_kWh_reduced"
-                },
-                {
-                  "descriptor": {
-                    "code": "total_reduction_kwh",
-                    "name": "Total Energy Reduction"
-                  },
-                  "value": "336"
-                },
-                {
-                  "descriptor": {
-                    "code": "total_incentive",
-                    "name": "Total Incentive Amount"
-                  },
-                  "value": "1680.00"
-                },
-                {
-                  "descriptor": {
-                    "code": "settlement_status",
-                    "name": "Settlement Status"
-                  },
-                  "value": "PROCESSING"
-                }
-              ]
+          {
+            "title": "Load Reduction Achieved",
+            "price": {
+              "currency": "kWh",
+              "value": "162"
             }
-          ]
-        }
-      ],
-      "fulfillments": [
-        {
-          "stops": [
-            {
-              "time": {
-                "range": {
-                  "start": "2025-08-26T00:00:00.000Z",
-                  "end": "2025-08-26T23:59:59.999Z"
-                }
+          },
+          {
+            "title": "Incentive Payment",
+            "price": {
+              "currency": "USD",
+              "value": "1620.00"
+            },
+            "tags": [
+              {
+                "name": "calculation",
+                "value": "162 kWh × $10/kWh emergency rate"
               }
-            }
-          ],
-          "state": {
-            "descriptor": {
-              "code": "COMPLETED"
-            }
+            ]
           }
-        }
-      ]
+        ]
+      }
     }
   }
 }
 ```
 
-### 7.5 Cancelling a subscription
-TBC
-
-### 7.6 Future Reference Implementations
+### 7.5 Future Reference Implementations
 
 Reference implementations will be developed as part of pilot programs and early adopter deployments. These implementations will be added to this section once validated in production environments.
 

@@ -52,11 +52,11 @@ cons:
 
 Flow:
 - Clients can discover a list of DF programs using search API.
-- Client can subscribe to a DF program using confirm API (with flag: `event_type: "program_subscription"`).
+- Client can subscribe to a DF program using confirm API (with flag: `request_type: "program_subscription"`).
 - BPRL sending a DF request: an /on_init request with request type as "query".
-- Bus depot sending a reply: must be an /confirm request (with flag: `event_type: "event_participation"`).
+- Bus depot sending a reply: must be an /confirm request (with flag: `request_type: "event_participation"`).
 - BRPL sends DFPCC catalog to Bus depot: must be an /on_init request with request type as "reminder".
-- Bus depot sending a reply: must be an /confirm request (with flag: `event_type: "event_participation"`).
+- Bus depot sending a reply: must be an /confirm request (with flag: `request_type: "event_participation"`).
 - BPRL confirms client participation in that DF instance,noting time period, clients promises, attaching an id to this participation. sends an /on_confirm
 - clients participation is evaluated using this stored state, and incentive is calculated on the basis of this object.
 - client checks incentive status against a participation using status API.
