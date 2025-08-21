@@ -273,27 +273,42 @@ Recommendation for implementing Registry:
   
 Recommendation for implementing Gateway:
   - **Authentication & Signing**: Gateway MUST implement signature addition with X-Gateway-Authorization header when forwarding BAP messages to BPPs
-  - **Search Endpoint**: Gateway MUST expose search endpoint at subscriber URL to receive search requests from BAPs
+  - **Search Endpoint**: Gateway MUST implement and expose search endpoint at subscriber URL to receive search requests from BAPs
   - **Registry Integration**: Gateway MUST use lookup API to fetch relevant BPPs based on message context (domain, location, capabilities)
   - **Message Forwarding**: Gateway MUST forward signed search requests to all relevant BPPs returned by Registry lookup
   - **Caching**: Gateway SHOULD implement short-term caching to reduce Registry lookup load during peak grid events
   - **Error Handling**: Gateway MUST gracefully handle Registry lookup failures and BPP communication errors
 
 Recommendation for implementing BAPs:
-  - **Transaction APIs**: BAP MUST implement all mandatory Transaction APIs (search,  init, confirm, status, track, cancel, update, rating, support)
-  - **Response Endpoints**: BAP MUST implement on_search, on_select, on_init, on_confirm, on_status, on_track, on_update, on_cancel, on_rating, on_support endpoints
+  - **Transaction APIs**: 
+    - BAP MUST implement the mandatory Transaction APIs (on_init, on_confirm, on_status). These APIs are required for receiving DF events and incentive details.
+    - BAP MAY implement additional APIs (on_search, on_cancel, on_rating, on_support): 
+      - on_search is required if a network wishes to implement DF program discovery and subscription features
+      - on_cancel is required for cancellation of an existing DF program subscription
+      - on_rating is required for rating existing DF programs
+      - on_support is required for handling customer support requests and technical assistance
   - **Layer 2 Compliance**: BAP MUST ensure all requests/responses comply with Layer 2 configuration rules for demand-flexibility domain
   - **Context Management**: BAP MUST generate unique message_id for each interaction and maintain transaction_id across workflow stages
   - **Authentication**: BAP MUST provide on_subscribe endpoint for Registry public-key verification
   - **Error Handling**: BAP MUST gracefully handle NACK responses and implement appropriate business logic triggers
+  - **Meta APIs**:
+    - BAP MAY implement cancellation_reasons Meta API to receive predefined cancellation reasons from BPP
+    - BAP MAY implement rating_categories Meta API to receive predefined rating categories from BPP
 
 Recommendation for implementing BPPs:
-  - **Request Endpoints**: BPP MUST implement search, select, init, confirm, status, track, cancel, update, rating, support endpoints
-  - **Response APIs**: BPP MUST send corresponding on_search, on_select, on_init, on_confirm, on_status, on_track, on_update, on_cancel, on_rating, on_support responses
-  - **Layer 2 Validation**: BPP MUST validate incoming requests against Layer 2 configuration rules before processing
+  - **Transaction APIs**: 
+    - BPP MUST implement the mandatory Transaction APIs (init, confirm, status). These APIs are required for sending DF events and providing incentive status updates
+    - BPP MAY implement additional APIs (search, cancel, rating, support):
+      - search is required if a network wishes to implement DF program discovery and subscription features
+      - cancel is required for cancellation of an existing DF program subscription
+      - rating is required for receiving ratings for a DF program
+      - support is required for providing customer support and resolving technical issues
+  - **Layer 2 Validation**: BPP MUST ensure all requests/responses comply with Layer 2 configuration rules for demand-flexibility domain
   - **Context Preservation**: BPP MUST return unaltered message_id, transaction_id, bap_id, and bap_uri in responses
   - **Authentication**: BPP MUST provide on_subscribe endpoint for Registry verification and implement Gateway proxy verification for search messages
-  - **Meta APIs**: BPP MUST implement Meta APIs to provide metadata useful for BAP user interactions
+  - **Meta APIs**: 
+    - BPP MAY implement get_cancellation_reasons Meta API if it requires BAP to fetch a predefined set of cancellation reasons
+    - BPP MAY implement get_rating_categories Meta API if it requires BAP to fetch a predefined set of rating categories
 
 #### 4.3.2 Security and Communication Infrastructure
 
