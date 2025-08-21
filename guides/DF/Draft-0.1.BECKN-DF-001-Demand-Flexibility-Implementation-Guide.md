@@ -247,12 +247,53 @@ Discovery requests flow through gateways(Beckn Gateway) that broadcast search qu
 **Registry Service:**
 Each DF network or Energy network requires a registry where all participants(BAP, BPP, BG) register themselves with details such as network endpoint, domains, region of operation, public keys. The registry maintains the authoritative list of network participants and their subscription status.
 
-**Participant Registration:**
+Participant Registration contains:
 - Unique participant identifiers across the network
 - Endpoint URLs for client and network communication
-- Service capabilities and capacity declarations
 - Geographic coverage and operational hours
 - Subscription status and access permissions
+
+**Recommendations for implementing the above mentioned components**
+
+  - BAP: All BAP implementations MUST follow the relevant APIs from the Beckn [transaction](https://github.com/beckn/protocol-specifications/blob/master/api/transaction/build/transaction.yaml) and [meta](https://github.com/beckn/protocol-specifications/blob/master/api/meta/build/meta.yaml) specifications.
+  - BPP: All BPP implementations MUST follow the relevant APIs from the Beckn [transaction](https://github.com/beckn/protocol-specifications/blob/master/api/transaction/build/transaction.yaml) and [meta](https://github.com/beckn/protocol-specifications/blob/master/api/meta/build/meta.yaml) specifications.
+  - Beckn Gateway: The implemented gateway MUST follow the Beckn [gateway](https://github.com/beckn/protocol-specifications/blob/master/api/transaction/build/transaction.yaml) specifications.
+  - Beckn Registry: The implemented registry MUST follow the Beckn [registry](https://github.com/beckn/protocol-specifications/tree/master/api/registry/build/registry.yaml) specifications.
+
+
+Recommendation for implementing Registry:
+  - **Participant Registration**: Registry MUST allow Network Participants to register themselves with a Subscriber ID and Subscriber URL
+  - **Approval Criteria**: Registry MAY have approval criteria for registrants, once the criteria are met, the registrants MAY be considered as subscribers
+  - **Participant Rights**: Registry MUST allow network participants to own and have rights to modify their network roles and participant keys
+  - **Access Control**: Registry MUST NOT allow a user to change other user's network participant details
+  - **Detail Management**: Registry MUST allow subscribers to create and alter their details including domain, role, and location
+  - **Key Management**: Registry MUST allow public keys associated with network participants to be changed
+  - **Information Updates**: Registry MUST support the modification of subscriber information
+  - **Lookup Services**: Registry MUST support the lookup of Subscriber information through the registry lookup endpoint
+  
+Recommendation for implementing Gateway:
+  - **Authentication & Signing**: Gateway MUST implement signature addition with X-Gateway-Authorization header when forwarding BAP messages to BPPs
+  - **Search Endpoint**: Gateway MUST expose search endpoint at subscriber URL to receive search requests from BAPs
+  - **Registry Integration**: Gateway MUST use lookup API to fetch relevant BPPs based on message context (domain, location, capabilities)
+  - **Message Forwarding**: Gateway MUST forward signed search requests to all relevant BPPs returned by Registry lookup
+  - **Caching**: Gateway SHOULD implement short-term caching to reduce Registry lookup load during peak grid events
+  - **Error Handling**: Gateway MUST gracefully handle Registry lookup failures and BPP communication errors
+
+Recommendation for implementing BAPs:
+  - **Transaction APIs**: BAP MUST implement all mandatory Transaction APIs (search,  init, confirm, status, track, cancel, update, rating, support)
+  - **Response Endpoints**: BAP MUST implement on_search, on_select, on_init, on_confirm, on_status, on_track, on_update, on_cancel, on_rating, on_support endpoints
+  - **Layer 2 Compliance**: BAP MUST ensure all requests/responses comply with Layer 2 configuration rules for demand-flexibility domain
+  - **Context Management**: BAP MUST generate unique message_id for each interaction and maintain transaction_id across workflow stages
+  - **Authentication**: BAP MUST provide on_subscribe endpoint for Registry public-key verification
+  - **Error Handling**: BAP MUST gracefully handle NACK responses and implement appropriate business logic triggers
+
+Recommendation for implementing BPPs:
+  - **Request Endpoints**: BPP MUST implement search, select, init, confirm, status, track, cancel, update, rating, support endpoints
+  - **Response APIs**: BPP MUST send corresponding on_search, on_select, on_init, on_confirm, on_status, on_track, on_update, on_cancel, on_rating, on_support responses
+  - **Layer 2 Validation**: BPP MUST validate incoming requests against Layer 2 configuration rules before processing
+  - **Context Preservation**: BPP MUST return unaltered message_id, transaction_id, bap_id, and bap_uri in responses
+  - **Authentication**: BPP MUST provide on_subscribe endpoint for Registry verification and implement Gateway proxy verification for search messages
+  - **Meta APIs**: BPP MUST implement Meta APIs to provide metadata useful for BAP user interactions
 
 #### 4.3.2 Security and Communication Infrastructure
 
