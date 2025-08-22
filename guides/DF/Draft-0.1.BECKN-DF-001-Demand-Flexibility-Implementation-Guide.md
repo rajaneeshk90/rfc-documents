@@ -712,16 +712,6 @@ Commercial facility searches for available DF programs:
         }
       },
       "fulfillment": {
-        "agent": {
-          "organization": {
-            "descriptor": {
-              "name": "Gov Bus Depot",
-              "city": {
-                "name": "New Delhi"
-              }
-            }
-          }
-        },
         "stops": [
           {
               "type": "end",
@@ -842,13 +832,6 @@ Commercial facility searches for available DF programs:
                 "name": "Controllable Load Types"
               },
               "value": "hvac,lighting,process"
-            },
-            {
-              "descriptor": {
-                "code": "metering_interval",
-                "name": "Metering Data Interval"
-              },
-              "value": "15min"
             }
           ]
         },
@@ -869,14 +852,7 @@ Commercial facility searches for available DF programs:
                 "code": "incentive_currency",
                 "name": "Incentive Currency"
               },
-              "value": "USD"
-            },
-            {
-              "descriptor": {
-                "code": "settlement_frequency",
-                "name": "Settlement Frequency"
-              },
-              "value": "monthly"
+              "value": "INR_per_kWh_load_reduction"
             }
           ]
         },
@@ -898,13 +874,6 @@ Commercial facility searches for available DF programs:
                 "name": "Participation Mode"
               },
               "value": "mandatory,voluntary"
-            },
-            {
-              "descriptor": {
-                "code": "grid_condition",
-                "name": "Grid Condition Trigger"
-              },
-              "value": "emergency,peak_demand"
             }
           ]
         }
@@ -945,7 +914,7 @@ Customer receives a catalog of DF programs:
   "message": {
     "catalog": {
       "descriptor": {
-        "name": "BRPL Demand Flexibility Programs"
+        "name": "Catalog for demand flexibility Programs"
       },
       "providers": [
         {
@@ -969,19 +938,22 @@ Customer receives a catalog of DF programs:
           ],
           "fulfillments": [
             {
-              "id": "manual_optin",
+              "id": "f1",
               "type": "DIGITAL",
               "tags": [
                 {
                   "descriptor": {
-                    "code": "participation_mode"
+                    "code": "event_notification_delivery"
                   },
                   "list": [
                     {
-                      "descriptor": {
-                        "code": "acceptance_type"
-                      },
-                      "value": "Manual via App Notification"
+                      "value": "api_push"
+                    },
+                    {
+                      "value": "sms_alert"
+                    },
+                    {
+                      "value": "email_notice"
                     }
                   ]
                 }
@@ -990,17 +962,24 @@ Customer receives a catalog of DF programs:
           ],
           "categories": [
             {
-              "id": "flex_manual",
+              "id": "always_available",
               "descriptor": {
-                "code": "MANUAL_FLEX",
-                "name": "Manual Demand Response"
+                "code": "ALWAYS_AVAILABLE",
+                "name": "Always Available Programs"
               }
             },
             {
-              "id": "flex_auto",
+              "id": "seasonal_programs",
               "descriptor": {
-                "code": "AUTO_FLEX",
-                "name": "Automated Load Management"
+                "code": "SEASONAL",
+                "name": "Seasonal Programs (Summer/Winter)"
+              }
+            },
+            {
+              "id": "emergency_only",
+              "descriptor": {
+                "code": "EMERGENCY_ONLY",
+                "name": "Emergency-Only Programs"
               }
             }
           ],
@@ -1019,10 +998,10 @@ Customer receives a catalog of DF programs:
                 "1"
               ],
               "category_ids": [
-                "flex_manual"
+                "seasonal_programs"
               ],
               "fulfillment_ids": [
-                "manual_optin"
+                "f1"
               ],
               "tags": [
                 {
@@ -1217,7 +1196,7 @@ TBC - Will explain the catalog structure, provider details, and available DF pro
       ],
       "fulfillments": [
         {
-          "id": "manual_optin",
+          "id": "f1",
           "agent": {
             "organization": {
               "descriptor": {
@@ -1393,7 +1372,7 @@ TBC - Will explain the subscription details, commitment parameters, and fulfillm
       ],
       "fulfillments": [
         {
-          "id": "manual_optin",
+          "id": "f1",
           "agent": {
             "organization": {
               "descriptor": {
