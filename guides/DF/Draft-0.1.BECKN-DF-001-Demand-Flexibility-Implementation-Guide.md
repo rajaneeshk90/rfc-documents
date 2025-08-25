@@ -260,6 +260,7 @@ Participant Registration contains:
   - Beckn Gateway: The implemented gateway MUST follow the Beckn [gateway](https://github.com/beckn/protocol-specifications/blob/master/api/transaction/build/transaction.yaml) specifications.
   - Beckn Registry: The implemented registry MUST follow the Beckn [registry](https://github.com/beckn/protocol-specifications/tree/master/api/registry/build/registry.yaml) specifications.
 
+NOTE: FIDE provides a software stack called [Beckn-ONIX](https://becknprotocol.io/beckn-onix/), for rapidly deploying and configuring a Beckn enabled network. This is just one of many ways to deploy a Beckn enabled network.
 
 Recommendation for implementing Registry:
   - **Participant Registration**: Registry MUST allow Network Participants to register themselves with a Subscriber ID and Subscriber URL
@@ -270,6 +271,7 @@ Recommendation for implementing Registry:
   - **Key Management**: Registry MUST allow public keys associated with network participants to be changed
   - **Information Updates**: Registry MUST support the modification of subscriber information
   - **Lookup Services**: Registry MUST support the lookup of Subscriber information through the registry lookup endpoint
+  - Here is a step by step guide for [setting up Beckn registry using Beckn-ONIX](https://github.com/beckn/beckn-onix/blob/main/docs/user_guide.md#setting-up-a-new-network---registry)
   
 Recommendation for implementing Gateway:
   - **Authentication & Signing**: Gateway MUST implement signature addition with X-Gateway-Authorization header when forwarding BAP messages to BPPs
@@ -278,6 +280,7 @@ Recommendation for implementing Gateway:
   - **Message Forwarding**: Gateway MUST forward signed search requests to all relevant BPPs returned by Registry lookup
   - **Caching**: Gateway SHOULD implement short-term caching to reduce Registry lookup load during peak grid events
   - **Error Handling**: Gateway MUST gracefully handle Registry lookup failures and BPP communication errors
+  - Here is a step by step guide for [setting up Beckn Gateway using Beckn-ONIX](https://github.com/beckn/beckn-onix/blob/main/docs/user_guide.md#setting-up-a-gateway)
 
 Recommendation for implementing BAPs:
   - **Transaction APIs**: 
@@ -294,6 +297,7 @@ Recommendation for implementing BAPs:
   - **Meta APIs**:
     - BAP MAY implement cancellation_reasons Meta API to receive predefined cancellation reasons from BPP
     - BAP MAY implement rating_categories Meta API to receive predefined rating categories from BPP
+  - Here is a step by step guide for [setting up a BAP using Beckn-ONIX](https://github.com/beckn/beckn-onix/blob/main/docs/user_guide.md#setting-up-a-bap-beckn-adapter)
 
 Recommendation for implementing BPPs:
   - **Transaction APIs**: 
@@ -309,6 +313,7 @@ Recommendation for implementing BPPs:
   - **Meta APIs**: 
     - BPP MAY implement get_cancellation_reasons Meta API if it requires BAP to fetch a predefined set of cancellation reasons
     - BPP MAY implement get_rating_categories Meta API if it requires BAP to fetch a predefined set of rating categories
+  - Here is a step by step guide for [setting up a BPP using Beckn-ONIX](https://github.com/beckn/beckn-onix/blob/main/docs/user_guide.md#setting-up-a-bpp-beckn-adapter)
 
 #### 4.3.2 Security and Communication Infrastructure
 
