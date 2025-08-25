@@ -691,8 +691,10 @@ This section provides comprehensive JSON examples for all Demand Flexibility API
 
 #### 7.1.1 Program Discovery (search API)
 
-Consumers (residential, commercial, retail, industrial) search for available DF programs for subscription. The example below demonstrates a comprehensive parameter set; consumers MAY use a subset of these parameters as per their requirements.
-This API call is required only when consumers need to discover available DF programs for subscription. BAPs that do not implement DF program subscription functionality MAY omit this API.
+- Consumers (residential, commercial, retail, industrial) search for available DF programs for subscription
+- The example below demonstrates a comprehensive parameter set; consumers MAY use a subset of these parameters as per their requirements
+- This API call is required only when consumers need to discover available DF programs for subscription
+- BAPs that do not implement DF program subscription functionality MAY omit this API
 
 ```json
 {
@@ -919,8 +921,10 @@ This API call is required only when consumers need to discover available DF prog
 
 #### 7.1.2 A catalog of DF programs (on_search API)
 
-Consumers receive a catalog of available DF programs for subscription. The example below demonstrates a comprehensive catalog response.
-This API call is required only when consumers need to discover available DF programs for subscription. BPPs that do not implement DF program subscription functionality MAY omit this API.
+- Consumers receive a catalog of available DF programs for subscription
+- The example below demonstrates a comprehensive catalog response
+- This API call is required only when consumers need to discover available DF programs for subscription
+- BPPs that do not implement DF program subscription functionality MAY omit this API
 
 ```json
 {
@@ -1234,8 +1238,10 @@ This catalog structure allows consumers to evaluate and select DF programs that 
 
 #### 7.2.1 DF program Subscription Request (confirm API)
 
-Consumers send a subscription confirmation for a selected DF program using order.type = "program_subscription". The example below demonstrates the subscription request structure.
-This API call is required only when consumers need to subscribe to DF programs. BAPs that do not implement DF program subscription functionality MAY omit this API.
+- Consumers send a subscription confirmation for a selected DF program using order.type = "program_subscription"
+- The example below demonstrates the subscription request structure
+- This API call is required only when consumers need to subscribe to DF programs
+- BAPs that do not implement DF program subscription functionality MAY omit this API
 
 ```json
 {
@@ -1325,8 +1331,10 @@ This request formally commits the consumer to participate in the selected DF pro
 
 #### 7.2.2 DF program Subscription confirmation (on_confirm API)
 
-BPPs send subscription acknowledgment to confirm consumer enrollment in the DF program. The example below demonstrates the confirmation response structure.
-This API call is required only when BPPs need to acknowledge DF program subscriptions. BPPs that do not implement DF program subscription functionality MAY omit this API.
+- BPPs send subscription acknowledgment to confirm consumer enrollment in the DF program
+- The example below demonstrates the confirmation response structure
+- This API call is required only when BPPs need to acknowledge DF program subscriptions
+- BPPs that do not implement DF program subscription functionality MAY omit this API
 
 ```json
 {
@@ -1534,8 +1542,10 @@ This response confirms successful enrollment and provides the consumer with subs
 
 #### 7.3.1 DF Event Notification (on_init API)
 
-BPPs initiate DF events when grid conditions require demand reduction using order.type = "event_participation". The example below demonstrates the event notification structure.
-This API call is required only when BPPs need to notify consumers of DF events. BPPs that do not implement real-time DF event management MAY omit this API.
+- BPPs initiate DF events when grid conditions require demand reduction using order.type = "event_participation"
+- The example below demonstrates the event notification structure
+- This API call is required only when BPPs need to notify consumers of DF events
+- BPPs that do not implement real-time DF event management MAY omit this API
 
 ```json
 {
@@ -1742,8 +1752,10 @@ This notification allows consumers to evaluate the DF event and decide on partic
 
 #### 7.3.2 DF Event Participation Confirmation (confirm API)
 
-Consumers confirm participation in DF events using order.type = "event_participation". The example below demonstrates the participation confirmation structure.
-This API call is required only when consumers participate in DF events. BAPs that do not implement DF event participation MAY omit this API.
+- Consumers confirm participation in DF events using order.type = "event_participation"
+- The example below demonstrates the participation confirmation structure
+- This API call is required only when consumers participate in DF events
+- BAPs that do not implement DF event participation MAY omit this API
 
 ```json
 {
@@ -1902,8 +1914,10 @@ This confirmation creates a binding commitment for the consumer to reduce specif
 
 #### 7.3.3 DF Event Participation Acknowledgement (on_confirm API)
 
-BPPs acknowledge consumer participation commitment and provide incentive estimates. The example below demonstrates the acknowledgment response structure.
-This API call is required only when BPPs need to acknowledge DF event participation. BPPs that do not implement DF event management MAY omit this API.
+- BPPs acknowledge consumer participation commitment and provide incentive estimates
+- The example below demonstrates the acknowledgment response structure
+- This API call is required only when BPPs need to acknowledge DF event participation
+- BPPs that do not implement DF event management MAY omit this API
 
 ```json
 {
@@ -2101,8 +2115,10 @@ This acknowledgment confirms that the BPP has accepted the consumer's participat
 
 #### 7.4.1 Settlement and Incentive Calculation against participation in a DF event (on_status API)
 
-BPPs provide performance metrics and final incentive calculations after DF event completion. The example below demonstrates the settlement response structure.
-This API call is required only when BPPs need to provide settlement information. BPPs that do not implement performance-based settlements MAY omit this API.
+- BPPs provide performance metrics and final incentive calculations after DF event completion
+- The example below demonstrates the settlement response structure
+- This API call is required only when BPPs need to provide settlement information
+- BPPs that do not implement performance-based settlements MAY omit this API
 
 ```json
 {
