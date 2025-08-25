@@ -1234,6 +1234,9 @@ This catalog structure allows consumers to evaluate and select DF programs that 
 
 #### 7.2.1 DF program Subscription Request (confirm API)
 
+Consumers send a subscription confirmation for a selected DF program using order.type = "program_subscription". The example below demonstrates the subscription request structure.
+This API call is required only when consumers need to subscribe to DF programs. BAPs that do not implement DF program subscription functionality MAY omit this API.
+
 ```json
 {
   "context": {
@@ -1295,10 +1298,35 @@ This catalog structure allows consumers to evaluate and select DF programs that 
 }
 ```
 
-**Understanding the Program Subscription Request:**
-TBC - Will explain the subscription details, commitment parameters, and fulfillment structure.
+**Request Structure Explanation:**
+
+**Order Information:**
+- `order.type`: Set to "program_subscription" to indicate subscription request
+- `order.provider`: References the selected provider from on_search response
+- `order.items`: Contains the specific DF program being subscribed to
+
+**Item Details:**
+- `id`: Program identifier from the catalog (used to identify specific program)
+- `quantity.value`: Load reduction capacity committed by consumer (in kW)
+- `descriptor`: Program name and description for confirmation
+
+**Fulfillment Method:**
+- `id`: Selected fulfillment method from available options (e.g., "manual_optin")
+- `agent`: Consumer organization details for program enrollment
+- `stops`: Contains consumer's meter location and operational timeframe
+
+**Consumer Commitment Tags:**
+- `load_capacity`: Total capacity consumer commits to reduce
+- `participation_mode`: Chosen participation type (manual/automated)
+- `availability_schedule`: When consumer is available for DF events
+- `response_commitment`: Consumer's guaranteed response time capability
+
+This request formally commits the consumer to participate in the selected DF program with specified capacity and operational parameters.
 
 #### 7.2.2 DF program Subscription confirmation (on_confirm API)
+
+BPPs send subscription acknowledgment to confirm consumer enrollment in the DF program. The example below demonstrates the confirmation response structure.
+This API call is required only when BPPs need to acknowledge DF program subscriptions. BPPs that do not implement DF program subscription functionality MAY omit this API.
 
 ```json
 {
@@ -1476,14 +1504,38 @@ TBC - Will explain the subscription details, commitment parameters, and fulfillm
 }
 ```
 
-**Understanding the Program Subscription Acknowledgement:**
-TBC - Will explain how BPP acknowledges the subscription and confirms program details.
+**Response Structure Explanation:**
+
+**Subscription Confirmation:**
+- `order.type`: Confirms "program_subscription" type
+- `order.status`: Subscription status (typically "ACTIVE" for successful enrollment)
+- `order.provider`: Provider details confirming program enrollment
+- `order.items`: Enrolled program details with assigned identifiers
+
+**Enrollment Details:**
+- `id`: Program identifier confirming successful subscription
+- `quantity.value`: Confirmed load reduction capacity (matches committed capacity)
+- `descriptor`: Program confirmation details
+
+**Assigned Fulfillment:**
+- `id`: Confirmed fulfillment method for the subscription
+- `agent`: Consumer organization confirmed for enrollment
+- `stops`: Confirmed meter location and operational schedule
+
+**Subscription Parameters:**
+- `subscription_id`: Unique identifier assigned for this subscription
+- `program_status`: Current program enrollment status
+- `enrollment_date`: When the subscription becomes active
+- `next_billing_cycle`: When subscription benefits/charges begin
+
+This response confirms successful enrollment and provides the consumer with subscription details and assigned identifiers for future reference.
 
 ### 7.3 DF Event Management Examples
 
 #### 7.3.1 DF Event Notification (on_init API)
 
-Utility initiates DF event when grid conditions require demand reduction:
+BPPs initiate DF events when grid conditions require demand reduction using order.type = "event_participation". The example below demonstrates the event notification structure.
+This API call is required only when BPPs need to notify consumers of DF events. BPPs that do not implement real-time DF event management MAY omit this API.
 
 ```json
 {
@@ -1658,12 +1710,40 @@ Utility initiates DF event when grid conditions require demand reduction:
 }
 ```
 
-**Understanding the Event Notification:**
-TBC - Will explain the event request structure, baseline calculation, and response requirements.
+**Request Structure Explanation:**
+
+**Event Details:**
+- `order.type`: Set to "event_participation" to indicate DF event request
+- `order.provider`: Grid operator initiating the event
+- `order.items`: Specific DF event with timing and requirements
+
+**Event Parameters:**
+- `id`: Unique event identifier for tracking and response
+- `descriptor`: Event name, timing, and load reduction requirements
+- `quantity.value`: Requested load reduction amount (in kW)
+
+**Baseline Information:**
+- `baseline_kw`: Consumer's normal consumption during event period
+- `target_kw`: Target consumption level to achieve required reduction
+- `reduction_kw`: Required load reduction amount
+
+**Event Timing:**
+- `stops`: Event start and end time with specific location
+- `response_deadline`: Deadline for consumer to confirm participation
+- `notification_advance`: Advance notice period provided
+
+**Grid Context Tags:**
+- `event_priority`: Urgency level (high/medium/low) based on grid conditions
+- `grid_condition`: Current grid state requiring demand response
+- `subscription_id`: Links to consumer's enrolled DF program
+- `program_id`: Specific program under which event is called
+
+This notification allows consumers to evaluate the DF event and decide on participation based on their operational constraints.
 
 #### 7.3.2 DF Event Participation Confirmation (confirm API)
 
-Consumer confirms participation in the DF event:
+Consumers confirm participation in DF events using order.type = "event_participation". The example below demonstrates the participation confirmation structure.
+This API call is required only when consumers participate in DF events. BAPs that do not implement DF event participation MAY omit this API.
 
 ```json
 {
@@ -1797,9 +1877,33 @@ Consumer confirms participation in the DF event:
 ```
 
 **Understanding the Event Participation Confirmation:**
-TBC - Will explain how BAP confirms participation with committed reduction and target load.
+**Request Structure Explanation:**
+
+**Participation Commitment:**
+- `order.type`: Confirms "event_participation" for DF event response
+- `order.items`: Event details with committed load reduction capacity
+- `quantity.value`: Actual committed reduction amount (may differ from requested)
+
+**Performance Commitment:**
+- `baseline_kw`: Agreed baseline consumption for performance measurement
+- `target_kw`: Committed target consumption level during event
+- `status`: Participation status ("CONFIRMED" indicates firm commitment)
+
+**Operational Details:**
+- `stops`: Confirmed event timing and meter location
+- `fulfillment`: Participation method and consumer organization details
+
+**Response Parameters:**
+- `committed_reduction`: Final committed load reduction amount
+- `participation_mode`: Confirmed participation type (manual/automated)
+- `response_method`: How consumer will achieve load reduction
+
+This confirmation creates a binding commitment for the consumer to reduce specified load during the DF event period.
 
 #### 7.3.3 DF Event Participation Acknowledgement (on_confirm API)
+
+BPPs acknowledge consumer participation commitment and provide incentive estimates. The example below demonstrates the acknowledgment response structure.
+This API call is required only when BPPs need to acknowledge DF event participation. BPPs that do not implement DF event management MAY omit this API.
 
 ```json
 {
@@ -1968,11 +2072,37 @@ TBC - Will explain how BAP confirms participation with committed reduction and t
 ```
 
 **Understanding the Event Participation Acknowledgement:**
-TBC - Will explain how BPP acknowledges the participation commitment and provides incentive estimates.
+**Response Structure Explanation:**
+
+**Participation Acknowledgment:**
+- `order.type`: Confirms "event_participation" acceptance
+- `order.status`: Event participation status ("ACCEPTED" indicates confirmed participation)
+- `order.items`: Acknowledged event with accepted commitment levels
+
+**Commitment Validation:**
+- `quantity.value`: Validated committed reduction amount
+- `baseline_kw`: Confirmed baseline for performance measurement
+- `target_kw`: Accepted target consumption level
+- `status`: Final participation status in tags
+
+**Incentive Estimation:**
+- `estimated_incentive`: Projected compensation based on committed reduction
+- `incentive_rate`: Applied rate for compensation calculation
+- `performance_threshold`: Minimum performance required for full incentive
+
+**Event Coordination:**
+- `event_id`: Confirmed event identifier for tracking
+- `participation_confirmed`: Timestamp of confirmation
+- `monitoring_enabled`: Indicates active performance monitoring
+
+This acknowledgment confirms that the BPP has accepted the consumer's participation commitment and will monitor performance for incentive calculation.
 
 ### 7.4 Settlement and Monitoring Examples
 
 #### 7.4.1 Settlement and Incentive Calculation against participation in a DF event (on_status API)
+
+BPPs provide performance metrics and final incentive calculations after DF event completion. The example below demonstrates the settlement response structure.
+This API call is required only when BPPs need to provide settlement information. BPPs that do not implement performance-based settlements MAY omit this API.
 
 ```json
 {
@@ -2176,7 +2306,30 @@ TBC - Will explain how BPP acknowledges the participation commitment and provide
 ```
 
 **Understanding the Settlement and Performance Metrics:**
-TBC - Will explain the performance calculation, incentive computation, and settlement status.
+**Response Structure Explanation:**
+
+**Performance Metrics:**
+- `actual_avg_load`: Measured average consumption during event period
+- `load_reduction_achieved`: Calculated actual load reduction (baseline - actual)
+- `performance_percentage`: Performance ratio (achieved/committed * 100)
+
+**Settlement Calculation:**
+- `total_reduction_kwh`: Total energy reduced during event period
+- `incentive_rate`: Applied compensation rate per kWh reduced
+- `total_incentive`: Final calculated compensation amount
+- `incentive_currency`: Payment currency and denomination
+
+**Settlement Status:**
+- `settlement_status`: Payment processing status (calculated/pending/paid)
+- `settlement_period`: Billing cycle when payment will be processed
+- `performance_verified`: Indicates completion of performance validation
+
+**Quality Metrics:**
+- `baseline_accuracy`: Validation of baseline calculation method
+- `measurement_quality`: Data quality assessment for settlement
+- `compliance_status`: Adherence to program participation requirements
+
+This status response provides comprehensive performance assessment and final incentive calculation for the completed DF event.
 
 ### 7.5 Cancelling a subscription
 TBC
