@@ -691,7 +691,7 @@ This section provides comprehensive JSON examples for all Demand Flexibility API
 
 #### 7.1.1 Program Discovery (search API)
 
-Commercial facility searches for available DF programs:
+Consumer (residential, commercial, retail, industrial) searches for available DF programs:
 
 ```json
 {
@@ -887,8 +887,34 @@ Commercial facility searches for available DF programs:
   }
 }
 ```
-**Understanding the Search Request:**
-TBC - Will explain how BAP structures the search query with location, capacity, and timing requirements.
+**Parameter Explanation:**
+
+**Participant Capabilities:**
+- `load_capacity`: Total load reduction capacity the participant can offer (used by grid to assess potential impact)
+- `participant_type`: Type of participant - residential, commercial, industrial, retail (used for program eligibility filtering)
+- `control_type`: How load will be controlled - automated, manual, hybrid (used to match with program requirements)
+
+**Availability Parameters:**
+- `response_time`: How quickly participant can respond to DF events (used to match with program urgency requirements)
+- `availability_hours`: Operating hours when participant can participate (used to align with event timing)
+- `availability_days`: Days of the week when participation is possible (used for program scheduling)
+- `seasonal_availability`: Seasons when participant is available - summer, winter, all (used for seasonal program matching)
+
+**Event Parameters:**
+- `min_event_duration`: Shortest duration participant can maintain load reduction (used to filter compatible programs)
+- `max_event_duration`: Longest duration participant can sustain response (used to prevent overcommitment)
+- `notification_type`: Preferred advance notice period - instant, day_ahead, week_ahead (used to match notification preferences)
+
+**Technical Parameters:**
+- `load_type`: Types of controllable loads - hvac, lighting, process, pumps (used to match with program requirements)
+
+**Incentive Parameters:**
+- `min_incentive_rate`: Minimum acceptable compensation rate (used to filter programs meeting economic requirements)
+- `incentive_currency`: Expected currency and basis - INR_per_kWh_load_reduction (used to clarify compensation structure)
+
+**Priority Parameters:**
+- `event_priority`: Priority levels participant will respond to - high, medium, low (used to match with grid urgency levels)
+- `participation_mode`: Participation type preference - mandatory, voluntary (used to filter program types)
 
 #### 7.1.2 A catalog of DF programs (on_search API)
 
