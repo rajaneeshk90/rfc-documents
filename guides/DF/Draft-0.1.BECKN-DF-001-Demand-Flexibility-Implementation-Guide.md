@@ -691,7 +691,8 @@ This section provides comprehensive JSON examples for all Demand Flexibility API
 
 #### 7.1.1 Program Discovery (search API)
 
-Consumer (residential, commercial, retail, industrial) searches for available DF programs:
+Consumers (residential, commercial, retail, industrial) search for available DF programs for subscription. The example below demonstrates a comprehensive parameter set; consumers MAY use a subset of these parameters as per their requirements.
+This API call is required only when consumers need to discover available DF programs for subscription. BAPs that do not implement DF program subscription functionality MAY omit this API.
 
 ```json
 {
@@ -918,7 +919,8 @@ Consumer (residential, commercial, retail, industrial) searches for available DF
 
 #### 7.1.2 A catalog of DF programs (on_search API)
 
-Customer receives a catalog of DF programs:
+Consumers receive a catalog of available DF programs for subscription. The example below demonstrates a comprehensive catalog response.
+This API call is required only when consumers need to discover available DF programs for subscription. BPPs that do not implement DF program subscription functionality MAY omit this API.
 
 ```json
 {
@@ -1192,8 +1194,41 @@ Customer receives a catalog of DF programs:
 }
 ```
 
-**Understanding the on_search Response:**
-TBC - Will explain the catalog structure, provider details, and available DF programs.
+**Response Structure Explanation:**
+
+**Provider Information:**
+- `id`: Unique identifier for the DF program provider (used for subsequent API calls)
+- `descriptor.name`: Provider's display name (e.g., "BRPL")
+- `descriptor.short_desc`: Brief description of provider's DF programs and coverage area
+- `locations`: Geographic areas where provider operates DF programs
+
+**Fulfillment Options:**
+- `id`: Unique identifier for the fulfillment method
+- `type`: Service delivery type (typically "DIGITAL" for DF programs)
+- `event_notification_delivery`: Available notification methods (api_push, sms_alert, email_notice)
+
+**Program Categories:**
+- Categories help consumers filter programs by type (manual vs automated control, response timing, etc.)
+- Each category has a unique `id` and descriptive `code` for filtering
+
+**Available Programs (Items):**
+- `id`: Unique program identifier for subscription requests
+- `descriptor.name`: Program display name
+- `descriptor.short_desc`: Brief program summary including incentive rate
+- `descriptor.long_desc`: Detailed program description and participation requirements
+- `category_ids`: Links to applicable program categories
+- `fulfillment_ids`: Links to available fulfillment methods
+
+**Program Tags (Key Parameters):**
+- `load_capacity_range`: Minimum/maximum load reduction requirements
+- `response_time`: Required response time for participation
+- `event_duration_range`: Typical duration of DF events
+- `availability_schedule`: When the program operates (days, hours, seasons)
+- `control_requirements`: Required controllable load types
+- `incentive_rate`: Compensation amount and calculation basis
+- `participation_terms`: Participation mode (mandatory/voluntary) and priority levels
+
+This catalog structure allows consumers to evaluate and select DF programs that match their capabilities and preferences.
 
 ### 7.2 DF program subscription Examples
 
