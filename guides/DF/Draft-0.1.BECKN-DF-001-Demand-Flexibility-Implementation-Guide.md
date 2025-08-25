@@ -630,7 +630,7 @@ Using inaccurate or manipulated baselines for incentive calculation.
 - Resource IDs use descriptive names: `df-program-subscription-001`, `load-reduction-request`
 
 **JSON Field Naming:**
-- Use snake_case for custom fields: `event_type`, `max_reduction_kw`, `baseline_kw`
+- Use snake_case for custom fields: `max_reduction_kw`, `baseline_kw`
 - Follow Beckn core schema for standard fields: `transaction_id`, `message_id`, `timestamp`
 - Energy-specific units clearly specified: `kW`, `kWh`, `Hz`
 
@@ -892,10 +892,19 @@ This section provides comprehensive JSON examples for all Demand Flexibility API
 ```
 **Parameter Explanation:**
 
+**Search Criteria:**
+- `descriptor.name`: Free text search for DF programs (user can enter any search terms)
+- `category.descriptor.name`: Category-based search filter (user can choose specific program categories)
+
+**Location and Timing:**
+- `stops.type`: Set to "end" to indicate consumer location
+- `stops.location`: Consumer's location details (REQUIRED - MAY include any combination of gps, address, or area_code as per implementor needs)
+- `stops.time.range`: Time range for which DF programs are sought (OPTIONAL - can be omitted if searching for all available programs)
+
 **Participant Capabilities:**
 - `load_capacity`: Total load reduction capacity the participant can offer (used by grid to assess potential impact)
 - `participant_type`: Type of participant - residential, commercial, industrial, retail (used for program eligibility filtering)
-- `control_type`: How load will be controlled - automated, manual, hybrid (used to match with program requirements)
+- `control_type`: Load control capabilities this consumer has - automated, manual, hybrid (used to match with program requirements)
 
 **Availability Parameters:**
 - `response_time`: How quickly participant can respond to DF events (used to match with program urgency requirements)
@@ -909,7 +918,7 @@ This section provides comprehensive JSON examples for all Demand Flexibility API
 - `notification_type`: Preferred advance notice period - instant, day_ahead, week_ahead (used to match notification preferences)
 
 **Technical Parameters:**
-- `load_type`: Types of controllable loads - hvac, lighting, process, pumps (used to match with program requirements)
+- `load_type`: Types of controllable loads - hvac, lighting, process, pumps that participant has (used to match with program requirements)
 
 **Incentive Parameters:**
 - `min_incentive_rate`: Minimum acceptable compensation rate (used to filter programs meeting economic requirements)
@@ -1209,10 +1218,10 @@ This section provides comprehensive JSON examples for all Demand Flexibility API
 **Fulfillment Options:**
 - `id`: Unique identifier for the fulfillment method
 - `type`: Service delivery type (typically "DIGITAL" for DF programs)
-- `event_notification_delivery`: Available notification methods (api_push, sms_alert, email_notice)
+- `event_notification_delivery`: Available notification methods for DF event push (api_push, sms_alert, email_notice)
 
 **Program Categories:**
-- Categories help consumers filter programs by type (manual vs automated control, response timing, etc.)
+- Categories help consumers filter programs by availability commitment (always available, seasonal, emergency-only)
 - Each category has a unique `id` and descriptive `code` for filtering
 
 **Available Programs (Items):**
@@ -1222,15 +1231,14 @@ This section provides comprehensive JSON examples for all Demand Flexibility API
 - `descriptor.long_desc`: Detailed program description and participation requirements
 - `category_ids`: Links to applicable program categories
 - `fulfillment_ids`: Links to available fulfillment methods
+- `location_ids`: Links to available location objects
 
 **Program Tags (Key Parameters):**
-- `load_capacity_range`: Minimum/maximum load reduction requirements
-- `response_time`: Required response time for participation
-- `event_duration_range`: Typical duration of DF events
-- `availability_schedule`: When the program operates (days, hours, seasons)
-- `control_requirements`: Required controllable load types
-- `incentive_rate`: Compensation amount and calculation basis
-- `participation_terms`: Participation mode (mandatory/voluntary) and priority levels
+- **Participant Capabilities**: `load_capacity` (capacity range), `participant_type` (eligible consumer types), `control_type` (required control method)
+- **Availability Parameters**: `response_time` (required response time), `availability_hours` (operating hours), `availability_days` (operating days), `seasonal_availability` (seasons)
+- **Event Parameters**: `min_event_duration` and `max_event_duration` (event duration range), `notification_type` (advance notice period)
+- **Incentive Parameters**: `incentive_rate` (compensation rate), `incentive_currency` (payment currency), `settlement_frequency` (payment schedule)
+- **Priority Parameters**: `event_priority` (priority levels), `participation_mode` (voluntary/mandatory), `grid_condition` (triggering conditions)
 
 This catalog structure allows consumers to evaluate and select DF programs that match their capabilities and preferences.
 
@@ -1272,20 +1280,16 @@ This catalog structure allows consumers to evaluate and select DF programs that 
       "fulfillments": [
         {
           "id": "f1",
-          "agent": {
-            "organization": {
-              "descriptor": {
-                "name": "Gov Bus Depot",
-                "city": {
-                  "name": "New Delhi"
-                }
-              }
-            }
-          },
           "stops": [
             {
                 "type": "end",
                 "location": {
+                  "descriptor": {
+                    "name": "Gov Bus Depot, Anand Vihar",
+                  },
+                  "city": {
+                    "code": "New-Delhi"
+                  },
                   "gps": "28.613901,77.209010",
                   "area_code": "110001"
                 },
@@ -1309,25 +1313,16 @@ This catalog structure allows consumers to evaluate and select DF programs that 
 **Order Information:**
 - `order.type`: Set to "program_subscription" to indicate subscription request
 - `order.provider`: References the selected provider from on_search response
-- `order.items`: Contains the specific DF program being subscribed to
+- `order.items`: Contains the specific DF program consumer wishes to subscribe
 
 **Item Details:**
 - `id`: Program identifier from the catalog (used to identify specific program)
-- `quantity.value`: Load reduction capacity committed by consumer (in kW)
-- `descriptor`: Program name and description for confirmation
 
 **Fulfillment Method:**
-- `id`: Selected fulfillment method from available options (e.g., "manual_optin")
-- `agent`: Consumer organization details for program enrollment
-- `stops`: Contains consumer's meter location and operational timeframe
+- `id`: Selected fulfillment option from available options
+- `stops`: Contains consumer's location and operational timeframe
 
-**Consumer Commitment Tags:**
-- `load_capacity`: Total capacity consumer commits to reduce
-- `participation_mode`: Chosen participation type (manual/automated)
-- `availability_schedule`: When consumer is available for DF events
-- `response_commitment`: Consumer's guaranteed response time capability
-
-This request formally commits the consumer to participate in the selected DF program with specified capacity and operational parameters.
+This request formally commits the consumer to participate in the selected DF program.
 
 #### 7.2.2 DF program Subscription confirmation (on_confirm API)
 
@@ -1383,13 +1378,6 @@ This request formally commits the consumer to participate in the selected DF pro
                 "name": "Subscription Details"
               },
               "list": [
-                {
-                  "descriptor": {
-                    "code": "event_type",
-                    "name": "Event Type"
-                  },
-                  "value": "program_subscription"
-                },
                 {
                   "descriptor": {
                     "code": "max_reduction_kw",
@@ -1475,20 +1463,16 @@ This request formally commits the consumer to participate in the selected DF pro
       "fulfillments": [
         {
           "id": "f1",
-          "agent": {
-            "organization": {
-              "descriptor": {
-                "name": "Gov Bus Depot",
-                "city": {
-                  "name": "New Delhi"
-                }
-              }
-            }
-          },
           "stops": [
             {
                 "type": "end",
                 "location": {
+                  "descriptor": {
+                    "name": "Gov Bus Depot, Anand Vihar",
+                  },
+                  "city": {
+                    "code": "New-Delhi"
+                  },
                   "gps": "28.613901,77.209010",
                   "area_code": "110001"
                 },
@@ -1515,26 +1499,17 @@ This request formally commits the consumer to participate in the selected DF pro
 **Response Structure Explanation:**
 
 **Subscription Confirmation:**
-- `order.type`: Confirms "program_subscription" type
-- `order.status`: Subscription status (typically "ACTIVE" for successful enrollment)
+- `order.type`: type of the info this payload contains, in this case it is "program_subscription" type
+- `order.id`: Unique identifier assigned for this particular subscription
 - `order.provider`: Provider details confirming program enrollment
-- `order.items`: Enrolled program details with assigned identifiers
+- `order.items`: Enrolled program details
 
 **Enrollment Details:**
-- `id`: Program identifier confirming successful subscription
-- `quantity.value`: Confirmed load reduction capacity (matches committed capacity)
-- `descriptor`: Program confirmation details
+- Item details are the same as received in the on_search response, confirming the specific program that was subscribed to
 
 **Assigned Fulfillment:**
-- `id`: Confirmed fulfillment method for the subscription
-- `agent`: Consumer organization confirmed for enrollment
-- `stops`: Confirmed meter location and operational schedule
-
-**Subscription Parameters:**
-- `subscription_id`: Unique identifier assigned for this subscription
-- `program_status`: Current program enrollment status
-- `enrollment_date`: When the subscription becomes active
-- `next_billing_cycle`: When subscription benefits/charges begin
+- Fulfillment details are the same as in on_search response, but with updated state
+- State changes to "SUBSCRIBED" after successful subscription, or relevant error state if subscription failed at BPP level
 
 This response confirms successful enrollment and provides the consumer with subscription details and assigned identifiers for future reference.
 
@@ -1544,8 +1519,8 @@ This response confirms successful enrollment and provides the consumer with subs
 
 - BPPs initiate DF events when grid conditions require demand reduction using order.type = "event_participation"
 - The example below demonstrates the event notification structure
-- This API call is required only when BPPs need to notify consumers of DF events
-- BPPs that do not implement real-time DF event management MAY omit this API
+- This API call is required for core DF functionality when BPPs need to notify consumers of DF events
+- BAPs MUST implement this API
 
 ```json
 {
@@ -1563,7 +1538,6 @@ This response confirms successful enrollment and provides the consumer with subs
   },
   "message": {
     "order": {
-      "id": "df-event-20250820-001",
       "type": "event_participation",
       "provider": {
         "id": "brpl_df_001",
@@ -1600,20 +1574,6 @@ This response confirms successful enrollment and provides the consumer with subs
                 "name": "Event Details"
               },
               "list": [
-                {
-                  "descriptor": {
-                    "code": "status",
-                    "name": "Event Status"
-                  },
-                  "value": "REQUESTED"
-                },
-                {
-                  "descriptor": {
-                    "code": "event_type",
-                    "name": "Event Type"
-                  },
-                  "value": "event_participation"
-                },
                 {
                   "descriptor": {
                     "code": "subscription_id",
@@ -1722,40 +1682,64 @@ This response confirms successful enrollment and provides the consumer with subs
 
 **Request Structure Explanation:**
 
+**Critical API Overview:**
+This API represents the core moment when grid operators request demand flexibility from consumers. It transforms grid stress into actionable consumer requests, making it the cornerstone of demand response programs.
+
 **Event Details:**
-- `order.type`: Set to "event_participation" to indicate DF event request
-- `order.provider`: Grid operator initiating the event
-- `order.items`: Specific DF event with timing and requirements
+- `order.type`: Set to "event_participation" to distinguish this from subscription requests - this is an actual event call
+- `order.provider`: Grid operator/utility initiating the event, establishing accountability and trust
+- `order.items`: Contains the specific DF event details that consumers must evaluate for participation
 
-**Event Parameters:**
-- `id`: Unique event identifier for tracking and response
-- `descriptor`: Event name, timing, and load reduction requirements
-- `quantity.value`: Requested load reduction amount (in kW)
+**Event Parameters (Consumer Decision Factors):**
+- `items.id`: Unique event identifier enabling precise tracking across all systems and settlement processes
+- `items.descriptor`: Human-readable event description including context and load reduction requirements
+- `quantity.measure.value`: Specific load reduction requested from this consumer (in kW) - forms the basis of commitment and compensation
+- `quantity.measure.unit`: Unit of measurement for the requested reduction (typically "kW")
 
-**Baseline Information:**
-- `baseline_kw`: Consumer's normal consumption during event period
-- `target_kw`: Target consumption level to achieve required reduction
-- `reduction_kw`: Required load reduction amount
+**Event Details Tags:**
+- `status`: Current event status - "REQUESTED" indicates the grid operator is awaiting consumer's participation decision
+- `priority`: Event urgency classification (high=critical grid stress requiring immediate response, medium=economic optimization, low=voluntary participation)
+- `grid_frequency`: Real-time grid frequency measurement (normal=50Hz, deviations indicate system stress requiring demand response)
+- `response_deadline`: Critical deadline for consumer confirmation - enables grid operator to plan alternative actions
+- `baseline_kw`: Consumer's calculated normal consumption during event period - critical for fair performance measurement
+- `baseline_method`: How baseline was calculated (e.g., "3-of-5_average") - provides transparency in measurement
 
-**Event Timing:**
-- `stops`: Event start and end time with specific location
-- `response_deadline`: Deadline for consumer to confirm participation
-- `notification_advance`: Advance notice period provided
+**Program Context Tags:**
+- `subscription_id`: Links to consumer's program enrollment - ensures event is sent to eligible participants only
+- `program_id`: Specific DF program triggering this event - enables program-specific response rules and compensation
 
-**Grid Context Tags:**
-- `event_priority`: Urgency level (high/medium/low) based on grid conditions
-- `grid_condition`: Current grid state requiring demand response
-- `subscription_id`: Links to consumer's enrolled DF program
-- `program_id`: Specific program under which event is called
+**Incentive Information Tags:**
+- `incentive_rate`: Compensation rate for load reduction
+- `incentive_currency`: Payment currency (e.g., "INR")
+- `incentive_type`: Basis for calculation (e.g., "per_kWh_reduced")
 
-This notification allows consumers to evaluate the DF event and decide on participation based on their operational constraints.
+**Event Timing (Operational Coordination):**
+- `fulfillments.stops.time.range`: Event start and end times - ensures synchronized response across grid
+- `fulfillments.state`: Current fulfillment status of the event
+
+**Consumer Response Requirements:**
+Consumers receiving this notification must:
+1. Evaluate their operational ability to provide the requested load reduction
+2. Consider the event timing against their operational schedules
+3. Assess the baseline calculation for accuracy
+4. Respond within the specified deadline with their participation decision
+5. Understand that non-response may be treated as non-participation
+
+**Grid Operator Responsibilities:**
+- Ensure baseline calculations are accurate and fair
+- Provide sufficient advance notice as per program terms
+- Send events only to eligible, subscribed consumers
+- Include all necessary context for informed consumer decisions
+- Respect consumer operational constraints and response capabilities
+
+This notification represents a bilateral contract offer that, once accepted, creates binding obligations for both parties.
 
 #### 7.3.2 DF Event Participation Confirmation (confirm API)
 
-- Consumers confirm participation in DF events using order.type = "event_participation"
+- Consumers respond to DF event notifications by confirming their participation decision using order.type = "event_participation"
 - The example below demonstrates the participation confirmation structure
-- This API call is required only when consumers participate in DF events
-- BAPs that do not implement DF event participation MAY omit this API
+- This API call is required for core DF functionality when consumers respond to DF event notifications
+- BPPs MUST implement this API
 
 ```json
 {
@@ -1773,7 +1757,6 @@ This notification allows consumers to evaluate the DF event and decide on partic
   },
   "message": {
     "order": {
-      "id": "df-event-20250820-001",
       "type": "event_participation",
       "provider": {
         "id": "brpl_df_001",
@@ -1810,20 +1793,6 @@ This notification allows consumers to evaluate the DF event and decide on partic
                 "name": "Event Details"
               },
               "list": [
-                {
-                  "descriptor": {
-                    "code": "status",
-                    "name": "Event Status"
-                  },
-                  "value": "CONFIRMED"
-                },
-                {
-                  "descriptor": {
-                    "code": "event_type",
-                    "name": "Event Type"
-                  },
-                  "value": "event_participation"
-                },
                 {
                   "descriptor": {
                     "code": "subscription_id",
@@ -1891,24 +1860,16 @@ This notification allows consumers to evaluate the DF event and decide on partic
 **Understanding the Event Participation Confirmation:**
 **Request Structure Explanation:**
 
-**Participation Commitment:**
-- `order.type`: Confirms "event_participation" for DF event response
-- `order.items`: Event details with committed load reduction capacity
-- `quantity.value`: Actual committed reduction amount (may differ from requested)
+This confirm API response contains the same structure and fields as the on_init notification, with few key differences:
 
-**Performance Commitment:**
-- `baseline_kw`: Agreed baseline consumption for performance measurement
-- `target_kw`: Committed target consumption level during event
-- `status`: Participation status ("CONFIRMED" indicates firm commitment)
+**Key Changes from on_init:**
+- `quantity.measure.value`: Consumer's committed reduction amount (e.g., "120" kW) - this is how much the consumer promises they will reduce, may differ from the originally requested amount
+- `fulfillment.state`: Changes from "REQUESTED" to "CONFIRMED" (if accepting) or "REJECTED" (if declining) indicating consumer's participation decision
+- `commitment_confidence`: New tag indicating consumer's confidence level in their ability to deliver the committed reduction (e.g., "high")
 
-**Operational Details:**
-- `stops`: Confirmed event timing and meter location
-- `fulfillment`: Participation method and consumer organization details
-
-**Response Parameters:**
-- `committed_reduction`: Final committed load reduction amount
-- `participation_mode`: Confirmed participation type (manual/automated)
-- `response_method`: How consumer will achieve load reduction
+**Unchanged Elements:**
+- All event details, baseline information, incentive parameters, and timing remain identical to the on_init request
+- Consumer confirms participation with the same event parameters provided by the grid operator
 
 This confirmation creates a binding commitment for the consumer to reduce specified load during the DF event period.
 
@@ -1916,8 +1877,8 @@ This confirmation creates a binding commitment for the consumer to reduce specif
 
 - BPPs acknowledge consumer participation commitment and provide incentive estimates
 - The example below demonstrates the acknowledgment response structure
-- This API call is required only when BPPs need to acknowledge DF event participation
-- BPPs that do not implement DF event management MAY omit this API
+- This API call is required for core DF functionality when BPPs need to acknowledge consumer participation decisions
+- BAPs MUST implement this API
 
 ```json
 {
@@ -1972,20 +1933,6 @@ This confirmation creates a binding commitment for the consumer to reduce specif
                 "name": "Event Details"
               },
               "list": [
-                {
-                  "descriptor": {
-                    "code": "status",
-                    "name": "Event Status"
-                  },
-                  "value": "ACCEPTED"
-                },
-                {
-                  "descriptor": {
-                    "code": "event_type",
-                    "name": "Event Type"
-                  },
-                  "value": "event_participation"
-                },
                 {
                   "descriptor": {
                     "code": "subscription_id",
@@ -2088,28 +2035,18 @@ This confirmation creates a binding commitment for the consumer to reduce specif
 **Understanding the Event Participation Acknowledgement:**
 **Response Structure Explanation:**
 
-**Participation Acknowledgment:**
-- `order.type`: Confirms "event_participation" acceptance
-- `order.status`: Event participation status ("ACCEPTED" indicates confirmed participation)
-- `order.items`: Acknowledged event with accepted commitment levels
+This on_confirm API response contains the same structure and fields as the confirm request, with key differences:
 
-**Commitment Validation:**
-- `quantity.value`: Validated committed reduction amount
-- `baseline_kw`: Confirmed baseline for performance measurement
-- `target_kw`: Accepted target consumption level
-- `status`: Final participation status in tags
+**Key Changes from confirm:**
+- `order.id`: New unique identifier is created to track this acknowledgment response
+- `order.status`: BPP's response to the participation decision ("ACCEPTED" if BPP accepts consumer's commitment, or relevant status if declined)
+- Additional tags may be added for incentive estimation and performance monitoring setup
 
-**Incentive Estimation:**
-- `estimated_incentive`: Projected compensation based on committed reduction
-- `incentive_rate`: Applied rate for compensation calculation
-- `performance_threshold`: Minimum performance required for full incentive
+**Unchanged Elements:**
+- All event details, baseline information, committed reduction amount, and timing remain identical to the confirm request
+- BPP acknowledges the consumer's participation decision with the same event parameters
 
-**Event Coordination:**
-- `event_id`: Confirmed event identifier for tracking
-- `participation_confirmed`: Timestamp of confirmation
-- `monitoring_enabled`: Indicates active performance monitoring
-
-This acknowledgment confirms that the BPP has accepted the consumer's participation commitment and will monitor performance for incentive calculation.
+This acknowledgment confirms that the BPP has processed the consumer's participation decision and establishes the framework for performance monitoring and incentive calculation.
 
 ### 7.4 Settlement and Monitoring Examples
 
@@ -2117,8 +2054,8 @@ This acknowledgment confirms that the BPP has accepted the consumer's participat
 
 - BPPs provide performance metrics and final incentive calculations after DF event completion
 - The example below demonstrates the settlement response structure
-- This API call is required only when BPPs need to provide settlement information
-- BPPs that do not implement performance-based settlements MAY omit this API
+- This API call is required for core DF functionality when BPPs need to provide settlement information
+- BAPs MUST implement this API
 
 ```json
 {
@@ -2173,20 +2110,6 @@ This acknowledgment confirms that the BPP has accepted the consumer's participat
                 "name": "Event Details"
               },
               "list": [
-                {
-                  "descriptor": {
-                    "code": "status",
-                    "name": "Event Status"
-                  },
-                  "value": "COMPLETED"
-                },
-                {
-                  "descriptor": {
-                    "code": "event_type",
-                    "name": "Event Type"
-                  },
-                  "value": "event_participation"
-                },
                 {
                   "descriptor": {
                     "code": "subscription_id",
