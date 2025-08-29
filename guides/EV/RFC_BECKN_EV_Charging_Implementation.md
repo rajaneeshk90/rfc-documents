@@ -183,93 +183,62 @@ The Beckn Protocol provides:
 
 ### 4.1 System Components
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                                EV Charging Ecosystem                            │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│  ┌─────────────┐     ┌─────────────────────────────────┐     ┌─────────────────┐ │
-│  │   Consumer  │     │            eMSP                 │     │       CPO       │ │
-│  │    (BAP)    │     │           (BPP)                 │     │     (OCPI)      │ │
-│  │             │     │  ┌─────────────────────────────┐ │     │  ┌─────────────┐ │ │
-│  │ ┌─────────┐ │     │  │    Beckn Protocol Server   │ │     │  │   EVSE      │ │ │
-│  │ │Mobile App│ │◄────┼──│  - Search Handler          │ │     │  │ Management  │ │ │
-│  │ └─────────┘ │     │  │  - Selection Handler       │ │     │  │   System    │ │ │
-│  │             │     │  │  - Order Handler           │ │     │  └─────────────┘ │ │
-│  │ ┌─────────┐ │     │  │  - Fulfillment Handler     │ │     │                 │ │
-│  │ │Web Portal│ │     │  └─────────────────────────────┘ │     │  ┌─────────────┐ │ │
-│  │ └─────────┘ │     │             │                   │     │  │   Tariff    │ │ │
-│  └─────────────┘     │  ┌─────────────────────────────┐ │     │  │ Management  │ │ │
-│                      │  │     OCPI Client             │ │     │  │   System    │ │ │
-│  ┌─────────────┐     │  │  - Location Aggregator      │ │     │  └─────────────┘ │ │
-│  │   Gateway   │     │  │  - Tariff Aggregator        │ │     │                 │ │
-│  │  (Registry) │◄────┼──│  - Command Dispatcher       │ │     │  ┌─────────────┐ │ │
-│  └─────────────┘     │  │  - Session Manager          │ │     │  │  Session    │ │ │
-│                      │  │  - Token Manager            │ │     │  │  Manager    │ │ │
-│                      │  └─────────────────────────────┘ │     │  └─────────────┘ │ │
-│                      │             │                   │     │                 │ │
-│                      │  ┌─────────────────────────────┐ │     │  ┌─────────────┐ │ │
-│                      │  │    Data Mapping Engine      │ │     │  │   OCPI      │ │ │
-│                      │  │  - Location-Tariff Mapper   │ │     │  │  Server     │ │ │
-│                      │  │  - Real-time Sync          │ │     │  └─────────────┘ │ │
-│                      │  │  - Cache Manager           │ │     │                 │ │
-│                      │  └─────────────────────────────┘ │     └─────────────────┘ │
-│                      └─────────────────────────────────┘                         │
-└─────────────────────────────────────────────────────────────────────────────────┘
-       │                                │                                │
-       │                                │                                │
-   Beckn Protocol               Beckn ◄──► OCPI                  OCPI Protocol
-   (JSON/HTTP)                   Translation                     (JSON/HTTP)
-```
+
 
 ### 4.2 Detailed Data Flow
 
-```
-┌─────────────┐   ┌─────────────────────────────────────┐   ┌─────────────┐
-│     BAP     │   │               BPP                   │   │     CPO     │
-│  (Consumer) │   │              (eMSP)                 │   │  (Charger)  │
-└─────────────┘   └─────────────────────────────────────┘   └─────────────┘
-       │                            │                              │
-   1.  │──────── search ─────────►  │                              │
-       │                            │  2. GET /locations ─────────►│
-       │                            │  3. GET /tariffs ───────────►│
-       │                            │  ◄─── locations data ────────│
-       │                            │  ◄─── tariffs data ──────────│
-       │                            │  4. Data Mapping & Filtering │
-       │  ◄─────── on_search ───────│                              │
-   5.  │                            │                              │
-       │──────── select ──────────► │                              │
-       │                            │  6. GET /locations/{id} ────►│
-       │                            │  7. GET /tariffs/{id} ──────►│
-       │                            │  ◄─── detailed data ─────────│
-       │  ◄─────── on_select ───────│                              │
-   8.  │                            │                              │
-       │──────── init ────────────► │                              │
-       │                            │  9. POST /tokens/authorize ─►│
-       │                            │  ◄─── authorization ─────────│
-       │  ◄─────── on_init ─────────│                              │
-  10.  │                            │                              │
-       │──────── confirm ─────────► │                              │
-       │                            │ 11. POST /commands/RESERVE ──►│
-       │                            │  ◄─── confirmation ──────────│
-       │  ◄─────── on_confirm ──────│                              │
-  12.  │                            │                              │
-       │                            │ ◄─ PUT /sessions (updates) ──│
-       │  ◄─────── status ──────────│                              │
-  13.  │                            │                              │
-       │──────── update ──────────► │                              │
-       │                            │ 14. POST /commands/START ────►│
-       │                            │  ◄─── session started ───────│
-       │  ◄─────── on_update ───────│                              │
-  15.  │                            │                              │
-       │                            │ ◄─ PUT /sessions (progress) ─│
-       │  ◄─────── track ───────────│                              │
-  16.  │                            │                              │
-       │──────── cancel ──────────► │                              │
-       │                            │ 17. POST /commands/STOP ─────►│
-       │                            │  ◄─── session stopped ───────│
-       │                            │ ◄─ PUT /cdrs (billing) ──────│
-       │  ◄─────── on_cancel ───────│                              │
-```
+<function_calls>
+<invoke name="create_diagram">
+<parameter name="content">sequenceDiagram
+    participant BAP as "BAP<br/>(Consumer)"
+    participant BPP as "BPP<br/>(eMSP)"
+    participant CPO as "CPO<br/>(Charger)"
+    
+    Note over BAP,CPO: Discovery Phase
+    BAP->>BPP: 1. search
+    BPP->>CPO: 2. GET /locations
+    BPP->>CPO: 3. GET /tariffs
+    CPO-->>BPP: locations data
+    CPO-->>BPP: tariffs data
+    Note over BPP: 4. Data Mapping & Filtering
+    BPP-->>BAP: on_search
+    
+    Note over BAP,CPO: Selection Phase
+    BAP->>BPP: 5. select
+    BPP->>CPO: 6. GET /locations/{id}
+    BPP->>CPO: 7. GET /tariffs/{id}
+    CPO-->>BPP: detailed data
+    BPP-->>BAP: on_select
+    
+    Note over BAP,CPO: Booking Phase
+    BAP->>BPP: 8. init
+    BPP->>CPO: 9. POST /tokens/authorize
+    CPO-->>BPP: authorization
+    BPP-->>BAP: on_init
+    
+    BAP->>BPP: 10. confirm
+    BPP->>CPO: 11. POST /commands/RESERVE
+    CPO-->>BPP: confirmation
+    BPP-->>BAP: on_confirm
+    
+    Note over BAP,CPO: Session Management
+    CPO->>BPP: 12. PUT /sessions (updates)
+    BPP-->>BAP: status
+    
+    BAP->>BPP: 13. update
+    BPP->>CPO: 14. POST /commands/START
+    CPO-->>BPP: session started
+    BPP-->>BAP: on_update
+    
+    CPO->>BPP: 15. PUT /sessions (progress)
+    BPP-->>BAP: track
+    
+    Note over BAP,CPO: Session Completion
+    BAP->>BPP: 16. cancel
+    BPP->>CPO: 17. POST /commands/STOP
+    CPO-->>BPP: session stopped
+    CPO->>BPP: PUT /cdrs (billing)
+    BPP-->>BAP: on_cancel
 
 ### 4.3 Component Interaction Matrix
 
@@ -536,771 +505,53 @@ Key validation scenarios for EV charging marketplace implementation:
 **Input:** Beckn Protocol specification, consumer requirements
 **Output:** Consumer application with search and booking capabilities
 
-**Technical Stack:**
-```javascript
-// Frontend: React Native / Flutter / React
-// Backend: Node.js / Python / Java
-// Database: PostgreSQL / MongoDB
-// Cache: Redis
-// Message Queue: RabbitMQ / Apache Kafka
-```
+**Core Components:**
 
-**Core Components Implementation:**
-
-**Search Service:**
-```javascript
-class BAPSearchService {
-  constructor(becknClient, configService) {
-    this.becknClient = becknClient;
-    this.config = configService;
-  }
-
-  async searchChargingStations(location, filters = {}) {
-    const searchPayload = {
-      context: {
-        domain: "ev-charging:beckn",
-        action: "search",
-        location: {
-          country: { name: "India", code: "IND" },
-          city: { code: location.cityCode }
-        },
-        version: "1.1.0",
-        bap_id: this.config.bapId,
-        bap_uri: this.config.bapUri,
-        transaction_id: generateUUID(),
-        message_id: generateUUID(),
-        timestamp: new Date().toISOString()
-      },
-      message: {
-        intent: {
-          fulfillment: {
-            type: "CHARGING",
-            stops: [{
-              location: {
-                gps: `${location.lat},${location.lng}`,
-                address: { full: location.address }
-              }
-            }]
-          },
-          ...this.buildFilters(filters)
-        }
-      }
-    };
-
-    try {
-      const response = await this.becknClient.search(searchPayload);
-      return this.processSearchResponse(response);
-    } catch (error) {
-      throw new BAPSearchError('Search failed', error);
-    }
-  }
-
-  buildFilters(filters) {
-    const intentFilters = {};
-    
-    if (filters.connectorType) {
-      intentFilters.item = {
-        tags: [{
-          descriptor: { code: "connector-type" },
-          value: filters.connectorType
-        }]
-      };
-    }
-
-    if (filters.powerRating) {
-      intentFilters.item = {
-        ...intentFilters.item,
-        tags: [
-          ...(intentFilters.item?.tags || []),
-          {
-            descriptor: { code: "power-rating" },
-            value: filters.powerRating
-          }
-        ]
-      };
-    }
-
-    return intentFilters;
-  }
-
-  processSearchResponse(response) {
-    const providers = response.message?.catalog?.providers || [];
-    return providers.map(provider => ({
-      providerId: provider.id,
-      providerName: provider.descriptor?.name,
-      locations: this.processLocations(provider.locations),
-      chargingStations: this.processItems(provider.items)
-    }));
-  }
-
-  processLocations(locations = []) {
-    return locations.map(location => ({
-      id: location.id,
-      name: location.descriptor?.name,
-      address: location.address,
-      gps: location.gps,
-      distance: this.calculateDistance(location.gps)
-    }));
-  }
-
-  processItems(items = []) {
-    return items.map(item => ({
-      id: item.id,
-      name: item.descriptor?.name,
-      price: item.price,
-      specifications: this.extractSpecifications(item.tags),
-      availability: this.extractAvailability(item.tags)
-    }));
-  }
-}
-```
-
-**Booking Service:**
-```javascript
-class BAPBookingService {
-  constructor(becknClient, userService, paymentService) {
-    this.becknClient = becknClient;
-    this.userService = userService;
-    this.paymentService = paymentService;
-  }
-
-  async initiateBooking(userId, chargingStationId, bookingDetails) {
-    const user = await this.userService.getUser(userId);
-    
-    const initPayload = {
-      context: this.buildContext("init"),
-      message: {
-        order: {
-          provider: { id: bookingDetails.providerId },
-          items: [{
-            id: chargingStationId,
-            quantity: { count: 1 }
-          }],
-          billing: this.buildBillingInfo(user),
-          fulfillment: this.buildFulfillmentInfo(bookingDetails)
-        }
-      }
-    };
-
-    const initResponse = await this.becknClient.init(initPayload);
-    
-    if (initResponse.error) {
-      throw new BookingError('Booking initialization failed', initResponse.error);
-    }
-
-    return this.processInitResponse(initResponse);
-  }
-
-  async confirmBooking(bookingId, paymentInfo) {
-    const booking = await this.getBooking(bookingId);
-    
-    const confirmPayload = {
-      context: this.buildContext("confirm"),
-      message: {
-        order: {
-          ...booking.order,
-          payment: {
-            type: paymentInfo.type,
-            params: {
-              amount: booking.totalCost,
-              currency: "INR",
-              transaction_id: paymentInfo.transactionId
-            }
-          }
-        }
-      }
-    };
-
-    const confirmResponse = await this.becknClient.confirm(confirmPayload);
-    
-    if (confirmResponse.error) {
-      throw new BookingError('Booking confirmation failed', confirmResponse.error);
-    }
-
-    await this.updateBookingStatus(bookingId, 'CONFIRMED');
-    return this.processConfirmResponse(confirmResponse);
-  }
-}
-```
+**Consumer Application (BAP) Components:**
+- **Search Interface**: Location-based charging station discovery with filtering capabilities
+- **Selection Interface**: Detailed station information and booking decision support
+- **Booking Management**: Session reservation and payment processing
+- **Session Tracking**: Real-time charging session monitoring and control
+- **User Profile**: Vehicle specifications and preferences management
 
 #### 5.3.2 Step 2: BPP Implementation (eMSP)
 
-**Technical Architecture:**
-```javascript
-// Microservices Architecture
-// - API Gateway (Kong/Istio)
-// - Service Mesh (Envoy)
-// - Container Orchestration (Kubernetes)
-// - Monitoring (Prometheus/Grafana)
-```
-
-**Core BPP Service:**
-```javascript
-class BPPService {
-  constructor(ocpiClient, dataMapper, cacheService) {
-    this.ocpiClient = ocpiClient;
-    this.dataMapper = dataMapper;
-    this.cache = cacheService;
-  }
-
-  async handleSearch(searchRequest) {
-    const { intent } = searchRequest.message;
-    const location = intent.fulfillment?.stops?.[0]?.location;
-    
-    try {
-      // Parallel OCPI calls to multiple CPOs
-      const [locationsData, tariffsData] = await Promise.all([
-        this.aggregateLocations(location),
-        this.aggregateTariffs(location)
-      ]);
-
-      // Map OCPI data to Beckn format
-      const catalog = await this.dataMapper.mapToCatalog(
-        locationsData, 
-        tariffsData, 
-        intent
-      );
-
-      return {
-        context: this.buildResponseContext(searchRequest.context, "on_search"),
-        message: { catalog }
-      };
-    } catch (error) {
-      return this.buildErrorResponse(searchRequest.context, error);
-    }
-  }
-
-  async aggregateLocations(location) {
-    const cacheKey = `locations:${location.gps}`;
-    let cachedData = await this.cache.get(cacheKey);
-    
-    if (cachedData) {
-      return JSON.parse(cachedData);
-    }
-
-    const cpoPromises = this.ocpiClient.getCPOs().map(async (cpo) => {
-      try {
-        const response = await this.ocpiClient.getLocations(cpo, {
-          latitude: location.gps.split(',')[0],
-          longitude: location.gps.split(',')[1],
-          radius: 10000 // 10km radius
-        });
-        return { cpo: cpo.id, data: response.data };
-      } catch (error) {
-        console.error(`Failed to get locations from CPO ${cpo.id}:`, error);
-        return { cpo: cpo.id, data: [], error: error.message };
-      }
-    });
-
-    const results = await Promise.allSettled(cpoPromises);
-    const locationsData = results
-      .filter(result => result.status === 'fulfilled')
-      .map(result => result.value)
-      .filter(data => data.data.length > 0);
-
-    // Cache for 5 minutes
-    await this.cache.setex(cacheKey, 300, JSON.stringify(locationsData));
-    
-    return locationsData;
-  }
-
-  async aggregateTariffs(location) {
-    const cacheKey = `tariffs:${location.gps}`;
-    let cachedData = await this.cache.get(cacheKey);
-    
-    if (cachedData) {
-      return JSON.parse(cachedData);
-    }
-
-    const cpoPromises = this.ocpiClient.getCPOs().map(async (cpo) => {
-      try {
-        const response = await this.ocpiClient.getTariffs(cpo);
-        return { cpo: cpo.id, data: response.data };
-      } catch (error) {
-        console.error(`Failed to get tariffs from CPO ${cpo.id}:`, error);
-        return { cpo: cpo.id, data: [], error: error.message };
-      }
-    });
-
-    const results = await Promise.allSettled(cpoPromises);
-    const tariffsData = results
-      .filter(result => result.status === 'fulfilled')
-      .map(result => result.value);
-
-    // Cache for 10 minutes
-    await this.cache.setex(cacheKey, 600, JSON.stringify(tariffsData));
-    
-    return tariffsData;
-  }
-}
-```
-
-**Data Mapping Engine:**
-```javascript
-class OCPIToBecknMapper {
-  constructor(configService) {
-    this.config = configService;
-  }
-
-  async mapToCatalog(locationsData, tariffsData, intent) {
-    const providers = [];
-    
-    for (const locationGroup of locationsData) {
-      const cpoId = locationGroup.cpo;
-      const locations = locationGroup.data;
-      const cpoTariffs = tariffsData.find(t => t.cpo === cpoId)?.data || [];
-      
-      const provider = await this.mapCPOToProvider(cpoId, locations, cpoTariffs, intent);
-      if (provider.items.length > 0) {
-        providers.push(provider);
-      }
-    }
-
-    return { providers };
-  }
-
-  async mapCPOToProvider(cpoId, locations, tariffs, intent) {
-    const cpoInfo = await this.config.getCPOInfo(cpoId);
-    
-    const mappedLocations = locations.map(loc => ({
-      id: loc.id,
-      gps: `${loc.coordinates.latitude},${loc.coordinates.longitude}`,
-      descriptor: {
-        name: loc.name || loc.address
-      },
-      address: this.buildAddress(loc)
-    }));
-
-    const items = [];
-    const fulfillments = [];
-
-    for (const location of locations) {
-      for (const evse of location.evses || []) {
-        if (this.matchesIntent(evse, intent)) {
-          const item = await this.mapEVSEToItem(location, evse, tariffs);
-          const fulfillment = this.mapEVSEToFulfillment(location, evse);
-          
-          items.push(item);
-          fulfillments.push(fulfillment);
-        }
-      }
-    }
-
-    return {
-      id: cpoId,
-      descriptor: {
-        name: cpoInfo.name,
-        short_desc: cpoInfo.description,
-        images: cpoInfo.images
-      },
-      locations: mappedLocations,
-      fulfillments,
-      items
-    };
-  }
-
-  async mapEVSEToItem(location, evse, tariffs) {
-    const connector = evse.connectors?.[0]; // Primary connector
-    if (!connector) return null;
-
-    const relevantTariffs = tariffs.filter(tariff => 
-      connector.tariff_ids?.includes(tariff.id)
-    );
-
-    const pricing = this.calculatePricing(relevantTariffs);
-
-    return {
-      id: evse.uid,
-      descriptor: {
-        name: `${location.name} - ${evse.physical_reference || evse.uid}`,
-        code: "energy"
-      },
-      price: {
-        value: pricing.energyRate.toString(),
-        currency: "INR/kWH"
-      },
-      location_ids: [location.id],
-      fulfillment_ids: [evse.uid],
-      tags: this.buildConnectorTags(connector, evse, pricing)
-    };
-  }
-
-  buildConnectorTags(connector, evse, pricing) {
-    return [{
-      descriptor: {
-        name: "Charging Specifications",
-        code: "connector-specifications"
-      },
-      list: [
-        {
-          descriptor: { name: "Connector ID", code: "connector-id" },
-          value: connector.id
-        },
-        {
-          descriptor: { name: "Connector Type", code: "connector-type" },
-          value: this.mapConnectorType(connector.standard)
-        },
-        {
-          descriptor: { name: "Power Type", code: "power-type" },
-          value: connector.power_type
-        },
-        {
-          descriptor: { name: "Power Rating", code: "power-rating" },
-          value: `${Math.round(connector.max_electric_power / 1000)}kW`
-        },
-        {
-          descriptor: { name: "Status", code: "status" },
-          value: this.mapStatus(evse.status)
-        },
-        {
-          descriptor: { name: "Energy Rate", code: "energy-rate" },
-          value: `${pricing.energyRate} INR/kWh`
-        },
-        {
-          descriptor: { name: "Time Rate", code: "time-rate" },
-          value: `${pricing.timeRate} INR/hour`
-        }
-      ]
-    }];
-  }
-
-  calculatePricing(tariffs) {
-    if (tariffs.length === 0) {
-      return { energyRate: 0, timeRate: 0 };
-    }
-
-    // Simple pricing calculation - can be enhanced
-    const tariff = tariffs[0];
-    let energyRate = 0;
-    let timeRate = 0;
-
-    for (const element of tariff.elements || []) {
-      for (const priceComponent of element.price_components || []) {
-        if (priceComponent.type === 'ENERGY') {
-          energyRate = priceComponent.price;
-        } else if (priceComponent.type === 'TIME') {
-          timeRate = priceComponent.price;
-        }
-      }
-    }
-
-    return { energyRate, timeRate };
-  }
-
-  mapConnectorType(ocpiType) {
-    const mapping = {
-      'IEC_62196_T2': 'Type 2',
-      'IEC_62196_T1': 'Type 1',
-      'CHADEMO': 'CHAdeMO',
-      'IEC_62196_T2_COMBO': 'CCS2',
-      'IEC_62196_T1_COMBO': 'CCS1'
-    };
-    return mapping[ocpiType] || ocpiType;
-  }
-
-  mapStatus(ocpiStatus) {
-    const mapping = {
-      'AVAILABLE': 'Available',
-      'CHARGING': 'In Use',
-      'BLOCKED': 'Blocked',
-      'OUTOFORDER': 'Out of Order',
-      'RESERVED': 'Reserved'
-    };
-    return mapping[ocpiStatus] || 'Unknown';
-  }
-}
-```
+**e-Mobility Service Provider (BPP) Components:**
+- **Beckn Protocol Handler**: Processes BAP requests and generates appropriate responses
+- **OCPI Client Integration**: Communicates with multiple CPO networks for real-time data
+- **Data Aggregation Engine**: Combines location and tariff data from multiple sources
+- **Session Management**: Coordinates booking, authorization, and session lifecycle
+- **Settlement Processing**: Handles billing calculation and multi-party payments
 
 #### 5.3.3 Step 3: Advanced OCPI Integration
 
-**OCPI Client Implementation:**
-```javascript
-class OCPIClient {
-  constructor(config) {
-    this.config = config;
-    this.cpos = new Map();
-    this.tokens = new Map();
-    this.httpClient = new HTTPClient({
-      timeout: 30000,
-      retries: 3
-    });
-  }
+**OCPI Integration Components:**
+- **CPO Registration**: Automated handshake and credential exchange with multiple CPO networks
+- **Real-time Data Synchronization**: Continuous location and tariff updates via push/pull mechanisms
+- **Token Management**: Driver authentication and authorization across CPO networks
+- **Command Coordination**: Session management commands (reserve, start, stop) via OCPI
+- **Error Resilience**: Circuit breaker patterns and fallback strategies for CPO failures
 
-  async initialize() {
-    // Load CPO configurations
-    for (const cpoConfig of this.config.cpos) {
-      await this.registerCPO(cpoConfig);
-    }
-    
-    // Start periodic sync
-    this.startPeriodicSync();
-  }
+## 6. Implementation Examples
 
-  async registerCPO(cpoConfig) {
-    try {
-      // OCPI Handshake
-      const credentialsResponse = await this.performHandshake(cpoConfig);
-      
-      const cpo = {
-        id: cpoConfig.id,
-        name: cpoConfig.name,
-        baseUrl: cpoConfig.baseUrl,
-        token: credentialsResponse.token,
-        endpoints: credentialsResponse.endpoints,
-        lastSync: null,
-        status: 'ACTIVE'
-      };
+This section provides comprehensive examples of all Beckn Protocol messages used in EV charging implementations, sourced from the UEI Implementation Guide. These examples demonstrate the complete flow from discovery to fulfillment with real-world message structures.
 
-      this.cpos.set(cpoConfig.id, cpo);
-      console.log(`CPO ${cpoConfig.id} registered successfully`);
-    } catch (error) {
-      console.error(`Failed to register CPO ${cpoConfig.id}:`, error);
-    }
-  }
+### 6.1 Discovery Examples
 
-  async performHandshake(cpoConfig) {
-    // Step 1: POST credentials
-    const credentialsPayload = {
-      token: generateToken(),
-      url: this.config.baseUrl,
-      business_details: this.config.businessDetails,
-      party_id: this.config.partyId,
-      country_code: this.config.countryCode
-    };
+#### 6.1.1 Search Request
 
-    const response = await this.httpClient.post(
-      `${cpoConfig.baseUrl}/ocpi/2.2/credentials`,
-      credentialsPayload,
-      {
-        headers: {
-          'Authorization': `Token ${cpoConfig.initialToken}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
+**Description:** Consumer searches for EV charging stations with specific criteria including location, connector type, and category filters.
 
-    if (response.status_code !== 1000) {
-      throw new Error(`Handshake failed: ${response.status_message}`);
-    }
-
-    return response.data;
-  }
-
-  async getLocations(cpo, filters = {}) {
-    const endpoint = cpo.endpoints.find(ep => ep.identifier === 'locations');
-    if (!endpoint) {
-      throw new Error(`Locations endpoint not found for CPO ${cpo.id}`);
-    }
-
-    const queryParams = new URLSearchParams();
-    if (filters.dateFrom) queryParams.append('date_from', filters.dateFrom);
-    if (filters.dateTo) queryParams.append('date_to', filters.dateTo);
-    if (filters.offset) queryParams.append('offset', filters.offset.toString());
-    if (filters.limit) queryParams.append('limit', filters.limit.toString());
-
-    const url = `${endpoint.url}?${queryParams.toString()}`;
-    
-    try {
-      const response = await this.httpClient.get(url, {
-        headers: {
-          'Authorization': `Token ${cpo.token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.status_code !== 1000) {
-        throw new Error(`API call failed: ${response.status_message}`);
-      }
-
-      return response;
-    } catch (error) {
-      // Implement retry logic
-      if (error.response?.status === 401) {
-        await this.refreshToken(cpo);
-        return this.getLocations(cpo, filters);
-      }
-      throw error;
-    }
-  }
-
-  async getTariffs(cpo, filters = {}) {
-    const endpoint = cpo.endpoints.find(ep => ep.identifier === 'tariffs');
-    if (!endpoint) {
-      throw new Error(`Tariffs endpoint not found for CPO ${cpo.id}`);
-    }
-
-    const queryParams = new URLSearchParams();
-    if (filters.dateFrom) queryParams.append('date_from', filters.dateFrom);
-    if (filters.dateTo) queryParams.append('date_to', filters.dateTo);
-    if (filters.offset) queryParams.append('offset', filters.offset.toString());
-    if (filters.limit) queryParams.append('limit', filters.limit.toString());
-
-    const url = `${endpoint.url}?${queryParams.toString()}`;
-    
-    const response = await this.httpClient.get(url, {
-      headers: {
-        'Authorization': `Token ${cpo.token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (response.status_code !== 1000) {
-      throw new Error(`API call failed: ${response.status_message}`);
-    }
-
-    return response;
-  }
-
-  async authorizeToken(cpo, tokenUid, locationReferences = null) {
-    const endpoint = cpo.endpoints.find(ep => ep.identifier === 'tokens');
-    if (!endpoint) {
-      throw new Error(`Tokens endpoint not found for CPO ${cpo.id}`);
-    }
-
-    const url = `${endpoint.url}/${this.config.countryCode}/${this.config.partyId}/${tokenUid}/authorize`;
-    
-    const response = await this.httpClient.post(url, locationReferences, {
-      headers: {
-        'Authorization': `Token ${cpo.token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (response.status_code !== 1000) {
-      throw new Error(`Token authorization failed: ${response.status_message}`);
-    }
-
-    return response.data;
-  }
-
-  async sendCommand(cpo, commandType, commandData) {
-    const endpoint = cpo.endpoints.find(ep => ep.identifier === 'commands');
-    if (!endpoint) {
-      throw new Error(`Commands endpoint not found for CPO ${cpo.id}`);
-    }
-
-    const url = `${endpoint.url}/${commandType}`;
-    
-    const response = await this.httpClient.post(url, commandData, {
-      headers: {
-        'Authorization': `Token ${cpo.token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (response.status_code !== 1000) {
-      throw new Error(`Command failed: ${response.status_message}`);
-    }
-
-    return response.data;
-  }
-
-  startPeriodicSync() {
-    // Sync locations every 5 minutes
-    setInterval(async () => {
-      for (const [cpoId, cpo] of this.cpos) {
-        try {
-          await this.syncCPOData(cpo);
-        } catch (error) {
-          console.error(`Sync failed for CPO ${cpoId}:`, error);
-        }
-      }
-    }, 5 * 60 * 1000);
-  }
-
-  async syncCPOData(cpo) {
-    const lastSync = cpo.lastSync || new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const locations = await this.getLocations(cpo, {
-      dateFrom: lastSync.toISOString()
-    });
-
-    // Process and cache updated locations
-    await this.processLocationUpdates(cpo.id, locations.data);
-    
-    cpo.lastSync = new Date();
-  }
-}
-```
-
-**Error Handling and Resilience:**
-```javascript
-class ResilientOCPIClient extends OCPIClient {
-  constructor(config) {
-    super(config);
-    this.circuitBreaker = new CircuitBreaker();
-    this.rateLimiter = new RateLimiter();
-  }
-
-  async getLocations(cpo, filters = {}) {
-    return this.circuitBreaker.execute(cpo.id, async () => {
-      await this.rateLimiter.checkLimit(cpo.id);
-      return super.getLocations(cpo, filters);
-    });
-  }
-
-  async handleCPOFailure(cpoId, error) {
-    const cpo = this.cpos.get(cpoId);
-    if (!cpo) return;
-
-    cpo.failureCount = (cpo.failureCount || 0) + 1;
-    
-    if (cpo.failureCount >= this.config.maxFailures) {
-      cpo.status = 'DEGRADED';
-      // Implement fallback strategy
-      await this.notifyOperations(`CPO ${cpoId} marked as degraded`);
-    }
-
-    // Exponential backoff
-    const backoffDelay = Math.min(1000 * Math.pow(2, cpo.failureCount), 60000);
-    setTimeout(() => {
-      this.recoverCPO(cpoId);
-    }, backoffDelay);
-  }
-}
-```
-
-## 6. Message Flows
-
-### 6.1 Discovery Flow
-
-```
-BAP ──search──► BPP ──OCPI locations──► CPO
-BAP ──search──► BPP ──OCPI tariffs──► CPO
-BAP ◄─on_search── BPP ◄─OCPI response── CPO
-```
-
-### 6.2 Selection Flow
-
-```
-BAP ──select──► BPP ──OCPI locations (narrow)──► CPO
-BAP ──select──► BPP ──OCPI tariffs (narrow)──► CPO
-BAP ◄─on_select── BPP ◄─OCPI response── CPO
-```
-
-### 6.3 Order Flow
-
-```
-BAP ──init──► BPP ──OCPI commands──► CPO
-BAP ◄─on_init── BPP ◄─OCPI response── CPO
-```
-
-### 6.4 Fulfillment Flow
-
-```
-BAP ──confirm──► BPP ──OCPI session──► CPO
-BAP ◄─on_confirm── BPP ◄─OCPI response── CPO
-```
-
-## 7. API Specifications
-
-### 7.1 Beckn Protocol Messages
-
-#### 7.1.1 Search Message
+**Search Criteria:**
+- Location search around GPS coordinates with radius
+- Connector type filtering (e.g., CCS2)
+- Category-based search (e.g., green-tariff)
+- Free text search capability
 
 ```json
 {
   "context": {
-    "domain": "ev-charging:beckn",
+    "ttl": "PT10M",
     "action": "search",
     "location": {
       "country": {
@@ -1311,27 +562,49 @@ BAP ◄─on_confirm── BPP ◄─OCPI response── CPO
         "code": "std:080"
       }
     },
+    "timestamp": "2024-08-05T09:21:12.618Z",
+    "message_id": "e138f204-ec0b-415d-9c9a-7b5bafe10bfe",
+    "transaction_id": "2ad735b9-e190-457f-98e5-9702fd895996",
+    "domain": "ev-charging:uei",
     "version": "1.1.0",
-    "bap_id": "example-bap.com",
-    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
-    "bpp_id": "example-bpp.com",
-    "bpp_uri": "https://example-bpp.com",
-    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
-    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
-    "timestamp": "2025-08-29T10:00:00Z"
+    "bap_id": "example-bap-id",
+    "bap_uri": "https://example-bap-url.com"
   },
   "message": {
     "intent": {
+      "descriptor": {
+        "name": "EV charger"
+      },
+      "category": {
+        "descriptor": {
+          "code": "green-tariff"
+        }
+      },
       "fulfillment": {
         "type": "CHARGING",
         "stops": [
           {
             "location": {
-              "gps": "28.7041,77.1025",
-              "address": {
-                "full": "Delhi, India"
+              "circle": {
+                "gps": "12.423423,77.325647",
+                "radius": {
+                  "value": "5",
+                  "unit": "km"
+                }
               }
             }
+          }
+        ],
+        "tags": [
+          {
+            "list": [
+              {
+                "descriptor": {
+                  "code": "connector-type"
+                },
+                "value": "CCS2"
+              }
+            ]
           }
         ]
       }
@@ -1340,12 +613,20 @@ BAP ◄─on_confirm── BPP ◄─OCPI response── CPO
 }
 ```
 
-#### 7.1.2 On Search Response
+#### 6.1.2 On Search Response
+
+**Description:** BPP returns comprehensive catalog of available charging stations from multiple CPOs with detailed specifications, pricing, and location information.
+
+**Response Structure:**
+- Multiple providers (CPOs) with their charging networks
+- Detailed location information with GPS coordinates
+- Individual charging station specifications and pricing
+- Connector types, power ratings, and availability status
 
 ```json
 {
   "context": {
-    "domain": "ev-charging:beckn",
+    "domain": "ev-charging:uei",
     "action": "on_search",
     "location": {
       "country": {
@@ -1363,7 +644,7 @@ BAP ◄─on_confirm── BPP ◄─OCPI response── CPO
     "bpp_uri": "https://example-bpp.com",
     "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
     "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
-    "timestamp": "2025-08-29T10:00:00Z"
+    "timestamp": "2023-07-16T04:41:16Z"
   },
   "message": {
     "catalog": {
@@ -1553,7 +834,231 @@ BAP ◄─on_confirm── BPP ◄─OCPI response── CPO
 }
 ```
 
-### 7.2 OCPI Integration Messages
+### 6.2 Selection Examples
+
+#### 6.2.1 Select Request
+
+**Description:** Consumer selects specific charging station from search results and requests detailed quote with timing information.
+
+**Selection Criteria:**
+- Specific provider and item selection
+- Charging session timing (start and finish times)
+- Service type specification
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "select",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "order": {
+      "provider": {
+        "id": "cpo1.com"
+      },
+      "items": [
+        {
+          "id": "pe-charging-01"
+        }
+      ],
+      "fulfillments": [
+        {
+          "id": "fulfillment-001",
+          "stops": [
+            {
+              "type": "start",
+              "time": {
+                "timestamp": "2023-07-16T10:00:00+05:30"
+              }
+            },
+            {
+              "type": "finish",
+              "time": {
+                "timestamp": "2023-07-16T10:30:00+05:30"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```
+
+#### 6.2.2 On Select Response
+
+**Description:** BPP returns detailed quote with pricing, terms, and service specifications for the selected charging station.
+
+**Quote Information:**
+- Complete item details with pricing
+- Service provider information
+- Detailed connector specifications
+- Terms and conditions
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "on_select",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "order": {
+      "provider": {
+        "id": "cpo1.com",
+        "descriptor": {
+          "name": "CPO1 EV charging Company",
+          "short_desc": "CPO1 provides EV charging facility across India",
+          "images": [
+            {
+              "url": "https://cpo1.com/images/logo.png"
+            }
+          ]
+        }
+      },
+      "items": [
+        {
+          "id": "pe-charging-01",
+          "descriptor": {
+            "name": "EV Charger #1 (AC Fast Charger)",
+            "code": "energy"
+          },
+          "price": {
+            "value": "18",
+            "currency": "INR/kWH"
+          },
+          "tags": [
+            {
+              "descriptor": {
+                "code": "connector-specifications",
+                "name": "Connector Specifications"
+              },
+              "list": [
+                {
+                  "descriptor": {
+                    "name": "connector Id",
+                    "code": "connector-id"
+                  },
+                  "value": "con1"
+                },
+                {
+                  "descriptor": {
+                    "name": "Power Type",
+                    "code": "power-type"
+                  },
+                  "value": "AC_3_PHASE"
+                },
+                {
+                  "descriptor": {
+                    "name": "Connector Type",
+                    "code": "connector-type"
+                  },
+                  "value": "CCS2"
+                },
+                {
+                  "descriptor": {
+                    "name": "Charging Speed",
+                    "code": "charging-speed"
+                  },
+                  "value": "FAST"
+                },
+                {
+                  "descriptor": {
+                    "name": "Power Rating",
+                    "code": "power-rating"
+                  },
+                  "value": "30kW"
+                },
+                {
+                  "descriptor": {
+                    "name": "Status",
+                    "code": "status"
+                  },
+                  "value": "Available"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "quote": {
+        "price": {
+          "currency": "INR",
+          "value": "540"
+        },
+        "breakup": [
+          {
+            "title": "Charging Cost",
+            "price": {
+              "currency": "INR",
+              "value": "540"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+### 6.3 Order Management Examples
+
+#### 6.3.1 Init Request
+
+**Description:** Consumer initiates order process with charging session requirements, billing information, and service preferences.
+
+**Order Information:**
+- Provider and item selection
+- Customer billing details
+- Fulfillment requirements
+- Service timing
+
+#### 6.3.2 Confirm Request  
+
+**Description:** Consumer confirms the order with payment information to complete the booking process.
+
+**Confirmation Details:**
+- Final order acceptance
+- Payment method selection
+- Service agreement confirmation
+- Booking finalization
+
+### 6.4 Session Management
+
+These examples demonstrate the complete lifecycle of an EV charging session from initial search through final completion, showing how Beckn Protocol messages coordinate with underlying OCPI infrastructure to provide seamless charging experiences across multiple CPO networks.
 
 #### 7.2.1 OCPI Locations Request
 
@@ -1588,9 +1093,9 @@ Content-Type: application/json
 }
 ```
 
-## 8. Best Practices
+## 7. Best Practices
 
-### 8.1 Design Principles
+### 7.1 Design Principles
 
 1. **Real-time First**: EV charging operates in a dynamic environment where availability, pricing, and demand change rapidly - all system components must prioritize real-time data accuracy over caching convenience
 2. **Cross-Network Transparency**: Consumers should experience seamless charging regardless of underlying CPO relationships - abstract network complexity while maintaining service quality
@@ -1598,9 +1103,9 @@ Content-Type: application/json
 4. **Privacy by Design**: EV charging involves location tracking, payment data, and mobility patterns - implement privacy protection as a core architectural principle
 5. **Scalable Interoperability**: Design integration patterns that can scale from single CPO connections to hundreds of networks without architectural redesign
 
-### 8.2 Implementation Patterns
+### 7.2 Implementation Patterns
 
-#### 8.2.1 Pattern 1: Real-time Availability Synchronization
+#### 7.2.1 Pattern 1: Real-time Availability Synchronization
 
 Real-time availability synchronization is like a "live traffic system" for EV charging infrastructure. Just as navigation apps continuously update traffic conditions, charging marketplace systems must continuously synchronize availability status across multiple CPO networks.
 
@@ -1614,7 +1119,7 @@ Real-time availability synchronization is like a "live traffic system" for EV ch
 - Higher frequency during peak times, cache invalidation strategies
 - Circuit breaker patterns for CPO system failures
 
-#### 8.2.2 Pattern 2: Multi-Network Error Resilience
+#### 7.2.2 Pattern 2: Multi-Network Error Resilience
 
 Multi-network error resilience ensures alternatives are available when CPO networks experience outages.
 
@@ -1622,27 +1127,27 @@ Multi-network error resilience ensures alternatives are available when CPO netwo
 **Graceful Degradation:** Provide reduced-functionality results rather than complete failure
 **Alternative Recommendation:** Suggest next-best options when preferred choices are unavailable
 
-#### 8.2.3 Pattern 3: Dynamic Pricing Coordination
+#### 7.2.3 Pattern 3: Dynamic Pricing Coordination
 
 **Real-time Price Aggregation:** Continuously collect and normalize pricing across CPO networks
 **Transparent Cost Breakdown:** Provide detailed cost information for informed decisions
 **Price Optimization Recommendations:** Analyze patterns to recommend optimal charging strategies
 
-### 8.3 Anti-Patterns
+### 7.3 Anti-Patterns
 
-#### 8.3.1 Anti-Pattern 1: Stale Availability Display
+#### 7.3.1 Anti-Pattern 1: Stale Availability Display
 **Problem:** Showing outdated availability information
 **Solution:** Real-time synchronization with 30-second maximum latency, confidence indicators
 
-#### 8.3.2 Anti-Pattern 2: Synchronous CPO Integration Blocking
+#### 7.3.2 Anti-Pattern 2: Synchronous CPO Integration Blocking
 **Problem:** Sequential blocking calls causing timeouts
 **Solution:** Parallel async queries with circuit breakers and partial results
 
-#### 8.3.3 Anti-Pattern 3: Payment Method Fragmentation
+#### 7.3.3 Anti-Pattern 3: Payment Method Fragmentation
 **Problem:** Separate payment relationships per CPO
 **Solution:** Unified payment processing with transparent backend settlement
 
-### 8.4 Performance Considerations
+### 7.4 Performance Considerations
 
 - **Search Response Time**: <2 seconds for multi-network results
 - **Availability Update Latency**: Maximum 30 seconds from CPO to consumer
@@ -1650,16 +1155,31 @@ Multi-network error resilience ensures alternatives are available when CPO netwo
 - **System Reliability**: 99.9% uptime with graceful degradation
 - **Scalability**: Support 100,000+ concurrent users per region
 
-### 8.5 Security and Compliance
+### 7.5 Security and Compliance
 
 - **Multi-layer Authentication**: Digital signatures, OAuth 2.0, PKI
 - **Data Protection**: End-to-end encryption, GDPR compliance
 - **Payment Security**: PCI DSS compliance, tokenization
 - **API Security**: Rate limiting, input validation, HTTPS enforcement
 
-## 9. Examples
+## 8. References
 
-### 9.1 Complete Search Flow
+### 8.1 Beckn Protocol
+
+- [Beckn Protocol Specification](https://github.com/beckn/protocol-specifications)
+- [Beckn Implementation Guide](https://github.com/beckn/missions/blob/main/Generic-Implementation-Guide/generic_implementation_guide.md)
+
+### 8.2 OCPI Protocol
+
+- [OCPI 2.2.1 Specification](https://github.com/ocpi/ocpi)
+- [OCPI Implementation Guide](https://evroaming.org/ocpi/)
+
+### 8.3 EV Charging Standards
+
+- [IEC 61851](https://webstore.iec.ch/publication/5968) - EV conductive charging system
+- [ISO 15118](https://www.iso.org/standard/55366.html) - EV communication interface
+
+## 9. Appendix
 
 **BAP Search Request:**
 ```json
@@ -1794,28 +1314,11 @@ Multi-network error resilience ensures alternatives are available when CPO netwo
 5. Handle CPO response
 6. Return confirmation
 
-## 10. References
+### 9.1 Message Flow Diagrams
 
-### 10.1 Beckn Protocol
+#### 9.1.1 Complete EV Charging Flow
 
-- [Beckn Protocol Specification](https://github.com/beckn/protocol-specifications)
-- [Beckn Implementation Guide](https://github.com/beckn/missions/blob/main/Generic-Implementation-Guide/generic_implementation_guide.md)
 
-### 10.2 OCPI Protocol
-
-- [OCPI 2.2.1 Specification](https://github.com/ocpi/ocpi)
-- [OCPI Implementation Guide](https://evroaming.org/ocpi/)
-
-### 10.3 EV Charging Standards
-
-- [IEC 61851](https://webstore.iec.ch/publication/5968) - EV conductive charging system
-- [ISO 15118](https://www.iso.org/standard/55366.html) - EV communication interface
-
-## 11. Appendix
-
-### 11.1 Message Flow Diagrams
-
-#### 11.1.1 Complete EV Charging Flow
 
 ```
 Consumer App (BAP)    eMSP (BPP)    CPO (OCPI)
@@ -1848,13 +1351,13 @@ Consumer App (BAP)    eMSP (BPP)    CPO (OCPI)
       │                    │◄── PUT CDR ──────────│
 ```
 
-### 11.2 Change Log
+### 9.2 Change Log
 
 | Version | Date | Description |
 |---------|------|-------------|
 | 0.1.0 | 2025-08-29 | Initial draft with comprehensive implementation guide |
 
-### 11.3 Acknowledgments
+### 9.3 Acknowledgments
 
 - Beckn Foundation for protocol specifications and community support
 - OCPI Foundation for interoperability standards and technical guidance
@@ -1862,7 +1365,7 @@ Consumer App (BAP)    eMSP (BPP)    CPO (OCPI)
 - eMSP and CPO partners for implementation feedback and real-world validation
 - Consumer application developers for user experience requirements and testing
 
-### 11.4 Glossary
+### 9.4 Glossary
 
 - **BAP (Beckn App Platform)**: Consumer-facing application that initiates EV charging transactions
 - **BPP (Beckn Provider Platform)**: Service provider platform that responds to BAP requests, typically an eMSP
@@ -1876,7 +1379,7 @@ Consumer App (BAP)    eMSP (BPP)    CPO (OCPI)
 - **Tariff**: Pricing structure for charging services including energy rates and time-based fees
 - **Token**: Digital credential used for driver authentication and session authorization
 
-### 11.5 FAQ
+### 9.5 FAQ
 
 **Q: How does this approach differ from existing EV charging apps?**
 A: Traditional apps connect to single charging networks or require separate accounts for each network. This Beckn-based approach enables unified access to multiple CPO networks through a single consumer interface with standardized pricing and booking.
@@ -1893,9 +1396,9 @@ A: The system provides real-time availability updates and automatically suggests
 **Q: How does the system handle payment across different CPO networks?**
 A: Consumer payments are processed through the eMSP marketplace platform, which handles backend settlement with individual CPOs via OCPI billing protocols, providing unified billing regardless of underlying CPO relationships.
 
-### 11.6 RFC Evolution and Maintenance
+### 9.6 RFC Evolution and Maintenance
 
-#### 11.6.1 Version Management
+#### 9.6.1 Version Management
 
 **Version Numbering:**
 - **Major versions (X.0.0)**: Breaking changes to API structure, message schemas, or fundamental architecture
@@ -1908,7 +1411,7 @@ A: Consumer payments are processed through the eMSP marketplace platform, which 
 - Implementation testing with reference platforms and pilot deployments
 - Final approval by maintainers, domain experts, and implementation partners
 
-#### 11.6.2 Community Contribution Guidelines
+#### 9.6.2 Community Contribution Guidelines
 
 **How to Contribute:**
 - Submit issues via GitHub for bugs, clarifications, or enhancement requests
@@ -1928,7 +1431,7 @@ A: Consumer payments are processed through the eMSP marketplace platform, which 
 - Community feedback integration and stakeholder input collection
 - Implementation feasibility assessment with pilot testing requirements
 
-#### 11.6.3 Maintenance Procedures
+#### 9.6.3 Maintenance Procedures
 
 **Regular Maintenance:**
 - Quarterly review of open issues and community feedback
@@ -1942,27 +1445,27 @@ A: Consumer payments are processed through the eMSP marketplace platform, which 
 - **Community Maintainers**: Documentation updates, example maintenance, issue triage
 - **Implementation Partners**: Real-world validation and feedback from production deployments
 
-### 11.7 Troubleshooting
+### 9.7 Troubleshooting
 
-#### 11.7.1 Issue 1: Multi-CPO Search Performance
+#### 9.7.1 Issue 1: Multi-CPO Search Performance
 
 **Symptoms:** Slow response times when searching across multiple CPO networks
 **Cause:** Sequential OCPI calls or slow CPO responses blocking entire search operation
 **Solution:** Implement parallel async queries with individual timeouts, circuit breakers for failing CPOs, and cached fallback data
 
-#### 11.7.2 Issue 2: Real-time Availability Synchronization
+#### 9.7.2 Issue 2: Real-time Availability Synchronization
 
 **Symptoms:** Consumers arriving at unavailable charging stations despite showing available
 **Cause:** Delayed or failed OCPI webhook delivery from CPO systems
 **Solution:** Implement hybrid push/pull synchronization with maximum 30-second polling fallback and availability confidence indicators
 
-#### 11.7.3 Issue 3: Cross-Protocol Session State Management
+#### 9.7.3 Issue 3: Cross-Protocol Session State Management
 
 **Symptoms:** Booking confirmations in Beckn not reflected in OCPI session status
 **Cause:** Async processing delays or integration failures between protocols
 **Solution:** Implement transaction correlation tracking, status reconciliation procedures, and consumer notification for state mismatches
 
-#### 11.7.4 Issue 4: Payment Settlement Complexity
+#### 9.7.4 Issue 4: Payment Settlement Complexity
 
 **Symptoms:** Billing discrepancies between consumer charges and CPO settlements
 **Cause:** Currency conversion, tax calculation differences, or rate structure misinterpretation
