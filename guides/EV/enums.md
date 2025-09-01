@@ -388,3 +388,13 @@ This document contains all enum types and their allowed values from the OCPI 2.2
 ---
 
 *This document is based on OCPI 2.2.1 specification. For the most up-to-date information, refer to the official OCPI documentation.* 
+
+
+
+
+Connector-type
+power-type
+connector-format
+charging-speed
+charger-status
+fulfillments.state.descriptor.code

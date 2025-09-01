@@ -1487,7 +1487,31 @@ This is like getting a "Washing Started" notification from your washing machine.
     }
   }
 }
-track
+```
+
+**Parameter Explanation:**
+
+**Session Status Update:**
+- `message.order.fulfillments[0].state.descriptor.code`: Current session status (changed to "ACTIVE")
+- `message.order.fulfillments[0].state.updated_at`: Timestamp when charging started
+- `message.order.fulfillments[0].state.updated_by`: System that initiated the charging session
+
+**Charging Point Information:**
+- `message.order.items[0].descriptor.name`: Human-readable name of the active charging point
+- `message.order.items[0].price.value`: Charging rate per unit (e.g., "18" for ₹18/kWh)
+- `message.order.items[0].tags`: Technical specifications and charging options
+
+**Session Details:**
+- `message.order.fulfillments[0].type`: Service type (set to "CHARGING")
+- `message.order.fulfillments[0].stops[0].time.timestamp`: Actual charging start time
+- `message.order.fulfillments[0].stops[0].location.gps`: Charging station GPS coordinates
+- `message.order.fulfillments[0].stops[0].instructions.short_desc`: Specific location details
+
+**Payment Status:**
+- `message.order.payments[0].status`: Payment status (confirmed as "PAID")
+- `message.order.payments[0].type`: Payment type (PRE-ORDER for advance payment)
+
+### track
 This is like asking "Where's my package?" on an e-commerce website. You're requesting a link to monitor your charging session in real-time - how much energy has been delivered, how much it's costing, and when it will be complete. Think of it as getting a "live dashboard" for your charging session.
 {
     "context": {
@@ -1515,7 +1539,20 @@ This is like asking "Where's my package?" on an e-commerce website. You're reque
         "order_id": "b989c9a9-f603-4d44-b38d-26fd72286b38"
     }
 }
-on_track
+```
+
+**Parameter Explanation:**
+
+**Tracking Request:**
+- `message.order_id`: Unique order identifier for the charging session to track
+- This links the tracking request to the specific booking
+
+**Context Information:**
+- `context.transaction_id`: Links this tracking request to the original booking transaction
+- `context.action`: Set to "track" to indicate tracking request
+- `context.ttl`: Time-to-live for the tracking request (e.g., "PT10M" for 10 minutes)
+
+### on_track
 This is like getting a FedEx tracking link - "Click here to see your package's journey." The charging station is giving you a special webpage where you can watch your charging session live, see the current power being delivered, and get real-time updates on your charging progress.
 {
     "context": {
@@ -1549,9 +1586,20 @@ https://track.bluechargenet-aggregator.io/session/SESSION-9876543210",
         }
     }
 }
+```
 
+**Parameter Explanation:**
 
-Asynchronous on_update (stop charging)
+**Tracking Response:**
+- `message.tracking.id`: Unique tracking identifier for the charging session
+- `message.tracking.url`: Live tracking dashboard URL for monitoring charging progress
+- `message.tracking.status`: Current tracking status (e.g., "active" for ongoing session)
+
+**Context Information:**
+- `context.transaction_id`: Links this tracking response to the original booking transaction
+- `context.action`: Set to "on_track" to indicate tracking response
+
+### Asynchronous on_update (stop charging)
 This is like getting a "Washing Complete" notification from your washing machine. The charging station is saying "Your charging session has finished! Here's the final bill and session summary."
 {
   "context": {
@@ -1781,7 +1829,30 @@ This is like getting a "Washing Complete" notification from your washing machine
      }
   }
 }
-Rating
+```
+
+**Parameter Explanation:**
+
+**Session Completion:**
+- `message.order.fulfillments[0].state.descriptor.code`: Final session status (changed to "COMPLETED")
+- `message.order.fulfillments[0].state.updated_at`: Timestamp when charging session ended
+- `message.order.fulfillments[0].state.updated_by`: System that completed the session
+
+**Session Timeline:**
+- `message.order.fulfillments[0].stops[0].time.timestamp`: Session start time
+- `message.order.fulfillments[0].stops[1].time.timestamp`: Session end time
+- `message.order.fulfillments[0].stops[1].type`: Set to "finish" indicating session completion
+
+**Final Billing:**
+- `message.order.quote.price.value`: Total final cost for the completed session
+- `message.order.quote.breakup`: Detailed cost breakdown for energy and service fees
+- `message.order.payments[0].status`: Payment status (confirmed as "PAID")
+
+**Location Information:**
+- `message.order.fulfillments[0].stops[0].location.gps`: Charging station GPS coordinates
+- `message.order.fulfillments[0].stops[0].instructions.short_desc`: Specific location details
+
+### Rating
 This is like leaving a review on Amazon or rating your Uber driver. You're giving feedback on your charging experience - how easy it was to find the station, how fast the charging was, and overall satisfaction. It helps other users and improves the service.
 {
   "context": {
@@ -1815,7 +1886,20 @@ This is like leaving a review on Amazon or rating your Uber driver. You're givin
     ]
   }
 }
-on_rating
+```
+
+**Parameter Explanation:**
+
+**Rating Information:**
+- `message.ratings[0].id`: Identifier for what is being rated (e.g., "fulfillment-001" for the charging session)
+- `message.ratings[0].rating_category`: Category of the rating (e.g., "Fulfillment" for service quality)
+- `message.ratings[0].value`: Rating value (e.g., "5" for 5-star rating, scale typically 1-5)
+
+**Context Information:**
+- `context.transaction_id`: Links this rating to the original charging session transaction
+- `context.action`: Set to "rating" to indicate rating submission
+
+### on_rating
 This is like getting a "Thank you for your review!" message from Amazon. The charging station is acknowledging your rating and might ask for more detailed feedback.
 {
   "context": {
@@ -1850,7 +1934,20 @@ This is like getting a "Thank you for your review!" message from Amazon. The cha
     }
   }
 }
-support
+```
+
+**Parameter Explanation:**
+
+**Feedback Form:**
+- `message.feedback_form.form.url`: URL to additional feedback form or survey
+- `message.feedback_form.form.mime_type`: Format of the feedback form (e.g., "application/xml")
+- `message.feedback_form.required`: Whether additional feedback is mandatory (set to "false")
+
+**Context Information:**
+- `context.transaction_id`: Links this rating response to the original charging session transaction
+- `context.action`: Set to "on_rating" to indicate rating acknowledgment
+
+### support
 This is like calling customer service when you have a problem with your hotel booking. You're asking for help with your charging session - maybe the charger isn't working, you have a billing question, or you need to report an issue. It's your way of getting assistance when something goes wrong.
 {
   "context": {
@@ -1882,7 +1979,20 @@ This is like calling customer service when you have a problem with your hotel bo
     }
   }
 }
-on_support
+```
+
+**Parameter Explanation:**
+
+**Support Request:**
+- `message.support.ref_id`: Reference ID linking to the specific order or transaction
+- `message.support.callback_phone`: Phone number for customer service callback
+- `message.support.email`: Customer's email for support communication
+
+**Context Information:**
+- `context.transaction_id`: Links this support request to the original charging session transaction
+- `context.action`: Set to "support" to indicate support request
+
+### on_support
 This is like getting a customer service response - "Here's our support phone number, email, and a link to create a support ticket." The charging station is providing you with contact information and ways to get help, similar to how a hotel would give you their front desk number and manager's contact details.
 {
   "context": {
@@ -1915,7 +2025,21 @@ This is like getting a customer service response - "Here's our support phone num
     }
   }
 }
-Integrating with your software
+```
+
+**Parameter Explanation:**
+
+**Support Response:**
+- `message.support.ref_id`: Echoed reference ID from the support request
+- `message.support.phone`: Support hotline number for immediate assistance
+- `message.support.email`: Support email address for written inquiries
+- `message.support.url`: Support ticket creation URL for issue tracking
+
+**Context Information:**
+- `context.transaction_id`: Links this support response to the original charging session transaction
+- `context.action`: Set to "on_support" to indicate support response
+
+## Integrating with your software
 This section gives a general walkthrough of how you would integrate your software with the Beckn network (say the sandbox environment). Refer to the starter kit for details on how to register with the sandbox and get credentials.
 Beckn-ONIX is an initiative to promote easy installation and maintenance of a Beckn Network. Apart from the Registry and Gateway components that are required for a network facilitator, Beckn-ONIX provides a Beckn Adapter. A reference implementation of the Beckn-ONIX specification is available at Beckn-ONIX repository. The reference implementation of the Beckn Adapter is called the Protocol Server. Based on whether we are writing the seeker platform or the provider platform, we will be installing the BAP Protocol Server or the BPP Protocol Server respectively.
 Integrating the seeker platform
