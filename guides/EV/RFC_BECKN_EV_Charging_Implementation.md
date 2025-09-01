@@ -797,16 +797,13 @@ This section provides comprehensive examples of all Beckn Protocol messages used
 }
 ```
 
-### 6.2 Selection Examples
+### 6.2 Order Management Examples
+
+This section contains examples from the UEI Implementation Guide covering the complete order management flow from selection to confirmation.
 
 #### 6.2.1 Select Request
 
 **Description:** Consumer selects specific charging station from search results and requests detailed quote with timing information.
-
-**Selection Criteria:**
-- Specific provider and item selection
-- Charging session timing (start and finish times)
-- Service type specification
 
 ```json
 {
@@ -868,12 +865,6 @@ This section provides comprehensive examples of all Beckn Protocol messages used
 #### 6.2.2 On Select Response
 
 **Description:** BPP returns detailed quote with pricing, terms, and service specifications for the selected charging station.
-
-**Quote Information:**
-- Complete item details with pricing
-- Service provider information
-- Detailed connector specifications
-- Terms and conditions
 
 ```json
 {
@@ -997,62 +988,607 @@ This section provides comprehensive examples of all Beckn Protocol messages used
 }
 ```
 
-### 6.3 Order Management Examples
+#### 6.2.3 Init Request
 
-#### 6.3.1 Init Request
+**Description:** Consumer initiates order process with billing details and charging session requirements.
 
-**Description:** Consumer initiates order process with charging session requirements, billing information, and service preferences.
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "init",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "order": {
+      "provider": {
+        "id": "cpo1.com"
+      },
+      "items": [
+        {
+          "id": "pe-charging-01"
+        }
+      ],
+      "billing": {
+        "name": "Ravi Kumar",
+        "organization": {
+          "descriptor": { "name": "GreenCharge Pvt Ltd" }
+        },
+        "address": "Apartment 123, MG Road, Bengaluru, Karnataka, 560001, India",
+        "state": { "name": "Karnataka" },
+        "city": { "name": "Bengaluru" },
+        "email": "ravi.kumar@greencharge.com",
+        "phone": "+918765432100",
+        "time": { "timestamp": "2025-07-30T12:02:00Z" },
+        "tax_id": "GSTIN29ABCDE1234F1Z5"
+      },
+      "fulfillments": [
+        {
+          "id": "1",
+          "stops": [
+            {
+              "type": "start",
+              "time": {
+                "timestamp": "2023-07-16T10:00:00+05:30"
+              }
+            },
+            {
+              "type": "finish",
+              "time": {
+                "timestamp": "2023-07-16T10:30:00+05:30"
+              }
+            }
+          ],
+          "customer": {
+            "person": {
+              "name": "Ravi Kumar"
+            },
+            "contact": {
+              "phone": "+91-9887766554"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+```
 
-**Order Information:**
-- Provider and item selection
-- Customer billing details
-- Fulfillment requirements
-- Service timing
-
-#### 6.3.2 Confirm Request  
+#### 6.2.4 Confirm Request
 
 **Description:** Consumer confirms the order with payment information to complete the booking process.
 
-**Confirmation Details:**
-- Final order acceptance
-- Payment method selection
-- Service agreement confirmation
-- Booking finalization
-
-### 6.4 Session Management
-
-These examples demonstrate the complete lifecycle of an EV charging session from initial search through final completion, showing how Beckn Protocol messages coordinate with underlying OCPI infrastructure to provide seamless charging experiences across multiple CPO networks.
-
-#### 7.2.1 OCPI Locations Request
-
-```http
-GET /ocpi/cpo/2.2/locations?offset=0&limit=100
-Authorization: Token {cpo_api_token}
-```
-
-#### 7.2.2 OCPI Tariffs Request
-
-```http
-GET /ocpi/cpo/2.2/tariffs?offset=0&limit=100
-Authorization: Token {cpo_api_token}
-```
-
-#### 7.2.3 OCPI Commands Request
-
-```http
-POST /ocpi/cpo/2.2/commands/RESERVE_NOW
-Authorization: Token {cpo_api_token}
-Content-Type: application/json
-
+```json
 {
-  "response_url": "https://emsp-provider.com/ocpi/emsp/2.2/commands/RESERVE_NOW/callback",
-  "token": {
-    "country_code": "IN",
-    "party_id": "EMSP",
-    "uid": "driver_token_123"
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "confirm",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
   },
-  "location_id": "LOC-DELHI-001",
-  "evse_uid": "evse-001"
+  "message": {
+    "order": {
+      "provider": {
+        "id": "cpo1.com"
+      },
+      "items": [
+        {
+          "id": "pe-charging-01"
+        }
+      ],
+      "billing": {
+        "name": "Ravi Kumar",
+        "organization": {
+          "descriptor": { "name": "GreenCharge Pvt Ltd" }
+        },
+        "address": "Apartment 123, MG Road, Bengaluru, Karnataka, 560001, India",
+        "state": { "name": "Karnataka" },
+        "city": { "name": "Bengaluru" },
+        "email": "ravi.kumar@greencharge.com",
+        "phone": "+918765432100",
+        "time": { "timestamp": "2025-07-30T12:02:00Z" },
+        "tax_id": "GSTIN29ABCDE1234F1Z5"
+      },
+      "fulfillments": [
+        {
+          "id": "fulfillment-001",
+          "stops": [
+            {
+              "type": "start",
+              "time": {
+                "timestamp": "2023-07-16T10:00:00+05:30"
+              }
+            },
+            {
+              "type": "finish",
+              "time": {
+                "timestamp": "2023-07-16T10:30:00+05:30"
+              }
+            }
+          ],
+          "customer": {
+            "person": {
+              "name": "Ravi kumar"
+            },
+            "contact": {
+              "phone": "+91-9887766554"
+            }
+          }
+        }
+      ],
+      "payments": [
+        {       
+          "id": "payment-123e4567-e89b-12d3-a456-426614174000",
+          "collected_by": "bpp",
+          "url": "https://payments.bluechargenet-aggregator.io/pay?transaction_id=$transaction_id&amount=$amount",
+          "params": {
+            "transaction_id": "123e4567-e89b-12d3-a456-426614174000",
+            "amount": "100.00",
+            "currency": "INR"
+          },
+          "type": "PRE-FULFILLMENT",
+          "status": "NOT-PAID",
+          "time": { "timestamp": "2025-07-30T14:59:00Z" }
+        }
+      ]
+    }
+  }
+}
+```
+
+#### 6.2.5 On Confirm Response
+
+**Description:** Order confirmation acknowledgment from the BPP.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "on_confirm",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "order": {
+      "id": "6743e9e2-4fb5-487c-92b7",
+      "state": "ACTIVE",
+      "provider": {
+        "id": "cpo1.com",
+        "descriptor": {
+          "name": "CPO1 EV charging Company"
+        }
+      },
+      "items": [
+        {
+          "id": "pe-charging-01",
+          "descriptor": {
+            "name": "EV Charger #1 (AC Fast Charger)",
+            "code": "energy"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+### 6.3 Order Fulfillment Examples
+
+This section contains examples from the UEI Implementation Guide covering the order fulfillment flow from session updates to unsolicited cancellations.
+
+#### 6.3.1 Update Request (Start Charging)
+
+**Description:** Consumer requests to start the charging session.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "update",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "update_target": "order.fulfillments[0].state",
+    "order": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "fulfillments": [
+        {
+          "id": "fulfillment-001",
+          "type": "CHARGING",
+          "state": {
+            "descriptor": {
+              "code": "start-charging"
+            }
+          },
+          "stops": [
+            {
+              "authorization": {
+                "token": "AUTH-GCN-20250730-001"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```
+
+#### 6.3.2 Status Request
+
+**Description:** Consumer requests status of the charging order.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "status",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "order_id": "6743e9e2-4fb5-487c-92b7"
+  }
+}
+```
+
+#### 6.3.3 Track Request
+
+**Description:** Consumer requests tracking information for the charging session.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "track",
+    "location": {
+      "city": {
+        "code": "std:080"
+      },
+      "country": {
+        "code": "IND"
+      }
+    },
+    "bap_id": "example-bap-id",
+    "bap_uri": "https://example-bap-url.com",
+    "bpp_id": "example-bpp-id",
+    "bpp_uri": "https://example-bpp-url.com",
+    "transaction_id": "e0a38442-69b7-4698-aa94-a1b6b5d244c2",
+    "message_id": "6ace310b-6440-4421-a2ed-b484c7548bd5",
+    "timestamp": "2023-02-18T17:00:40.065Z",
+    "version": "1.0.0",
+    "ttl": "PT10M"
+  },
+  "message": {
+    "order_id": "b989c9a9-f603-4d44-b38d-26fd72286b38"
+  }
+}
+```
+
+#### 6.3.4 Cancel Request
+
+**Description:** Consumer requests to cancel the charging order.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "cancel",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "order_id": "6743e9e2-4fb5-487c-92b7",
+    "cancellation_reason_id": "5",
+    "descriptor": {
+      "short_desc": "User Requested Cancellation"
+    }
+  }
+}
+```
+
+#### 6.3.5 Unsolicited On Cancel
+
+**Description:** BPP-initiated cancellation due to external events (e.g., charger failure).
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "on_cancel",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "order": {
+      "id": "6743e9e2-4fb5-487c-92b7",
+      "provider": {
+        "id": "cpo1.com",
+        "descriptor": {
+          "name": "CPO1 EV charging Company",
+          "short_desc": "CPO1 provides EV charging facility across India",
+          "images": [
+            {
+              "url": "https://cpo1.com/images/logo.png"
+            }
+          ]
+        }
+      },
+      "cancellation": {
+        "cancelled_by": "PROVIDER",
+        "reason": {
+          "descriptor": {
+            "code": "CHARGER_HW_FAILURE",
+            "name": "Charger hardware failure"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### 6.4 Support Examples
+
+This section contains examples from the UEI Implementation Guide covering the customer support and rating flow.
+
+#### 6.4.1 Rating Request
+
+**Description:** Consumer provides rating for the charging experience.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "rating",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "ratings": [
+      {
+        "id": "fulfillment-001",
+        "rating_category": "Fulfillment",
+        "value": "5"
+      }
+    ]
+  }
+}
+```
+
+#### 6.4.2 On Rating Response
+
+**Description:** BPP acknowledges the rating and optionally provides feedback form.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "on_rating",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "feedback_form": {
+      "form": {
+        "url": "https://example-bpp.comfeedback/portal",
+        "mime_type": "application/xml"
+      },
+      "required": false
+    }
+  }
+}
+```
+
+#### 6.4.3 Support Request
+
+**Description:** Consumer requests support for a specific order or general assistance.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "support",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "support": {
+      "ref_id": "6743e9e2-4fb5-487c-92b7",
+      "callback_phone": "+911234567890",
+      "email": "ravi.kumar@bookmycharger.com"
+    }
+  }
+}
+```
+
+#### 6.4.4 On Support Response
+
+**Description:** BPP provides support information and contact details.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "on_support",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "support": {
+      "ref_id": "6743e9e2-4fb5-487c-92b7",
+      "phone": "18001080",
+      "email": "support@bluechargenet-aggregator.io",
+      "url": "https://support.bluechargenet-aggregator.io/ticket/SUP-20250730-001"
+    }
+  }
 }
 ```
 
