@@ -827,6 +827,131 @@ This section provides comprehensive examples of all Beckn Protocol messages used
    - Sort by relevance (distance, availability, rating)
    - Include real-time availability status from OCPI data
 
+**OCPI to User-Friendly Enum Mapping:**
+
+The BPP should transform technical OCPI enums into user-friendly values that end users can easily understand. Here's the recommended mapping strategy:
+
+**Connector Type Mapping (OCPI → User-Friendly):**
+- `IEC_62196_T2` → `"Type 2 (Mennekes)"`
+- `IEC_62196_T2_COMBO` → `"CCS2 (Combined Charging System)"`
+- `CHADEMO` → `"CHAdeMO"`
+- `DOMESTIC_D` → `"3-Pin UK Plug"`
+- `IEC_60309_2_three_16` → `"Industrial 3-Phase"`
+- `IEC_60309_2_single_16` → `"Industrial Single-Phase"`
+
+**Power Type Mapping (OCPI → User-Friendly):**
+- `AC_1_PHASE` → `"AC Single-Phase"`
+- `AC_3_PHASE` → `"AC Three-Phase"`
+- `DC` → `"DC Fast Charging"`
+
+**Charging Speed Mapping (Derived from Power Rating):**
+- `max_electric_power < 7.4kW` → `"Slow (≤7.4kW)"`
+- `7.4kW ≤ max_electric_power < 22kW` → `"Fast (7.4-22kW)"`
+- `22kW ≤ max_electric_power < 50kW` → `"Rapid (22-50kW)"`
+- `max_electric_power ≥ 50kW` → `"Ultra-Rapid (50kW+)"`
+
+**Availability Status Mapping (OCPI → User-Friendly):**
+
+For end users, only 3-4 status categories are relevant for charging decisions:
+
+- `AVAILABLE` → `"Available"`
+- `CHARGING` → `"In Use"`
+- `RESERVED` → `"Reserved"`
+- `INOPERATIVE`, `OUTOFORDER`, `PLANNED`, `REMOVED`, `UNKNOWN` → `"Unavailable"`
+
+**Rationale:** Users only need to know if they can charge now ("Available"), if someone else is using it ("In Use"), if it's temporarily reserved ("Reserved"), or if it's not usable for any reason ("Unavailable"). Technical distinctions like maintenance vs. out-of-order don't affect user charging decisions.
+
+(These enums can be passed as they are)
+**Parking Type Mapping (OCPI → User-Friendly):** 
+- `ON_STREET`
+- `PARKING_GARAGE`
+- `PARKING_LOT`
+- `ON_DRIVEWAY`
+- `UNDERGROUND_GARAGE`
+
+**Facilities Mapping (OCPI → User-Friendly):**
+- `RESTAURANT`
+- `TOILETS`
+- `SHOPPING` 
+- `SUPERMARKET` 
+- `HOTEL`
+- `SPORTS`
+
+**User-Facing Tag Structure in Beckn Response:**
+
+The BPP should structure the `item.tags` section to include these user-friendly values:
+
+```json
+"tags": [
+  {
+    "descriptor": {
+      "code": "connector-specifications",
+      "name": "Connector Specifications"
+    },
+    "list": [
+      {
+        "descriptor": {
+          "name": "Connector Type",
+          "code": "connector-type"
+        },
+        "value": "CCS2 (Combined Charging System)"
+      },
+      {
+        "descriptor": {
+          "name": "Charging Speed",
+          "code": "charging-speed"
+        },
+        "value": "Rapid (22-50kW)"
+      },
+      {
+        "descriptor": {
+          "name": "Power Rating",
+          "code": "power-rating"
+        },
+        "value": "30kW"
+      },
+      {
+        "descriptor": {
+          "name": "Status",
+          "code": "status"
+        },
+        "value": "Available"
+      }
+    ]
+  },
+  {
+    "descriptor": {
+      "code": "location-amenities",
+      "name": "Location Amenities"
+    },
+    "list": [
+      {
+        "descriptor": {
+          "name": "Parking Type",
+          "code": "parking-type"
+        },
+        "value": "Parking Garage"
+      },
+      {
+        "descriptor": {
+          "name": "Facilities",
+          "code": "facilities"
+        },
+        "value": "Restaurant, Restrooms, Shopping"
+      }
+    ]
+  }
+]
+```
+
+**Benefits of User-Friendly Enum Mapping:**
+
+1. **Improved User Experience**: End users see familiar terminology instead of technical specifications
+2. **Better Decision Making**: Clear descriptions help users choose appropriate charging stations
+3. **Localization Support**: User-friendly values can be easily translated to local languages
+4. **Accessibility**: Non-technical users can understand charging station capabilities
+5. **Consistent Presentation**: Standardized mapping across different CPO networks
+
 **Description:** How the BPP processes the search request by fetching data from multiple CPOs via OCPI and mapping it to Beckn format.
 
 **OCPI Data Fetching Process:**
