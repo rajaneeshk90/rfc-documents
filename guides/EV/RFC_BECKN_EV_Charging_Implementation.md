@@ -187,9 +187,8 @@ The Beckn Protocol provides:
 
 ### 4.2 Detailed Data Flow
 
-<function_calls>
-<invoke name="create_diagram">
-<parameter name="content">sequenceDiagram
+```mermaid
+sequenceDiagram
     participant BAP as "BAP<br/>(Consumer)"
     participant BPP as "BPP<br/>(eMSP)"
     participant CPO as "CPO<br/>(Charger)"
@@ -239,6 +238,9 @@ The Beckn Protocol provides:
     CPO-->>BPP: session stopped
     CPO->>BPP: PUT /cdrs (billing)
     BPP-->>BAP: on_cancel
+```
+
+
 
 
 ## 5. Implementation Guide
@@ -1220,9 +1222,9 @@ This section contains examples from the UEI Implementation Guide covering the co
 
 ### 6.3 Order Fulfillment Examples
 
-This section contains examples from the UEI Implementation Guide covering the order fulfillment flow from session updates to unsolicited cancellations.
+This section contains examples from the UEI Implementation Guide covering the complete order fulfillment flow from session updates to unsolicited cancellations.
 
-#### 6.3.1 Update Request (Start Charging)
+#### 6.3.1 Update (Start Charging)
 
 **Description:** Consumer requests to start the charging session.
 
@@ -1276,15 +1278,15 @@ This section contains examples from the UEI Implementation Guide covering the or
 }
 ```
 
-#### 6.3.2 Status Request
+#### 6.3.2 On Update (Start Charging)
 
-**Description:** Consumer requests status of the charging order.
+**Description:** Confirmation of successful start of charging operation.
 
 ```json
 {
   "context": {
     "domain": "ev-charging:uei",
-    "action": "status",
+    "action": "on_update",
     "location": {
       "country": {
         "name": "India",
@@ -1304,12 +1306,90 @@ This section contains examples from the UEI Implementation Guide covering the or
     "timestamp": "2023-07-16T04:41:16Z"
   },
   "message": {
-    "order_id": "6743e9e2-4fb5-487c-92b7"
+    "order": {
+      "id": "6743e9e2-4fb5-487c-92b7",
+      "provider": {
+        "id": "cpo1.com",
+        "descriptor": {
+          "name": "CPO1 EV charging Company",
+          "short_desc": "CPO1 provides EV charging facility across India",
+          "images": [
+            {
+              "url": "https://cpo1.com/images/logo.png"
+            }
+          ]
+        }
+      },
+      "items": [
+        {
+          "id": "pe-charging-01",
+          "descriptor": {
+            "name": "EV Charger #1 (AC Fast Charger)",
+            "code": "energy"
+          },
+          "price": {
+            "value": "18",
+            "currency": "INR/kWH"
+          }
+        }
+      ],
+      "fulfillments": [
+        {
+          "id": "fulfillment-001",
+          "type": "CHARGING",
+          "state": {
+            "descriptor": {
+              "code": "ACTIVE",
+              "name": "Charging started"
+            },
+            "updated_at": "2025-07-30T12:06:02Z",
+            "updated_by": "bluechargenet-aggregator.io"
+          },
+          "stops": [
+            {
+              "type": "start",
+              "time": {
+                "timestamp": "2023-07-16T10:00:00+05:30"
+              },
+              "location": {
+                "gps": "28.345345,77.389754",
+                "descriptor": {
+                  "name": "BlueCharge Connaught Place Station"
+                },
+                "address": "Connaught Place, New Delhi"
+              },
+              "instructions": {
+                "short_desc": "Ground floor, Pillar Number 4"
+              }
+            },
+            {
+              "type": "finish",
+              "time": {
+                "timestamp": "2023-07-16T10:30:00+05:30"
+              },
+              "location": {
+                "gps": "28.345345,77.389754",
+                "descriptor": {
+                  "name": "BlueCharge Connaught Place Station"
+                },
+                "address": "Connaught Place, New Delhi"
+              },
+              "instructions": {
+                "short_desc": "Ground floor, Pillar Number 4"
+              },
+              "authorization": {
+                "token": "AUTH-GCN-20250730-001"
+              }
+            }
+          ]
+        }
+      ]
+    }
   }
 }
 ```
 
-#### 6.3.3 Track Request
+#### 6.3.3 Track
 
 **Description:** Consumer requests tracking information for the charging session.
 
@@ -1342,7 +1422,509 @@ This section contains examples from the UEI Implementation Guide covering the or
 }
 ```
 
-#### 6.3.4 Cancel Request
+#### 6.3.4 On Track
+
+**Description:** BPP provides tracking URL with custom UI for charging process.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "on_track",
+    "location": {
+      "city": {
+        "code": "std:080"
+      },
+      "country": {
+        "name": "India",
+        "code": "IND"
+      }
+    },
+    "bap_id": "example-bap-id",
+    "bap_uri": "https://example-bap-url.com",
+    "bpp_id": "example-bpp-id",
+    "bpp_uri": "https://example-bpp-url.com",
+    "transaction_id": "e0a38442-69b7-4698-aa94-a1b6b5d244c2",
+    "message_id": "6ace310b-6440-4421-a2ed-b484c7548bd5",
+    "timestamp": "2023-02-18T17:00:40.065Z",
+    "version": "1.0.0",
+    "ttl": "PT10M"
+  },
+  "message": {
+    "tracking": {
+      "id": "TRACK-SESSION-9876543210",
+      "url": "https://track.bluechargenet-aggregator.io/session/SESSION-9876543210",
+      "status": "active"
+    }
+  }
+}
+```
+
+#### 6.3.5 Update (Stop Charging)
+
+**Description:** Consumer requests to stop the charging session.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "update",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "update_target": "order.fulfillments[0].state",
+    "order": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "fulfillments": [
+        {
+          "id": "fulfillment-001",
+          "type": "CHARGING",
+          "state": {
+            "descriptor": {
+              "code": "stop-charging"
+            }
+          },
+          "stops": [
+            {
+              "authorization": {
+                "token": "AUTH-GCN-20250730-001"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```
+
+#### 6.3.6 On Update (Stop Charging)
+
+**Description:** Confirmation of successful operation to end charging.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "on_update",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "order": {
+      "id": "6743e9e2-4fb5-487c-92b7",
+      "state": "COMPLETED",
+      "provider": {
+        "id": "cpo1.com",
+        "descriptor": {
+          "name": "CPO1 EV charging Company",
+          "short_desc": "CPO1 provides EV charging facility across India"
+        }
+      },
+      "items": [
+        {
+          "id": "pe-charging-01",
+          "descriptor": {
+            "name": "EV Charger #1 (AC Fast Charger)",
+            "code": "energy"
+          },
+          "price": {
+            "value": "18",
+            "currency": "INR/kWH"
+          }
+        }
+      ],
+      "fulfillments": [
+        {
+          "id": "fulfillment-001",
+          "type": "CHARGING",
+          "state": {
+            "descriptor": {
+              "code": "COMPLETED",
+              "name": "Charging completed"
+            },
+            "updated_at": "2025-07-30T13:06:02Z",
+            "updated_by": "bluechargenet-aggregator.io"
+          }
+        }
+      ],
+      "billing": {
+        "name": "Ravi Kumar",
+        "organization": {
+          "descriptor": { "name": "GreenCharge Pvt Ltd" }
+        },
+        "address": "Apartment 123, MG Road, Bengaluru, Karnataka, 560001, India",
+        "state": { "name": "Karnataka" },
+        "city": { "name": "Bengaluru" },
+        "email": "ravi.kumar@greencharge.com",
+        "phone": "+918765432100",
+        "time": { "timestamp": "2025-07-30T12:02:00Z" },
+        "tax_id": "GSTIN29ABCDE1234F1Z5"
+      },
+      "payments": [
+        {
+          "id": "payment-123e4567-e89b-12d3-a456-426614174000",
+          "collected_by": "bpp",
+          "url": "https://payments.bluechargenet-aggregator.io/pay?transaction_id=$transaction_id&amount=$amount",
+          "params": {
+            "transaction_id": "123e4567-e89b-12d3-a456-426614174000",
+            "amount": "91.00",
+            "currency": "INR"
+          },
+          "type": "POST-FULFILLMENT",
+          "status": "NOT-PAID",
+          "time": { "timestamp": "2025-07-30T14:59:00Z" }
+        }
+      ],
+      "cancellation_terms": [
+        {
+          "fulfillment_state": {
+            "descriptor": {
+              "code": "charging-start"
+            }
+          },
+          "cancellation_fee": {
+            "percentage": "30%"
+          },
+          "external_ref": {
+            "mimetype": "text/html",
+            "url": "https://example-company.com/charge/tnc.html"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+#### 6.3.7 Asynchronous On Update (Stop Charging)
+
+**Description:** BPP sends unsolicited update when payment terms change but order is not cancelled.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "on_update",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "order": {
+      "id": "6743e9e2-4fb5-487c-92b7",
+      "provider": {
+        "id": "cpo1.com",
+        "descriptor": {
+          "name": "CPO1 EV charging Company",
+          "short_desc": "CPO1 provides EV charging facility across India"
+        }
+      },
+      "quote": {
+        "price": {
+          "currency": "INR",
+          "value": "112"
+        },
+        "breakup": [
+          {
+            "title": "Charging session cost (6.2 kWh @ ₹18.00/kWh)",
+            "item": {
+              "descriptor": {
+                "name": "EV Charger #1 (AC Fast Charger)"
+              },
+              "price": {
+                "currency": "INR",
+                "value": "112"
+              },
+              "quantity": {
+                "selected": {
+                  "measure": {
+                    "unit": "kWh",
+                    "value": "6.2"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "billing": {
+        "name": "Ravi Kumar",
+        "organization": {
+          "descriptor": { "name": "GreenCharge Pvt Ltd" }
+        },
+        "address": "Apartment 123, MG Road, Bengaluru, Karnataka, 560001, India",
+        "state": { "name": "Karnataka" },
+        "city": { "name": "Bengaluru" },
+        "email": "ravi.kumar@greencharge.com",
+        "phone": "+918765432100",
+        "time": { "timestamp": "2025-07-30T12:02:00Z" },
+        "tax_id": "GSTIN29ABCDE1234F1Z5"
+      },
+      "payments": [
+        {
+          "id": "payment-123e4567-e89b-12d3-a456-426614174000",
+          "collected_by": "bpp",
+          "url": "https://payments.bluechargenet-aggregator.io/pay?transaction_id=$transaction_id&amount=$amount",
+          "params": {
+            "transaction_id": "123e4567-e89b-12d3-a456-426614174000",
+            "amount": "112.00",
+            "currency": "INR"
+          },
+          "type": "ON-FULFILLMENT",
+          "status": "NOT-PAID",
+          "time": { "timestamp": "2025-07-30T14:59:00Z" }
+        }
+      ]
+    }
+  }
+}
+```
+
+#### 6.3.8 Status
+
+**Description:** Consumer requests status of the charging order.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "status",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "order_id": "6743e9e2-4fb5-487c-92b7"
+  }
+}
+```
+
+#### 6.3.9 On Status
+
+**Description:** BPP provides current status of the charging order.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "on_status",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "order": {
+      "id": "6743e9e2-4fb5-487c-92b7",
+      "state": "ACTIVE",
+      "provider": {
+        "id": "cpo1.com",
+        "descriptor": {
+          "name": "CPO1 EV charging Company",
+          "short_desc": "CPO1 provides EV charging facility across India"
+        }
+      },
+      "items": [
+        {
+          "id": "pe-charging-01",
+          "descriptor": {
+            "name": "EV Charger #1 (AC Fast Charger)",
+            "code": "energy"
+          },
+          "price": {
+            "value": "18",
+            "currency": "INR/kWH"
+          },
+          "quantity": {
+            "selected": {
+              "measure": {
+                "unit": "kWh",
+                "value": "3"
+              }
+            }
+          }
+        }
+      ],
+      "fulfillments": [
+        {
+          "id": "fulfillment-001",
+          "type": "CHARGING",
+          "state": {
+            "descriptor": {
+              "code": "ACTIVE",
+              "name": "Charging in progress",
+              "long_desc": "{\"status\": \"Charging\", \"power\": \"7.2kW\", \"energy_delivered\": \"3.2kWh\", \"session_time\": \"26min\"}"
+            },
+            "updated_at": "2025-07-30T12:26:02Z",
+            "updated_by": "bluechargenet-aggregator.io"
+          }
+        }
+      ],
+      "billing": {
+        "name": "Ravi Kumar",
+        "organization": {
+          "descriptor": { "name": "GreenCharge Pvt Ltd" }
+        },
+        "address": "Apartment 123, MG Road, Bengaluru, Karnataka, 560001, India",
+        "state": { "name": "Karnataka" },
+        "city": { "name": "Bengaluru" },
+        "email": "ravi.kumar@greencharge.com",
+        "phone": "+918765432100",
+        "time": { "timestamp": "2025-07-30T12:02:00Z" },
+        "tax_id": "GSTIN29ABCDE1234F1Z5"
+      },
+      "payments": [
+        {
+          "id": "payment-123e4567-e89b-12d3-a456-426614174000",
+          "collected_by": "bpp",
+          "url": "https://payments.bluechargenet-aggregator.io/pay?transaction_id=$transaction_id&amount=$amount",
+          "params": {
+            "transaction_id": "123e4567-e89b-12d3-a456-426614174000",
+            "amount": "100.00",
+            "currency": "INR"
+          },
+          "type": "PRE-FULFILLMENT",
+          "status": "NOT-PAID",
+          "time": { "timestamp": "2025-07-30T14:59:00Z" }
+        }
+      ]
+    }
+  }
+}
+```
+
+#### 6.3.10 Unsolicited On Status
+
+**Description:** BPP pushes status updates when informational OCPI session statuses change.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "on_status",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "order": {
+      "id": "6743e9e2-4fb5-487c-92b7",
+      "state": "ACTIVE",
+      "provider": {
+        "id": "cpo1.com",
+        "descriptor": {
+          "name": "CPO1 EV charging Company",
+          "short_desc": "CPO1 provides EV charging facility across India"
+        }
+      },
+      "fulfillments": [
+        {
+          "id": "fulfillment-001",
+          "type": "CHARGING",
+          "state": {
+            "descriptor": {
+              "code": "ACTIVE",
+              "name": "Charging in progress",
+              "long_desc": "{\"status\": \"Charging\", \"power\": \"7.2kW\", \"energy_delivered\": \"4.8kWh\", \"session_time\": \"40min\"}"
+            },
+            "updated_at": "2025-07-30T12:40:02Z",
+            "updated_by": "bluechargenet-aggregator.io"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+#### 6.3.11 Cancel
 
 **Description:** Consumer requests to cancel the charging order.
 
@@ -1379,9 +1961,9 @@ This section contains examples from the UEI Implementation Guide covering the or
 }
 ```
 
-#### 6.3.5 Unsolicited On Cancel
+#### 6.3.12 On Cancel
 
-**Description:** BPP-initiated cancellation due to external events (e.g., charger failure).
+**Description:** BPP confirmation of cancelled order.
 
 ```json
 {
@@ -1421,6 +2003,132 @@ This section contains examples from the UEI Implementation Guide covering the or
           ]
         }
       },
+      "items": [
+        {
+          "id": "pe-charging-01",
+          "descriptor": {
+            "name": "EV Charger #1 (AC Fast Charger)",
+            "code": "energy"
+          },
+          "price": {
+            "value": "18",
+            "currency": "INR/kWH"
+          }
+        }
+      ],
+      "billing": {
+        "name": "Ravi Kumar",
+        "organization": {
+          "descriptor": { "name": "GreenCharge Pvt Ltd" }
+        },
+        "address": "Apartment 123, MG Road, Bengaluru, Karnataka, 560001, India",
+        "state": { "name": "Karnataka" },
+        "city": { "name": "Bengaluru" },
+        "email": "ravi.kumar@greencharge.com",
+        "phone": "+918765432100",
+        "time": { "timestamp": "2025-07-30T12:02:00Z" },
+        "tax_id": "GSTIN29ABCDE1234F1Z5"
+      },
+      "payments": [
+        {
+          "id": "payment-123e4567-e89b-12d3-a456-426614174000",
+          "collected_by": "bpp",
+          "url": "https://payments.bluechargenet-aggregator.io/pay?transaction_id=$transaction_id&amount=$amount",
+          "params": {
+            "transaction_id": "123e4567-e89b-12d3-a456-426614174000",
+            "amount": "60.00",
+            "currency": "INR"
+          },
+          "type": "PRE-FULFILLMENT",
+          "status": "NOT-PAID",
+          "time": { "timestamp": "2025-07-30T14:59:00Z" }
+        }
+      ],
+      "cancellation_terms": [
+        {
+          "fulfillment_state": {
+            "descriptor": {
+              "code": "charging-start"
+            }
+          },
+          "cancellation_fee": {
+            "percentage": "30%"
+          },
+          "external_ref": {
+            "mimetype": "text/html",
+            "url": "https://example-company.com/charge/tnc.html"
+          }
+        }
+      ],
+      "cancellation": {
+        "cancelled_by": "CONSUMER",
+        "reason": {
+          "descriptor": {
+            "code": "UNKNOWN",
+            "name": "Reason not specified"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+#### 6.3.13 Unsolicited On Cancel
+
+**Description:** BPP-initiated cancellation due to external events.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "on_cancel",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "order": {
+      "id": "6743e9e2-4fb5-487c-92b7",
+      "provider": {
+        "id": "cpo1.com",
+        "descriptor": {
+          "name": "CPO1 EV charging Company",
+          "short_desc": "CPO1 provides EV charging facility across India",
+          "images": [
+            {
+              "url": "https://cpo1.com/images/logo.png"
+            }
+          ]
+        }
+      },
+      "items": [
+        {
+          "id": "pe-charging-01",
+          "descriptor": {
+            "name": "EV Charger #1 (AC Fast Charger)",
+            "code": "energy"
+          },
+          "price": {
+            "value": "18",
+            "currency": "INR/kWH"
+          }
+        }
+      ],
       "cancellation": {
         "cancelled_by": "PROVIDER",
         "reason": {
