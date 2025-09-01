@@ -240,15 +240,6 @@ The Beckn Protocol provides:
     CPO->>BPP: PUT /cdrs (billing)
     BPP-->>BAP: on_cancel
 
-### 4.3 Component Interaction Matrix
-
-| Component | BAP | BPP Core | OCPI Client | Data Mapper | CPO |
-|-----------|-----|----------|-------------|-------------|-----|
-| **BAP** | - | Beckn API | - | - | - |
-| **BPP Core** | Beckn Response | Business Logic | Internal API | Internal API | - |
-| **OCPI Client** | - | Data Callback | HTTP Client | Data Provider | OCPI API |
-| **Data Mapper** | - | Mapped Data | Raw Data | Cache/Transform | - |
-| **CPO** | - | - | OCPI Response | - | Infrastructure |
 
 ## 5. Implementation Guide
 
@@ -312,39 +303,11 @@ EV charging marketplace fundamentally reimagines charging infrastructure access 
 
 **Consumer Application (BAP) - The Intelligent Mobility Node:**
 
-Think of each consumer application as a "smart mobility edge node" with decision-making capabilities for optimal charging experiences. A BAP implementation consists of three logical components:
-
-**1. Network-Side Interface (Beckn Protocol Communication):**
-This component handles all Beckn Protocol API communications with the eMSP marketplace network. It processes search requests, selection confirmations, booking notifications, and session status updates. This is the standard Beckn BAP endpoint that accepts BPP callbacks following the protocol specification.
-
-**2. Decision Engine (Consumer Intelligence):**
-This is the business logic component that makes charging decisions by considering:
-  - Vehicle requirements (battery capacity, charging speed, connector compatibility, current state of charge)
-  - Journey planning (destination requirements, route optimization, charging time constraints, backup station identification)
-  - Economic preferences (pricing comparison, membership benefits, payment method preferences, budget constraints)
-  - User preferences (charging speed preferences, amenity requirements, brand preferences, accessibility needs)
-  - Real-time conditions (traffic patterns, weather impacts, station availability, queue status)
-
-**3. Client-Side Interface (Vehicle and User Systems Integration):**
-This component interfaces with the consumer's vehicle systems—onboard navigation, battery management systems, mobile device integration, or connected car platforms. It translates between "consumer language" (range anxiety, arrival time requirements, cost constraints) and "charging marketplace language" (session booking, availability queries, pricing comparisons).
+Each consumer application operates as a smart mobility edge node that seamlessly bridges user needs with the charging marketplace. The BAP handles Beckn Protocol communications with eMSPs, makes intelligent charging decisions based on vehicle requirements (battery capacity, connector compatibility), journey planning (route optimization, charging time constraints), economic preferences (pricing comparison, payment methods), and user preferences (charging speed, amenities, accessibility), while integrating with vehicle systems to translate consumer needs into marketplace transactions.
 
 **e-Mobility Service Provider (BPP) - The Marketplace Orchestrator:**
 
-The eMSP transforms from a traditional "charging network intermediary" to a "intelligent charging marketplace operator". A BPP implementation consists of three logical components:
-
-**1. Charging Infrastructure Interface (OCPI Systems Integration):**
-This component interfaces with multiple CPO systems using OCPI 2.2.1 protocol—location management, tariff synchronization, session authorization, real-time status monitoring, and billing coordination. It translates between "CPO operations language" (EVSE status, tariff structures, session commands) and "marketplace language" (availability catalogs, pricing options, booking confirmations).
-
-**2. Marketplace Intelligence Engine (Aggregation and Optimization):**
-This is the business logic component that orchestrates charging marketplace operations by:
-  - Monitoring real-time availability across multiple CPO networks and maintaining synchronized availability status
-  - Managing consumer portfolios and preference tracking for personalized charging recommendations
-  - Optimizing pricing strategies and promotional campaigns across different CPO partnerships
-  - Coordinating session bookings, authorization flows, and conflict resolution across multiple systems
-  - Processing billing, settlement, and revenue sharing calculations across eMSP-CPO relationships
-
-**3. Network-Side Interface (Beckn Protocol Communication):**
-This component handles all Beckn Protocol API communications with consumer BAPs. It processes search queries, selection requests, booking confirmations, and status tracking. This is the standard Beckn BPP endpoint that serves BAP requests following the protocol specification.
+The eMSP operates as an intelligent charging marketplace operator that aggregates multiple CPO networks into a unified service offering. The BPP interfaces with CPO systems via OCPI 2.2.1 protocol for location management, tariff synchronization, and session coordination, orchestrates marketplace operations including real-time availability monitoring, consumer preference tracking, pricing optimization, and revenue sharing calculations, while handling all Beckn Protocol communications with consumer BAPs for search queries, bookings, and status tracking.
 
 **Gateway Service:**
 Discovery requests flow through gateways (Beckn Gateway) that broadcast search queries to all relevant charging service providers in the network. Gateways filter and route messages based on domain and geographic criteria.
@@ -1181,257 +1144,75 @@ Multi-network error resilience ensures alternatives are available when CPO netwo
 
 ## 9. Appendix
 
-**BAP Search Request:**
-```json
-{
-  "context": {
-    "action": "search",
-    "domain": "ev-charging:beckn"
-  },
-  "message": {
-    "intent": {
-      "fulfillment": {
-        "type": "CHARGING",
-        "stops": [
-          {
-            "location": {
-              "gps": "28.7041,77.1025"
-            }
-          }
-        ]
-      }
-    }
-  }
-}
-```
-
-**BPP Processing:**
-1. Receive search request
-2. Query OCPI locations from multiple CPOs
-3. Query OCPI tariffs from multiple CPOs
-4. Aggregate and map locations with tariffs
-5. Return formatted catalog with pricing
-
-**BAP Response:**
-```json
-{
-  "context": {
-    "action": "on_search",
-    "domain": "ev-charging:beckn"
-  },
-  "message": {
-    "catalog": {
-      "providers": [
-        {
-          "id": "cpo1.com",
-          "descriptor": {
-            "name": "CPO1 EV charging Company",
-            "short_desc": "CPO1 provides EV charging facility across India"
-          },
-          "items": [
-            {
-              "id": "pe-charging-01",
-              "descriptor": {
-                "name": "EV Charger #1 (AC Fast Charger)",
-                "code": "energy"
-              },
-              "price": {
-                "value": "18",
-                "currency": "INR/kWH"
-              },
-              "tags": [
-                {
-                  "descriptor": {
-                    "name": "Connector Specifications",
-                    "code": "connector-specifications"
-                  },
-                  "list": [
-                    {
-                      "descriptor": {
-                        "name": "Connector Type",
-                        "code": "connector-type"
-                      },
-                      "value": "CCS2"
-                    },
-                    {
-                      "descriptor": {
-                        "name": "Power Rating",
-                        "code": "power-rating"
-                      },
-                      "value": "30kW"
-                    },
-                    {
-                      "descriptor": {
-                        "name": "Status",
-                        "code": "status"
-                      },
-                      "value": "Available"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  }
-}
-```
-
-### 9.2 Booking Flow
-
-**BAP Init Request:**
-```json
-{
-  "context": {
-    "action": "init",
-    "domain": "ev-charging:beckn"
-  },
-  "message": {
-    "order": {
-      "provider": {
-        "id": "cpo1.com"
-      },
-      "items": [
-        {
-          "id": "pe-charging-01",
-          "quantity": {
-            "count": 1
-          }
-        }
-      ]
-    }
-  }
-}
-```
-
-**BPP Processing:**
-1. Receive init request
-2. Validate EVSE availability via OCPI locations
-3. Get current pricing via OCPI tariffs
-4. Call OCPI RESERVE_NOW command
-5. Handle CPO response
-6. Return confirmation
-
-### 9.1 Message Flow Diagrams
-
-#### 9.1.1 Complete EV Charging Flow
-
-
-
-```
-Consumer App (BAP)    eMSP (BPP)    CPO (OCPI)
-      │                    │            │
-      │─── search ────────►│            │
-      │                    │─── GET locations ──►│
-      │                    │◄── locations ──────│
-      │◄── on_search ─────│            │
-      │                    │            │
-      │─── select ────────►│            │
-      │                    │─── GET tariffs ───►│
-      │                    │◄── tariffs ───────│
-      │◄── on_select ─────│            │
-      │                    │            │
-      │─── init ─────────►│            │
-      │                    │─── POST RESERVE_NOW ─►│
-      │                    │◄── confirmation ───│
-      │◄── on_init ───────│            │
-      │                    │            │
-      │─── confirm ───────►│            │
-      │                    │─── POST START_SESSION ─►│
-      │                    │◄── session_started ─│
-      │◄── on_confirm ────│            │
-      │                    │            │
-      │                    │◄── PUT session updates ─│
-      │                    │            │
-      │                    │─── POST STOP_SESSION ─►│
-      │                    │◄── session_stopped ─│
-      │                    │            │
-      │                    │◄── PUT CDR ──────────│
-```
-
-### 9.2 Change Log
+### 9.1 Change Log
 
 | Version | Date | Description |
 |---------|------|-------------|
-| 0.1.0 | 2025-08-29 | Initial draft with comprehensive implementation guide |
+| 1.0.0 | 2025-08-29 | Initial RFC with comprehensive EV charging implementation guide using Beckn Protocol and OCPI integration |
 
-### 9.3 Acknowledgments
+### 9.2 Acknowledgments
 
 - Beckn Foundation for protocol specifications and community support
-- OCPI Foundation for interoperability standards and technical guidance
-- EV charging industry experts who provided domain knowledge and operational insights
-- eMSP and CPO partners for implementation feedback and real-world validation
-- Consumer application developers for user experience requirements and testing
+- EV charging industry experts who provided domain knowledge and insights
+- eMSP and CPO operators for operational requirements input
+- Technology partners for implementation feedback and OCPI protocol expertise
 
-### 9.4 Glossary
+### 9.3 Glossary
 
-- **BAP (Beckn App Platform)**: Consumer-facing application that initiates EV charging transactions
-- **BPP (Beckn Provider Platform)**: Service provider platform that responds to BAP requests, typically an eMSP
-- **eMSP (e-Mobility Service Provider)**: Entity that provides EV charging services to consumers, aggregating multiple CPOs
-- **CPO (Charge Point Operator)**: Entity that owns and operates EV charging infrastructure
-- **EVSE (Electric Vehicle Supply Equipment)**: Individual charging station unit with one or more connectors
+- **BAP (Beckn Application Platform)**: Consumer-facing application that enables charging station discovery and booking
+- **BPP (Beckn Provider Platform)**: e-Mobility Service Provider platform that aggregates multiple CPO networks
+- **CPO (Charge Point Operator)**: Entity that operates and maintains EV charging infrastructure
+- **eMSP (e-Mobility Service Provider)**: Service provider that enables EV drivers to access charging networks
+- **EVSE (Electric Vehicle Supply Equipment)**: Physical charging station/point
 - **OCPI (Open Charge Point Interface)**: Protocol for communication between eMSPs and CPOs
-- **Connector**: Physical charging interface (CCS, CHAdeMO, Type 2, etc.)
-- **Session**: Complete charging transaction from connection to payment completion
-- **Roaming**: Ability for EV drivers to charge at CPOs other than their primary service provider
-- **Tariff**: Pricing structure for charging services including energy rates and time-based fees
-- **Token**: Digital credential used for driver authentication and session authorization
+- **RFID**: Radio Frequency Identification technology used for charging authorization
+- **Session**: Complete charging transaction from start to finish including billing
+- **Tariff**: Pricing structure for charging services including rates and fees
 
-### 9.5 FAQ
+### 9.4 FAQ
 
-**Q: How does this approach differ from existing EV charging apps?**
-A: Traditional apps connect to single charging networks or require separate accounts for each network. This Beckn-based approach enables unified access to multiple CPO networks through a single consumer interface with standardized pricing and booking.
+**Q: How does this approach differ from traditional EV charging apps?**
+A: Traditional apps are typically single-network or limited multi-network solutions. This Beckn-based approach creates an open marketplace where any consumer can discover and access charging from multiple networks through standardized APIs.
 
-**Q: What are the minimum technical requirements for eMSP participation?**
-A: eMSPs need OCPI 2.2.1 client implementation, Beckn Protocol server capabilities, payment processing integration, and real-time data synchronization infrastructure.
+**Q: What are the minimum technical requirements for implementation?**
+A: BAPs need Beckn Protocol API implementation, while BPPs require both Beckn Protocol and OCPI 2.2.1 support for CPO integration. CPOs need OCPI-compliant charging infrastructure.
 
-**Q: How is pricing transparency maintained across multiple CPO networks?**
-A: The system aggregates real-time tariff data from all CPO networks via OCPI and presents unified pricing comparisons through Beckn marketplace interfaces, with detailed cost breakdowns for consumer transparency.
+**Q: How is payment handled across different CPO networks?**
+A: eMSPs handle payment aggregation, collecting from consumers via Beckn transactions and settling with individual CPOs via existing OCPI billing mechanisms.
 
-**Q: What happens if a charging station becomes unavailable after booking?**
-A: The system provides real-time availability updates and automatically suggests alternative charging options when booked stations become unavailable, with clear rebooking procedures and no penalties for unavoidable cancellations.
+**Q: What happens when a charging session fails or is interrupted?**
+A: The system includes comprehensive error handling with automatic session recovery, alternative station recommendations, and transparent billing for partial sessions.
 
-**Q: How does the system handle payment across different CPO networks?**
-A: Consumer payments are processed through the eMSP marketplace platform, which handles backend settlement with individual CPOs via OCPI billing protocols, providing unified billing regardless of underlying CPO relationships.
+### 9.5 RFC Evolution and Maintenance
 
-### 9.6 RFC Evolution and Maintenance
-
-#### 9.6.1 Version Management
+#### 9.5.1 Version Management
 
 **Version Numbering:**
-- **Major versions (X.0.0)**: Breaking changes to API structure, message schemas, or fundamental architecture
-- **Minor versions (X.Y.0)**: New features, additional use cases, backward-compatible enhancements
-- **Patch versions (X.Y.Z)**: Bug fixes, clarifications, documentation improvements, example updates
+- **Major versions (X.0.0)**: Breaking changes to API structure or protocol integration
+- **Minor versions (X.Y.0)**: New features, additional use cases, backward-compatible enhancements  
+- **Patch versions (X.Y.Z)**: Bug fixes, clarifications, documentation improvements
 
 **Release Process:**
-- Draft versions for community review and feedback collection
+- Draft versions for community review and feedback
 - Public comment period of minimum 30 days for major changes
-- Implementation testing with reference platforms and pilot deployments
-- Final approval by maintainers, domain experts, and implementation partners
+- Implementation testing with reference platforms
+- Final approval by maintainers and domain experts
 
-#### 9.6.2 Community Contribution Guidelines
+#### 9.5.2 Community Contribution Guidelines
 
 **How to Contribute:**
 - Submit issues via GitHub for bugs, clarifications, or enhancement requests
-- Propose changes through pull requests with detailed technical explanations
+- Propose changes through pull requests with detailed explanations
 - Participate in community discussions and EV charging working group meetings
-- Provide feedback from real-world implementations and production deployments
+- Provide feedback from real-world implementations
 
 **Contribution Requirements:**
-- All proposals must include implementation considerations and impact analysis
+- All proposals must include implementation considerations
 - Changes should maintain backward compatibility when possible
-- Include updated examples, test cases, and integration scenarios
-- Document migration paths for breaking changes with clear timelines
+- Include updated examples and test cases
+- Document migration paths for breaking changes
 
-**Review Process:**
-- Technical review by EV charging domain experts and OCPI specialists
-- Beckn Protocol compliance validation and interoperability testing
-- Community feedback integration and stakeholder input collection
-- Implementation feasibility assessment with pilot testing requirements
-
-#### 9.6.3 Maintenance Procedures
+#### 9.5.3 Maintenance Procedures
 
 **Regular Maintenance:**
 - Quarterly review of open issues and community feedback
@@ -1445,27 +1226,27 @@ A: Consumer payments are processed through the eMSP marketplace platform, which 
 - **Community Maintainers**: Documentation updates, example maintenance, issue triage
 - **Implementation Partners**: Real-world validation and feedback from production deployments
 
-### 9.7 Troubleshooting
+### 9.6 Troubleshooting
 
-#### 9.7.1 Issue 1: Multi-CPO Search Performance
+#### 9.6.1 Issue 1: Multi-CPO Search Performance
 
 **Symptoms:** Slow response times when searching across multiple CPO networks
 **Cause:** Sequential OCPI calls or slow CPO responses blocking entire search operation
 **Solution:** Implement parallel async queries with individual timeouts, circuit breakers for failing CPOs, and cached fallback data
 
-#### 9.7.2 Issue 2: Real-time Availability Synchronization
+#### 9.6.2 Issue 2: Real-time Availability Synchronization
 
 **Symptoms:** Consumers arriving at unavailable charging stations despite showing available
-**Cause:** Delayed or failed OCPI webhook delivery from CPO systems
+**Cause:** Delayed or failed OCPI webhook delivery from CPO systems  
 **Solution:** Implement hybrid push/pull synchronization with maximum 30-second polling fallback and availability confidence indicators
 
-#### 9.7.3 Issue 3: Cross-Protocol Session State Management
+#### 9.6.3 Issue 3: Cross-Protocol Session State Management
 
 **Symptoms:** Booking confirmations in Beckn not reflected in OCPI session status
 **Cause:** Async processing delays or integration failures between protocols
 **Solution:** Implement transaction correlation tracking, status reconciliation procedures, and consumer notification for state mismatches
 
-#### 9.7.4 Issue 4: Payment Settlement Complexity
+#### 9.6.4 Issue 4: Payment Settlement Complexity
 
 **Symptoms:** Billing discrepancies between consumer charges and CPO settlements
 **Cause:** Currency conversion, tax calculation differences, or rate structure misinterpretation
@@ -1474,49 +1255,3 @@ A: Consumer payments are processed through the eMSP marketplace platform, which 
 ---
 
 **Note:** This RFC provides comprehensive guidance for implementing EV charging marketplace services using Beckn Protocol with OCPI integration. Implementations should be carefully adapted to specific regulatory requirements, regional market conditions, and technical infrastructure capabilities. Feedback from pilot implementations and production deployments will help evolve this specification to meet the rapidly changing needs of the global EV charging ecosystem.
-
-- **CPO Unavailable**: Handle OCPI communication failures
-- **Invalid Token**: Manage authentication errors
-- **EVSE Unavailable**: Handle booking conflicts
-- **Network Issues**: Implement retry mechanisms
-
-#### 11.2.2 Error Response Format
-
-```json
-{
-  "context": {
-    "action": "on_search",
-    "domain": "ev-charging:beckn"
-  },
-  "error": {
-    "code": "EVSE_UNAVAILABLE",
-    "message": "Selected EVSE is currently unavailable",
-    "details": {
-      "reason": "MAINTENANCE",
-      "estimated_availability": "2024-12-16T10:00:00Z"
-    }
-  }
-}
-```
-
-### 11.3 Testing and Validation
-
-#### 11.3.1 Test Scenarios
-
-- **Happy Path**: Complete successful booking flow
-- **Error Scenarios**: Handle various failure modes
-- **Load Testing**: Test with multiple concurrent users
-- **Integration Testing**: Test OCPI communication
-
-#### 11.3.2 Validation Checklist
-
-- [ ] Beckn Protocol message validation
-- [ ] OCPI protocol compliance
-- [ ] Error handling and recovery
-- [ ] Security and authentication
-- [ ] Performance and scalability
-- [ ] User experience validation
-
----
-
-*This RFC provides implementation guidance for EV charging using the Beckn Protocol. For questions or clarifications, please contact the Beckn Protocol EV Charging Working Group.* 
