@@ -260,15 +260,14 @@ The Beckn Protocol serves as our **digital lingua franca**, enabling standardize
 
 This approach transforms complex multi-party charging transactions into **standardized API conversations** that any participant can understand and implement, whether they're managing a single consumer mobile app or coordinating charging access across hundreds of CPO networks.
 
-**Implementation Architecture: Five-Phase Marketplace Orchestration**
+**Implementation Architecture: Four-Phase Marketplace Orchestration**
 
-An implementation follows a **discovery-first marketplace approach** where each phase builds upon standardized Beckn API interactions:
+An implementation follows a **DOFP (Discovery, Order, Fulfillment, Post-fulfillment) marketplace approach** where each phase builds upon standardized Beckn API interactions:
 
 1. **Discovery Phase**: Consumers discover available charging stations through search APIs, finding real-time availability and pricing across multiple CPO networks
-2. **Selection Phase**: Detailed charging station information and pricing selection using select APIs, enabling informed booking decisions
-3. **Booking Phase**: Session reservation and authorization using init/confirm APIs, establishing charging session commitments with integrated OCPI coordination
-4. **Fulfillment Phase**: Real-time session management via update/status APIs, enabling charging session control and monitoring
-5. **Settlement Phase**: Completion and billing coordination through status APIs, ensuring transparent cost calculation and payment processing
+2. **Order Phase**: Detailed charging station selection and booking using select/init/confirm APIs, establishing charging session commitments with integrated OCPI coordination
+3. **Fulfillment Phase**: Real-time session management via update/status/track APIs, enabling charging session control and monitoring
+4. **Post-fulfillment Phase**: Session completion, billing coordination, and support interactions through status/support/rating APIs, ensuring transparent cost calculation and payment processing
 
 Each phase leverages **native Beckn Protocol capabilities**—search, select, init, confirm, status, update, support, cancel, rating—adapted specifically for the EV charging domain while maintaining full protocol compliance and interoperability.
 
@@ -333,7 +332,7 @@ Each EV charging network requires a registry where all participants (BAP, BPP, B
 
 ### 5.4 Step-by-Step Implementation
 
-#### 5.4.1 Step 1: Charging Station Discovery
+#### 5.4.1 Step 1: Discovery Phase - Charging Station Discovery
 
 **The Consumer's Journey: From Range Anxiety to Charging Confidence**
 
@@ -352,17 +351,19 @@ This step represents the fundamental transformation of EV charging from "hoping 
 - **Real-time Availability**: Current EVSE status, estimated availability windows, queue information, reservation options
 - **Comprehensive Pricing**: Energy rates, time-based fees, membership discounts, dynamic pricing, total session cost estimates
 
-#### 5.4.2 Step 2: Charging Station Selection and Detailed Information
+#### 5.4.2 Step 2: Order Phase - Charging Station Selection and Booking
 
-**The Decision Point: Informed Choice Among Options**
+**The Decision Point: Informed Choice and Commitment**
 
-This step enables consumers to make informed decisions by providing detailed information about specific charging stations. Unlike simple availability checking, this involves comprehensive technical and commercial evaluation of charging options.
+This step enables consumers to make informed decisions and commit to charging sessions through comprehensive technical and commercial evaluation, followed by booking authorization and payment coordination.
 
 **Process:**
 - **Detailed Station Inquiry**: Consumer selects specific charging station from discovery results for comprehensive information
 - **Real-time Status Verification**: eMSP performs targeted OCPI calls to verify current status, pricing, and technical specifications
 - **Comprehensive Information Assembly**: eMSP provides detailed station information including amenities, access instructions, and current conditions
-- **Booking Readiness Confirmation**: Consumer receives all necessary information to make informed booking decision
+- **Booking Authorization**: Consumer commits to specific charging session with time window and payment authorization
+- **Multi-system Coordination**: eMSP simultaneously processes Beckn booking confirmation and OCPI session authorization
+- **Binding Reservation Creation**: Successful coordination results in confirmed charging session reservation with guaranteed access
 
 **Key Information Exchanged:**
 - **Technical Specifications**: Exact connector types, maximum charging speeds, power delivery profiles, compatibility confirmations
@@ -370,27 +371,11 @@ This step enables consumers to make informed decisions by providing detailed inf
 - **Comprehensive Pricing**: Detailed rate structure, estimated total costs, membership benefits, payment options, cancellation policies
 - **Location Intelligence**: Precise directions, access instructions, parking availability, security information, operating hours
 - **Amenity Information**: Available services (restaurants, restrooms, shopping), WiFi access, accessibility features, customer reviews
-
-#### 5.4.3 Step 3: Session Booking and Authorization
-
-**The Commitment: Securing Charging Access**
-
-This step represents the critical moment where consumer intent becomes a binding reservation, requiring coordination between Beckn marketplace protocols and OCPI charging infrastructure protocols.
-
-**Process:**
-- **Booking Request Submission**: Consumer commits to specific charging session with time window and payment authorization
-- **Multi-system Coordination**: eMSP simultaneously processes Beckn booking confirmation and OCPI session authorization
-- **Real-time Verification**: eMSP confirms charging station availability and consumer authorization with CPO systems
-- **Binding Reservation Creation**: Successful coordination results in confirmed charging session reservation with guaranteed access
-
-**Key Information Exchanged:**
 - **Session Parameters**: Specific EVSE reservation, planned charging duration, arrival time estimates, vehicle identification
 - **Authorization Credentials**: Consumer charging tokens, payment method confirmation, membership verification, access codes
 - **Reservation Confirmation**: Guaranteed access window, pricing lock-in, cancellation terms, emergency contact procedures
-- **Integration Protocols**: OCPI token authorization between eMSP and CPO, real-time status monitoring setup, billing coordination
-- **Consumer Instructions**: Station access procedures, session initiation steps, support contact information, backup plan activation
 
-#### 5.4.4 Step 4: Real-time Session Management
+#### 5.4.3 Step 3: Fulfillment Phase - Real-time Session Management
 
 **The Experience: Seamless Charging Execution**
 
@@ -409,17 +394,18 @@ This step manages the active charging session, providing real-time monitoring an
 - **Consumer Experience**: Mobile app real-time updates, push notifications, station amenity information, support access, feedback collection
 - **Operational Intelligence**: Performance metrics, infrastructure utilization, demand patterns, quality monitoring, optimization opportunities
 
-#### 5.4.5 Step 5: Session Completion and Settlement
+#### 5.4.4 Step 4: Post-fulfillment Phase - Session Completion and Support
 
 **The Resolution: Transparent Billing and Experience Closure**
 
-This step handles charging session completion, accurate billing calculation, and consumer experience closure while coordinating settlement across eMSP-CPO financial relationships.
+This step handles charging session completion, accurate billing calculation, consumer experience closure, and ongoing support while coordinating settlement across eMSP-CPO financial relationships.
 
 **Process:**
 - **Session Completion Coordination**: Charging session ends (automatically or by consumer request), final energy delivery measurement, equipment status verification
 - **Multi-party Billing Calculation**: eMSP coordinates final billing through OCPI protocols while processing Beckn marketplace settlement
 - **Payment Processing and Settlement**: Consumer payment processing, eMSP-CPO financial settlement, transaction reconciliation, receipt generation
 - **Experience Completion**: Final session summary, feedback collection, loyalty program updates, future recommendation optimization
+- **Support and Rating**: Customer support interactions, session rating collection, issue resolution, and continuous service improvement
 
 **Key Information Exchanged:**
 - **Final Session Metrics**: Total energy delivered, session duration, charging efficiency, infrastructure performance, environmental impact
@@ -427,6 +413,7 @@ This step handles charging session completion, accurate billing calculation, and
 - **Settlement Coordination**: eMSP-CPO revenue sharing, OCPI CDR (Charging Data Record) processing, financial reconciliation, audit trail creation
 - **Consumer Experience Data**: Session satisfaction ratings, performance feedback, preference updates, loyalty program benefits, future recommendations
 - **Operational Analytics**: Network performance metrics, utilization patterns, consumer behavior insights, infrastructure optimization data, market intelligence
+- **Support Interactions**: Customer service requests, technical support coordination, complaint resolution, and quality improvement feedback
 
 ### 5.5 Testing
 
@@ -1072,7 +1059,227 @@ This section contains examples from the UEI Implementation Guide covering the co
 }
 ```
 
-#### 6.2.4 Confirm Request
+#### 6.2.4 On Init Response
+
+**Description:** BPP provides payment terms, cancellation terms, and order details.
+
+```json
+{
+  "context": {
+    "domain": "ev-charging:uei",
+    "action": "on_init",
+    "location": {
+      "country": {
+        "name": "India",
+        "code": "IND"
+      },
+      "city": {
+        "code": "std:080"
+      }
+    },
+    "version": "1.1.0",
+    "bap_id": "example-bap.com",
+    "bap_uri": "https://api.example-bap.com/pilot/bap/energy/v1",
+    "bpp_id": "example-bpp.com",
+    "bpp_uri": "https://example-bpp.com",
+    "transaction_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "message_id": "6743e9e2-4fb5-487c-92b7-13ba8018f176",
+    "timestamp": "2023-07-16T04:41:16Z"
+  },
+  "message": {
+    "order": {
+      "provider": {
+        "id": "cpo1.com",
+        "descriptor": {
+          "name": "CPO1 EV charging Company",
+          "short_desc": "CPO1 provides EV charging facility across India",
+          "images": [
+            {
+              "url": "https://cpo1.com/images/logo.png"
+            }
+          ]
+        }
+      },
+      "items": [
+        {
+          "id": "pe-charging-01",
+          "descriptor": {
+            "name": "EV Charger #1 (AC Fast Charger)",
+            "code": "energy"
+          },
+          "price": {
+            "value": "18",
+            "currency": "INR/kWH"
+          },
+          "tags": [
+            {
+              "descriptor": {
+                "code": "connector-specifications",
+                "name": "Connector Specifications"
+              },
+              "list": [
+                {
+                  "descriptor": {
+                    "name": "connector Id",
+                    "code": "connector-id"
+                  },
+                  "value": "con1"
+                },
+                {
+                  "descriptor": {
+                    "name": "Power Type",
+                    "code": "power-type"
+                  },
+                  "value": "AC_3_PHASE"
+                },
+                {
+                  "descriptor": {
+                    "name": "Connector Type",
+                    "code": "connector-type"
+                  },
+                  "value": "CCS2"
+                },
+                {
+                  "descriptor": {
+                    "name": "Charging Speed",
+                    "code": "charging-speed"
+                  },
+                  "value": "FAST"
+                },
+                {
+                  "descriptor": {
+                    "name": "Power Rating",
+                    "code": "power-rating"
+                  },
+                  "value": "30kW"
+                },
+                {
+                  "descriptor": {
+                    "name": "Status",
+                    "code": "status"
+                  },
+                  "value": "Available"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "fulfillments": [
+        {
+          "id": "fulfillment-001",
+          "type": "CHARGING",
+          "stops": [
+            {
+              "type": "start",
+              "time": {
+                "timestamp": "2023-07-16T10:00:00+05:30"
+              },
+              "location": {
+                "gps": "28.345345,77.389754",
+                "descriptor": {
+                  "name": "BlueCharge Connaught Place Station"
+                },
+                "address": "Connaught Place, New Delhi"
+              },
+              "instructions": {
+                "short_desc": "Ground floor, Pillar Number 4"
+              }
+            },
+            {
+              "type": "finish",
+              "time": {
+                "timestamp": "2023-07-16T10:30:00+05:30"
+              },
+              "location": {
+                "gps": "28.345345,77.389754",
+                "descriptor": {
+                  "name": "BlueCharge Connaught Place Station"
+                },
+                "address": "Connaught Place, New Delhi"
+              },
+              "instructions": {
+                "short_desc": "Ground floor, Pillar Number 4"
+              }
+            }
+          ]
+        }
+      ],
+      "quote": {
+        "price": {
+          "value": "100",
+          "currency": "INR"
+        },
+        "breakup": [
+          {
+            "title": "Charging session cost (5 kWh @ ₹18.00/kWh)",
+            "item": {
+              "id": "pe-charging-01"
+            },
+            "price": {
+              "value": "90",
+              "currency": "INR"
+            }
+          },
+          {
+            "title": "Service Fee",
+            "price": {
+              "currency": "INR",
+              "value": "10"
+            }
+          }
+        ]
+      },
+      "billing": {
+        "name": "Ravi Kumar",
+        "organization": {
+          "descriptor": { "name": "GreenCharge Pvt Ltd" }
+        },
+        "address": "Apartment 123, MG Road, Bengaluru, Karnataka, 560001, India",
+        "state": { "name": "Karnataka" },
+        "city": { "name": "Bengaluru" },
+        "email": "ravi.kumar@greencharge.com",
+        "phone": "+918765432100",
+        "time": { "timestamp": "2025-07-30T12:02:00Z" },
+        "tax_id": "GSTIN29ABCDE1234F1Z5"
+      },
+      "payments": [
+        {
+          "id": "payment-123e4567-e89b-12d3-a456-426614174000",
+          "collected_by": "bpp",
+          "url": "https://payments.bluechargenet-aggregator.io/pay?transaction_id=$transaction_id&amount=$amount",
+          "params": {
+            "transaction_id": "123e4567-e89b-12d3-a456-426614174000",
+            "amount": "100.00",
+            "currency": "INR"
+          },
+          "type": "PRE-FULFILLMENT",
+          "status": "NOT-PAID",
+          "time": { "timestamp": "2025-07-30T12:59:00Z" }
+        }
+      ],
+      "cancellation_terms": [
+        {
+          "fulfillment_state": {
+            "descriptor": {
+              "code": "charging-start"
+            }
+          },
+          "cancellation_fee": {
+            "percentage": "30%"
+          },
+          "external_ref": {
+            "mimetype": "text/html",
+            "url": "https://example-company.com/charge/tnc.html"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+#### 6.2.5 Confirm Request
 
 **Description:** Consumer confirms the order with payment information to complete the booking process.
 
@@ -1169,7 +1376,7 @@ This section contains examples from the UEI Implementation Guide covering the co
 }
 ```
 
-#### 6.2.5 On Confirm Response
+#### 6.2.6 On Confirm Response
 
 **Description:** Order confirmation acknowledgment from the BPP.
 
