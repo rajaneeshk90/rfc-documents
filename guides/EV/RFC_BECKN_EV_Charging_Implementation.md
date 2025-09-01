@@ -1586,25 +1586,204 @@ This section contains examples from the UEI Implementation Guide covering the co
   "message": {
     "order": {
       "id": "6743e9e2-4fb5-487c-92b7",
-      "state": "ACTIVE",
       "provider": {
         "id": "cpo1.com",
         "descriptor": {
-          "name": "CPO1 EV charging Company"
-        }
+            "name": "CPO1 EV charging Company",
+            "short_desc": "CPO1 provides EV charging facility across India",
+            "images": [
+              {
+                "url": "https://cpo1.com/images/logo.png"
+              }
+            ]
+          }
       },
       "items": [
         {
           "id": "pe-charging-01",
           "descriptor": {
-            "name": "EV Charger #1 (AC Fast Charger)",
+  "name": "EV Charger #1 (AC Fast Charger)",
             "code": "energy"
+          },
+          "price": {
+            "value": "18",
+            "currency": "INR/kWH"
+          },
+          "tags": [
+                {
+                  "descriptor": {
+				  "code":"connector-cpecifications"
+                      "name": "Connector Specifications"
+                  },
+                  "list": [
+                    {
+                        "descriptor": {
+                            "name": "connector Id",
+                            "code": "connector-id"
+                        },
+                        "value": "con1"
+                    },
+                    {
+                        "descriptor": {
+                            "name": "Power Type",
+                            "code": "power-type"
+                        },
+                        "value": "AC_3_PHASE"
+                    },
+                    {
+                        "descriptor": {
+                            "name": "Connector Type",
+                            "code": "connector-type"
+                        },
+                        "value": "CCS2"
+                    },
+                    {
+                        "descriptor": {
+                            "name": "Charging Speed",
+                            "code": "charging-speed"
+                        },
+                        "value": "FAST"
+                    },
+                    {
+                        "descriptor": {
+                            "name": "Power Rating",
+                            "code": "power-rating"
+                        },
+                        "value": "30kW"
+                    },
+                    {
+                        "descriptor": {
+                            "name": "Status",
+                            "code": "status"
+                        },
+                        "value": "Available"
+                    }
+                  ]
+                }
+              ]
+        }
+      ],
+"fulfillments": [
+        {
+          "id": "fulfillment-001",
+          "type": "CHARGING",
+           "state": {
+            "descriptor": {
+              "code": "PENDING",
+              "name": "Charging Pending"
+            },
+            "updated_at": "2025-07-30T12:06:02Z",
+            "updated_by": "bluechargenet-aggregator.io"
+          },
+          "stops": [
+            {
+              "type": "start",
+              "time": {
+                "timestamp": "2023-07-16T10:00:00+05:30"
+              },
+		    "location": {
+  "gps": "28.345345,77.389754",
+            "descriptor": {
+              "name": "BlueCharge Connaught Place Station"
+              },
+              "address": "Connaught Place, New Delhi"
+},
+"instructions": {
+	"short_desc": "Ground floor, Pillar Number 4"
+}
+            },
+            {
+              "type": "finish",
+              "time": {
+                "timestamp": "2023-07-16T10:30:00+05:30"
+              },
+		    "location": {
+  "gps": "28.345345,77.389754",
+            "descriptor": {
+              "name": "BlueCharge Connaught Place Station"
+              },
+              "address": "Connaught Place, New Delhi"
+},
+"instructions": {
+	"short_desc": "Ground floor, Pillar Number 4"
+}
+            }
+          ]
+        }
+      ],
+      "quote": {
+        "price": {
+          "value": "100",
+          "currency": "INR"
+        },
+        "breakup": [
+          {
+            "title": "Charging session cost (5 kWh @ ₹18.00/kWh)",
+            "item": {
+		    "id": "pe-charging-01"
+            },
+            "price": {
+              "value": "90",
+              "currency": "INR"
+            }
+          },
+          {
+            "title": "Service Fee",
+            "price": {
+                "currency": "INR",
+                "value": "10"
+            }
+          }
+        ]
+      },
+"billing": {
+        "name": "Ravi Kumar",
+        "organization": {
+          "descriptor": { "name": "GreenCharge Pvt Ltd" }
+        },
+        "address": "Apartment 123, MG Road, Bengaluru, Karnataka, 560001, India",
+        "state": { "name": "Karnataka" },
+        "city": { "name": "Bengaluru" },
+        "email": "ravi.kumar@greencharge.com",
+        "phone": "+918765432100",
+        "time": { "timestamp": "2025-07-30T12:02:00Z" },
+        "tax_id": "GSTIN29ABCDE1234F1Z5"
+      },
+      "payments": [
+        {
+         "id": "payment-123e4567-e89b-12d3-a456-426614174000",
+          "collected_by": "bpp",
+          "url": "https://payments.bluechargenet-aggregator.io/pay?transaction_id=$transaction_id&amount=$amount",
+          "params": {
+            "transaction_id": "123e4567-e89b-12d3-a456-426614174000",
+            "amount": "100.00",
+            "currency": "INR"
+          },
+          "type": "PRE-FULFILLMENT",
+          "status": "NOT-PAID",
+          "time": { "timestamp": "2025-07-30T14:59:00Z" },
+        }
+      ],
+      "cancellation_terms": [
+        {
+          "fulfillment_state": {
+            "descriptor": {
+              "code": "charging-start"
+            }
+          },
+          "cancellation_fee": {
+            "percentage": "30%"
+          },
+          "external_ref": {
+            "mimetype": "text/html",
+            "url": "https://example-company.com/charge/tnc.html"
           }
         }
       ]
     }
   }
 }
+
 ```
 
 
