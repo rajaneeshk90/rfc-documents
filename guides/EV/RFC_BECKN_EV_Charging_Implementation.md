@@ -330,6 +330,40 @@ Each EV charging network requires a registry where all participants (BAP, BPP, B
 - **Integration APIs**: RESTful services for system integration, webhook handling for real-time notifications, batch processing for large data updates
 - **Monitoring and Alerting**: Real-time system monitoring, performance metrics collection, automated incident response, capacity planning
 
+#### 5.3.3 Implementation Components
+
+**Step 1: BAP Implementation**
+
+**Input:** Beckn Protocol specification, consumer requirements
+**Output:** Consumer application with search and booking capabilities
+
+**Core Components:**
+
+**Consumer Application (BAP) Components:**
+- **Search Interface**: Location-based charging station discovery with filtering capabilities
+- **Selection Interface**: Detailed station information and booking decision support
+- **Booking Management**: Session reservation and payment processing
+- **Session Tracking**: Real-time charging session monitoring and control
+- **User Profile**: Vehicle specifications and preferences management
+
+**Step 2: BPP Implementation (eMSP)**
+
+**e-Mobility Service Provider (BPP) Components:**
+- **Beckn Protocol Handler**: Processes BAP requests and generates appropriate responses
+- **OCPI Client Integration**: Communicates with multiple CPO networks for real-time data
+- **Data Aggregation Engine**: Combines location and tariff data from multiple sources
+- **Session Management**: Coordinates booking, authorization, and session lifecycle
+- **Settlement Processing**: Handles billing calculation and multi-party payments
+
+**Step 3: Advanced OCPI Integration**
+
+**OCPI Integration Components:**
+- **CPO Registration**: Automated handshake and credential exchange with multiple CPO networks
+- **Real-time Data Synchronization**: Continuous location and tariff updates via push/pull mechanisms
+- **Token Management**: Driver authentication and authorization across CPO networks
+- **Command Coordination**: Session management commands (reserve, start, stop) via OCPI
+- **Error Resilience**: Circuit breaker patterns and fallback strategies for CPO failures
+
 ### 5.4 Step-by-Step Implementation
 
 #### 5.4.1 Step 1: Discovery Phase - Charging Station Discovery
@@ -451,38 +485,6 @@ Key validation scenarios for EV charging marketplace implementation:
 - [ ] Error handling gracefully manages CPO network failures
 - [ ] Security protocols protect consumer and payment data throughout all transactions
 - [ ] Performance meets real-time requirements for charging session operations
-
-#### 5.3.1 Step 1: BAP Implementation
-
-**Input:** Beckn Protocol specification, consumer requirements
-**Output:** Consumer application with search and booking capabilities
-
-**Core Components:**
-
-**Consumer Application (BAP) Components:**
-- **Search Interface**: Location-based charging station discovery with filtering capabilities
-- **Selection Interface**: Detailed station information and booking decision support
-- **Booking Management**: Session reservation and payment processing
-- **Session Tracking**: Real-time charging session monitoring and control
-- **User Profile**: Vehicle specifications and preferences management
-
-#### 5.3.2 Step 2: BPP Implementation (eMSP)
-
-**e-Mobility Service Provider (BPP) Components:**
-- **Beckn Protocol Handler**: Processes BAP requests and generates appropriate responses
-- **OCPI Client Integration**: Communicates with multiple CPO networks for real-time data
-- **Data Aggregation Engine**: Combines location and tariff data from multiple sources
-- **Session Management**: Coordinates booking, authorization, and session lifecycle
-- **Settlement Processing**: Handles billing calculation and multi-party payments
-
-#### 5.3.3 Step 3: Advanced OCPI Integration
-
-**OCPI Integration Components:**
-- **CPO Registration**: Automated handshake and credential exchange with multiple CPO networks
-- **Real-time Data Synchronization**: Continuous location and tariff updates via push/pull mechanisms
-- **Token Management**: Driver authentication and authorization across CPO networks
-- **Command Coordination**: Session management commands (reserve, start, stop) via OCPI
-- **Error Resilience**: Circuit breaker patterns and fallback strategies for CPO failures
 
 ## 6. Implementation Examples
 
