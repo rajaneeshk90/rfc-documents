@@ -788,6 +788,83 @@ This section provides comprehensive examples of all Beckn Protocol messages used
 }
 ```
 
+
+**BPP OCPI Processing Details:**
+
+**How the BPP processes the search request by fetching data from multiple CPOs via OCPI and mapping it to Beckn format:**
+
+1. **Cache Freshness Check**
+   - If cached data > 10 minutes old, fetch fresh OCPI data from all registered CPOs
+   - For each CPO, make parallel OCPI calls:
+
+   ```
+   GET /ocpi/2.2/locations?country_code=IN&party_id={CPO_ID}
+   GET /ocpi/2.2/tariffs?country_code=IN&party_id={CPO_ID}
+   ```
+
+2. **Geospatial Filtering**
+   - Apply Haversine distance calculation to filter locations within search radius
+   - Filter by connector type compatibility if specified in search criteria
+   - Filter by charging speed requirements if specified
+
+3. **Data Mapping (OCPI → Beckn)**
+   - **Provider ID**: Map OCPI `party_id` to Beckn `provider.id`
+   - **Locations**: Map OCPI location data to Beckn format:
+     - `location.id` ← OCPI `location.id`
+     - `location.descriptor.name` ← OCPI `location.name`
+     - `location.gps` ← OCPI `coordinates.latitude,coordinates.longitude`
+     - `location.address.full` ← OCPI `address`
+   - **Items**: Map OCPI EVSE data to Beckn format:
+     - `item.id` ← OCPI `evse_id`
+     - `item.descriptor.name` ← Generate "EV Charger #n" format
+     - `item.price` ← Map from OCPI tariffs using `tariff_ids`
+     - `item.tags` ← Group connector specifications under "Connector Specifications"
+   - **Fulfillments**: Use location coordinates and opening hours as stops
+
+4. **Response Composition**
+   - Aggregate results from all CPOs into single Beckn catalog
+   - Apply search filters (connector type, charging speed, category)
+   - Sort by relevance (distance, availability, rating)
+   - Include real-time availability status from OCPI data
+
+**Description:** How the BPP processes the search request by fetching data from multiple CPOs via OCPI and mapping it to Beckn format.
+
+**OCPI Data Fetching Process:**
+
+1. **Cache Freshness Check**
+   - If cached data > 10 minutes old, fetch fresh OCPI data from all registered CPOs
+   - For each CPO, make parallel OCPI calls:
+
+   ```
+   GET /ocpi/2.2/locations?country_code=IN&party_id={CPO_ID}
+   GET /ocpi/2.2/tariffs?country_code=IN&party_id={CPO_ID}
+   ```
+
+2. **Geospatial Filtering**
+   - Apply Haversine distance calculation to filter locations within search radius
+   - Filter by connector type compatibility if specified in search criteria
+   - Filter by charging speed requirements if specified
+
+3. **Data Mapping (OCPI → Beckn)**
+   - **Provider ID**: Map OCPI `party_id` to Beckn `provider.id`
+   - **Locations**: Map OCPI location data to Beckn format:
+     - `location.id` ← OCPI `location.id`
+     - `location.descriptor.name` ← OCPI `location.name`
+     - `location.gps` ← OCPI `coordinates.latitude,coordinates.longitude`
+     - `location.address.full` ← OCPI `address`
+   - **Items**: Map OCPI EVSE data to Beckn format:
+     - `item.id` ← OCPI `evse_id`
+     - `item.descriptor.name` ← Generate "EV Charger #n" format
+     - `item.price` ← Map from OCPI tariffs using `tariff_ids`
+     - `item.tags` ← Group connector specifications under "Connector Specifications"
+   - **Fulfillments**: Use location coordinates and opening hours as stops
+
+4. **Response Composition**
+   - Aggregate results from all CPOs into single Beckn catalog
+   - Apply search filters (connector type, charging speed, category)
+   - Sort by relevance (distance, availability, rating)
+   - Include real-time availability status from OCPI data
+
 ### 6.2 Order Management Examples
 
 This section contains examples from the UEI Implementation Guide covering the complete order management flow from selection to confirmation.
@@ -979,7 +1056,43 @@ This section contains examples from the UEI Implementation Guide covering the co
 }
 ```
 
-#### 6.2.3 Init Request
+
+**BPP OCPI Processing Details:**
+
+**How the BPP processes the select request by fetching real-time data from the specific CPO via OCPI and calculating the quote:**
+
+1. **Fetch Latest Tariff Information**
+   - Retrieve current pricing from the specific CPO:
+   ```
+   GET /ocpi/2.2/tariffs/{tariff_id}
+   → Extract current rate (e.g., ₹18.00 per kWh)
+   ```
+
+2. **Check EVSE Availability Status**
+   - Verify real-time availability of the selected charging station:
+   ```
+   GET /ocpi/2.2/locations/{location_id}
+   → Check EVSE status (AVAILABLE, CHARGING, MAINTENANCE, etc.)
+   ```
+
+3. **Calculate Quote**
+   - **Energy Cost**: Calculate based on estimated session duration and power consumption
+   - **Service Fee**: Apply any additional charges (parking, reservation, etc.)
+   - **Total Price**: Sum of all cost components
+   - **Quote TTL**: Set expiration time (typically 15-30 minutes)
+
+4. **Data Mapping (OCPI → Beckn)**
+   - **Provider Details**: Map CPO information to Beckn provider format
+   - **Item Specifications**: Include detailed connector and power specifications
+   - **Quote Structure**: Break down pricing into energy cost and service fees
+   - **Fulfillment Details**: Include location and timing information
+
+5. **Response Validation**
+   - Ensure all required fields are populated
+   - Verify pricing calculations are accurate
+   - Confirm EVSE availability status is current
+
+#### 6.2.4 Init Request
 
 **Description:** Consumer initiates order process with billing details and charging session requirements.
 
@@ -1061,7 +1174,7 @@ This section contains examples from the UEI Implementation Guide covering the co
 }
 ```
 
-#### 6.2.4 On Init Response
+#### 6.2.5 On Init Response
 
 **Description:** BPP provides payment terms, cancellation terms, and order details.
 
@@ -1281,7 +1394,72 @@ This section contains examples from the UEI Implementation Guide covering the co
 }
 ```
 
-#### 6.2.5 Confirm Request
+
+**BPP OCPI Processing Details:**
+
+**How the BPP processes the init request by validating the order details and preparing for OCPI session authorization:**
+
+1. **Validate Order Parameters**
+   - Verify charging station availability for the requested time slot
+   - Check if the EVSE supports the requested connector type
+   - Validate billing information and payment method
+
+2. **Prepare OCPI Session Data**
+   - Map Beckn order details to OCPI session format
+   - Generate unique session identifier
+   - Prepare billing and customer information
+
+3. **OCPI Pre-authorization Check**
+   - Verify driver token validity with CPO:
+   ```
+   POST /ocpi/2.2/tokens/{country_code}/{party_id}/{token_uid}/authorize
+   → Check if token is valid for the requested location and EVSE
+   ```
+
+4. **Data Mapping (Beckn → OCPI)**
+   - **Session Parameters**: Map Beckn fulfillment details to OCPI session format
+   - **Customer Information**: Extract billing and contact details
+   - **Charging Requirements**: Map connector type and power requirements
+   - **Timing Information**: Convert Beckn time format to OCPI format
+
+5. **Response Preparation**
+   - Include payment terms and cancellation policies
+   - Set up response URL for async OCPI callbacks
+   - Prepare billing breakdown and total cost
+
+**Description:** How the BPP processes the init request by validating the order details and preparing for OCPI session authorization.
+
+**OCPI Data Processing:**
+
+1. **Validate Order Parameters**
+   - Verify charging station availability for the requested time slot
+   - Check if the EVSE supports the requested connector type
+   - Validate billing information and payment method
+
+2. **Prepare OCPI Session Data**
+   - Map Beckn order details to OCPI session format
+   - Generate unique session identifier
+   - Prepare billing and customer information
+
+3. **OCPI Pre-authorization Check**
+   - Verify driver token validity with CPO:
+   ```
+   POST /ocpi/2.2/tokens/{country_code}/{party_id}/{token_uid}/authorize
+   → Check if token is valid for the requested location and EVSE
+   ```
+
+4. **Data Mapping (Beckn → OCPI)**
+   - **Session Parameters**: Map Beckn fulfillment details to OCPI session format
+   - **Customer Information**: Extract billing and contact details
+   - **Charging Requirements**: Map connector type and power requirements
+   - **Timing Information**: Convert Beckn time format to OCPI format
+
+5. **Response Preparation**
+   - Include payment terms and cancellation policies
+   - Set up response URL for async OCPI callbacks
+   - Prepare billing breakdown and total cost
+
+#### 6.2.7 Confirm Request
 
 **Description:** Consumer confirms the order with payment information to complete the booking process.
 
@@ -1378,7 +1556,7 @@ This section contains examples from the UEI Implementation Guide covering the co
 }
 ```
 
-#### 6.2.6 On Confirm Response
+#### 6.2.8 On Confirm Response
 
 **Description:** Order confirmation acknowledgment from the BPP.
 
@@ -1428,6 +1606,87 @@ This section contains examples from the UEI Implementation Guide covering the co
   }
 }
 ```
+
+
+**BPP OCPI Processing Details:**
+
+**How the BPP processes the confirm request by executing the OCPI reservation command and creating the charging session:**
+
+1. **Execute OCPI RESERVE_NOW Command**
+   - Send reservation command to CPO:
+   ```
+   POST /ocpi/2.2/commands/RESERVE_NOW
+   {
+     "response_url": "https://emsp-app.com/ocpi/emsp/2.2/commands/RESERVE_NOW/booking_123",
+     "token": { "uid": "driver_token_123", "type": "APP_USER" },
+     "expiry_date": "2024-12-15T16:00:00Z",
+     "reservation_id": "res_12345",
+     "location_id": "HrKNUxJ9Ara6AL6PaUlF",
+     "evse_uid": "tLAj42jrr0dYtDqdqTDK_1"
+   }
+   ```
+
+2. **Handle OCPI Response**
+   - Process CPO confirmation or rejection
+   - Extract reservation details and session ID
+   - Handle any error conditions or validation failures
+
+3. **Create Beckn Order**
+   - Generate unique Beckn order ID
+   - Map OCPI session details to Beckn order format
+   - Set order state to "ACTIVE"
+
+4. **Data Mapping (OCPI → Beckn)**
+   - **Order ID**: Generate unique identifier for tracking
+   - **Order State**: Set to "ACTIVE" for confirmed bookings
+   - **Provider Details**: Include CPO information
+   - **Items**: Map confirmed EVSE details
+   - **Fulfillments**: Include reservation confirmation details
+
+5. **Response Preparation**
+   - Confirm order creation with Beckn order ID
+   - Include provider and item details
+   - Set up tracking for session updates
+
+**Description:** How the BPP processes the confirm request by executing the OCPI reservation command and creating the charging session.
+
+**OCPI Command Execution:**
+
+1. **Execute OCPI RESERVE_NOW Command**
+   - Send reservation command to CPO:
+   ```
+   POST /ocpi/2.2/commands/RESERVE_NOW
+   {
+     "response_url": "https://emsp-app.com/ocpi/emsp/2.2/commands/RESERVE_NOW/booking_123",
+     "token": { "uid": "driver_token_123", "type": "APP_USER" },
+     "expiry_date": "2024-12-15T16:00:00Z",
+     "reservation_id": "res_12345",
+     "location_id": "HrKNUxJ9Ara6AL6PaUlF",
+     "evse_uid": "tLAj42jrr0dYtDqdqTDK_1"
+   }
+   ```
+
+2. **Handle OCPI Response**
+   - Process CPO confirmation or rejection
+   - Extract reservation details and session ID
+   - Handle any error conditions or validation failures
+
+3. **Create Beckn Order**
+   - Generate unique Beckn order ID
+   - Map OCPI session details to Beckn order format
+   - Set order state to "ACTIVE"
+
+4. **Data Mapping (OCPI → Beckn)**
+   - **Order ID**: Generate unique identifier for tracking
+   - **Order State**: Set to "ACTIVE" for confirmed bookings
+   - **Provider Details**: Include CPO information
+   - **Items**: Map confirmed EVSE details
+   - **Fulfillments**: Include reservation confirmation details
+
+5. **Response Preparation**
+   - Confirm order creation with Beckn order ID
+   - Include provider and item details
+   - Set up tracking for session updates
 
 ### 6.3 Order Fulfillment Examples
 
@@ -1598,7 +1857,84 @@ This section contains examples from the UEI Implementation Guide covering the co
 }
 ```
 
-#### 6.3.3 Track
+
+**BPP OCPI Processing Details:**
+
+**How the BPP processes the update request to start charging by executing the OCPI START_SESSION command:**
+
+1. **Execute OCPI START_SESSION Command**
+   - Send start session command to CPO:
+   ```
+   POST /ocpi/2.2/commands/START_SESSION
+   {
+     "response_url": "https://emsp-app.com/ocpi/emsp/2.2/commands/START_SESSION/session_123",
+     "token": { "uid": "driver_token_123", "type": "APP_USER" },
+     "location_id": "HrKNUxJ9Ara6AL6PaUlF",
+     "evse_uid": "tLAj42jrr0dYtDqdqTDK_1",
+     "connector_id": "1"
+   }
+   ```
+
+2. **Handle OCPI Response**
+   - Process CPO session start confirmation
+   - Extract session ID and start timestamp
+   - Handle any authorization or availability errors
+
+3. **Update Beckn Order State**
+   - Change fulfillment state to "ACTIVE"
+   - Record session start time and session ID
+   - Update charging progress tracking
+
+4. **Data Mapping (OCPI → Beckn)**
+   - **Session ID**: Map OCPI session identifier
+   - **Start Time**: Record actual charging start timestamp
+   - **Order State**: Update to reflect active charging
+   - **Fulfillment State**: Set to "ACTIVE" with charging details
+
+5. **Response Preparation**
+   - Confirm charging session has started
+   - Include session details and timing information
+   - Set up real-time status monitoring
+
+**Description:** How the BPP processes the update request to start charging by executing the OCPI START_SESSION command.
+
+**OCPI Command Execution:**
+
+1. **Execute OCPI START_SESSION Command**
+   - Send start session command to CPO:
+   ```
+   POST /ocpi/2.2/commands/START_SESSION
+   {
+     "response_url": "https://emsp-app.com/ocpi/emsp/2.2/commands/START_SESSION/session_123",
+     "token": { "uid": "driver_token_123", "type": "APP_USER" },
+     "location_id": "HrKNUxJ9Ara6AL6PaUlF",
+     "evse_uid": "tLAj42jrr0dYtDqdqTDK_1",
+     "connector_id": "1"
+   }
+   ```
+
+2. **Handle OCPI Response**
+   - Process CPO session start confirmation
+   - Extract session ID and start timestamp
+   - Handle any authorization or availability errors
+
+3. **Update Beckn Order State**
+   - Change fulfillment state to "ACTIVE"
+   - Record session start time and session ID
+   - Update charging progress tracking
+
+4. **Data Mapping (OCPI → Beckn)**
+   - **Session ID**: Map OCPI session identifier
+   - **Start Time**: Record actual charging start timestamp
+   - **Order State**: Update to reflect active charging
+   - **Fulfillment State**: Set to "ACTIVE" with charging details
+
+5. **Response Preparation**
+   - Confirm charging session has started
+   - Include session details and timing information
+   - Set up real-time status monitoring
+
+#### 6.3.5 Track
 
 **Description:** Consumer requests tracking information for the charging session.
 
@@ -1631,7 +1967,7 @@ This section contains examples from the UEI Implementation Guide covering the co
 }
 ```
 
-#### 6.3.4 On Track
+#### 6.3.6 On Track
 
 **Description:** BPP provides tracking URL with custom UI for charging process.
 
@@ -1669,7 +2005,7 @@ This section contains examples from the UEI Implementation Guide covering the co
 }
 ```
 
-#### 6.3.5 Update (Stop Charging)
+#### 6.3.7 Update (Stop Charging)
 
 **Description:** Consumer requests to stop the charging session.
 
@@ -1723,7 +2059,7 @@ This section contains examples from the UEI Implementation Guide covering the co
 }
 ```
 
-#### 6.3.6 On Update (Stop Charging)
+#### 6.3.8 On Update (Stop Charging)
 
 **Description:** Confirmation of successful operation to end charging.
 
@@ -1837,7 +2173,7 @@ This section contains examples from the UEI Implementation Guide covering the co
 }
 ```
 
-#### 6.3.7 Asynchronous On Update (Stop Charging)
+#### 6.3.9 Asynchronous On Update (Stop Charging)
 
 **Description:** BPP sends unsolicited update when payment terms change but order is not cancelled.
 
@@ -1935,7 +2271,92 @@ This section contains examples from the UEI Implementation Guide covering the co
 }
 ```
 
-#### 6.3.8 Status
+
+**BPP OCPI Processing Details:**
+
+**How the BPP processes the update request to stop charging by executing the OCPI STOP_SESSION command and handling the final CDR:**
+
+1. **Execute OCPI STOP_SESSION Command**
+   - Send stop session command to CPO:
+   ```
+   POST /ocpi/2.2/commands/STOP_SESSION
+   {
+     "response_url": "https://emsp-app.com/ocpi/emsp/2.2/commands/STOP_SESSION/session_123",
+     "session_id": "ocpi_session_456"
+   }
+   ```
+
+2. **Handle OCPI Response**
+   - Process CPO session stop confirmation
+   - Extract final session metrics and end timestamp
+   - Handle any session completion errors
+
+3. **Process Final CDR (Charging Data Record)**
+   - Receive final billing data from CPO:
+   ```
+   PUT /ocpi/emsp/2.2/cdrs/{cdr_id}
+   → Extract final energy delivered, session duration, total cost
+   ```
+
+4. **Update Beckn Order State**
+   - Change fulfillment state to "COMPLETED"
+   - Record final session metrics and billing details
+   - Calculate final payment amount
+
+5. **Data Mapping (OCPI → Beckn)**
+   - **Session Completion**: Map final OCPI session data
+   - **Final Billing**: Include total energy cost and fees
+   - **Order State**: Update to "COMPLETED"
+   - **Payment Details**: Set up final payment processing
+
+6. **Response Preparation**
+   - Confirm charging session has completed
+   - Include final billing and session summary
+   - Set up payment processing and receipt generation
+
+**Description:** How the BPP processes the update request to stop charging by executing the OCPI STOP_SESSION command and handling the final CDR.
+
+**OCPI Command Execution:**
+
+1. **Execute OCPI STOP_SESSION Command**
+   - Send stop session command to CPO:
+   ```
+   POST /ocpi/2.2/commands/STOP_SESSION
+   {
+     "response_url": "https://emsp-app.com/ocpi/emsp/2.2/commands/STOP_SESSION/session_123",
+     "session_id": "ocpi_session_456"
+   }
+   ```
+
+2. **Handle OCPI Response**
+   - Process CPO session stop confirmation
+   - Extract final session metrics and end timestamp
+   - Handle any session completion errors
+
+3. **Process Final CDR (Charging Data Record)**
+   - Receive final billing data from CPO:
+   ```
+   PUT /ocpi/emsp/2.2/cdrs/{cdr_id}
+   → Extract final energy delivered, session duration, total cost
+   ```
+
+4. **Update Beckn Order State**
+   - Change fulfillment state to "COMPLETED"
+   - Record final session metrics and billing details
+   - Calculate final payment amount
+
+5. **Data Mapping (OCPI → Beckn)**
+   - **Session Completion**: Map final OCPI session data
+   - **Final Billing**: Include total energy cost and fees
+   - **Order State**: Update to "COMPLETED"
+   - **Payment Details**: Set up final payment processing
+
+6. **Response Preparation**
+   - Confirm charging session has completed
+   - Include final billing and session summary
+   - Set up payment processing and receipt generation
+
+#### 6.3.10 Status
 
 **Description:** Consumer requests status of the charging order.
 
@@ -1968,7 +2389,7 @@ This section contains examples from the UEI Implementation Guide covering the co
 }
 ```
 
-#### 6.3.9 On Status
+#### 6.3.11 On Status
 
 **Description:** BPP provides current status of the charging order.
 
@@ -2075,7 +2496,7 @@ This section contains examples from the UEI Implementation Guide covering the co
 }
 ```
 
-#### 6.3.10 Unsolicited On Status
+#### 6.3.12 Unsolicited On Status
 
 **Description:** BPP pushes status updates when informational OCPI session statuses change.
 
@@ -2133,7 +2554,7 @@ This section contains examples from the UEI Implementation Guide covering the co
 }
 ```
 
-#### 6.3.11 Cancel
+#### 6.3.13 Cancel
 
 **Description:** Consumer requests to cancel the charging order.
 
@@ -2170,7 +2591,7 @@ This section contains examples from the UEI Implementation Guide covering the co
 }
 ```
 
-#### 6.3.12 On Cancel
+#### 6.3.14 On Cancel
 
 **Description:** BPP confirmation of cancelled order.
 
@@ -2351,6 +2772,87 @@ This section contains examples from the UEI Implementation Guide covering the co
   }
 }
 ```
+
+
+**BPP OCPI Processing Details:**
+
+**How the BPP processes the cancel request by executing the OCPI STOP_SESSION command and handling cancellation fees:**
+
+1. **Execute OCPI STOP_SESSION Command (if charging in progress)**
+   - Send stop session command to CPO if charging has started:
+   ```
+   POST /ocpi/2.2/commands/STOP_SESSION
+   {
+     "response_url": "https://emsp-app.com/ocpi/emsp/2.2/commands/STOP_SESSION/session_123",
+     "session_id": "ocpi_session_456"
+   }
+   ```
+
+2. **Handle OCPI Response**
+   - Process CPO session stop confirmation
+   - Extract partial session data if charging was in progress
+   - Handle any cancellation errors
+
+3. **Calculate Cancellation Fees**
+   - Apply cancellation policy based on fulfillment state
+   - Calculate partial charges for energy delivered
+   - Determine final refund or charge amount
+
+4. **Update Beckn Order State**
+   - Change order state to "CANCELLED"
+   - Record cancellation reason and timestamp
+   - Update payment details with final amount
+
+5. **Data Mapping (OCPI → Beckn)**
+   - **Cancellation Details**: Include reason and timestamp
+   - **Final Billing**: Apply cancellation fees and partial charges
+   - **Order State**: Update to "CANCELLED"
+   - **Payment Details**: Process final settlement
+
+6. **Response Preparation**
+   - Confirm order cancellation
+   - Include final billing and cancellation details
+   - Set up refund processing if applicable
+
+**Description:** How the BPP processes the cancel request by executing the OCPI STOP_SESSION command and handling cancellation fees.
+
+**OCPI Command Execution:**
+
+1. **Execute OCPI STOP_SESSION Command (if charging in progress)**
+   - Send stop session command to CPO if charging has started:
+   ```
+   POST /ocpi/2.2/commands/STOP_SESSION
+   {
+     "response_url": "https://emsp-app.com/ocpi/emsp/2.2/commands/STOP_SESSION/session_123",
+     "session_id": "ocpi_session_456"
+   }
+   ```
+
+2. **Handle OCPI Response**
+   - Process CPO session stop confirmation
+   - Extract partial session data if charging was in progress
+   - Handle any cancellation errors
+
+3. **Calculate Cancellation Fees**
+   - Apply cancellation policy based on fulfillment state
+   - Calculate partial charges for energy delivered
+   - Determine final refund or charge amount
+
+4. **Update Beckn Order State**
+   - Change order state to "CANCELLED"
+   - Record cancellation reason and timestamp
+   - Update payment details with final amount
+
+5. **Data Mapping (OCPI → Beckn)**
+   - **Cancellation Details**: Include reason and timestamp
+   - **Final Billing**: Apply cancellation fees and partial charges
+   - **Order State**: Update to "CANCELLED"
+   - **Payment Details**: Process final settlement
+
+6. **Response Preparation**
+   - Confirm order cancellation
+   - Include final billing and cancellation details
+   - Set up refund processing if applicable
 
 ### 6.4 Support Examples
 
