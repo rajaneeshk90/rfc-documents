@@ -1,0 +1,33 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+You are a senior engineering lead writing a broad, thesis like literature review on **Catalog Management** focused on both **product and service** catalogs. Keep it high-level, practical, and accessible — do not dive into heavy math or implementation minutiae.
+
+Primary extra requirement: explicitly cover the **algorithms currently used in production** for catalog discoverability and ranking. **Identify and summarize relevant papers / whitepapers from Amazon, Google, Microsoft or other authoritative sources** (include title, authors/org, year, and URL/DOI where available). Prefer sources from **2015-2025**, but include seminal older work where necessary.
+
+Follow an industry accepted structure for the document.
+
+Tone: practical, concise, easy to read.
+
+get additional context from the files under /knowledge folder.
+put the file in /catalog-management directory.
+
+Bear in mind, these are product and service catalogs, not basic web page indexing. 
+
+here is a back of the envelop structure.
+    - List down terminnology
+    - explain that there is a central service for managing catalogs, called PIM. examples of PIMs.
+    - Merchant manages PIM service, how PIMs work. PIM supports catalog upload from merchant, this is canonical catalog.
+    - Explain how PIMs produce per-channel views via a feed/adapter layer that transforms, filters and enriches records for each outlet
+    - Channel adapters implement channel-specific mapping rules. required fields, local language, legal compliance, images, availability windows (for services), allowed SKUs/service types.
+    - Differential publishing patterns:
+        - Full export for new SKUs / new services.
+        - Incremental/partial update for volatile fields (price, inventory, availability, next-slot) via APIs / feed diffs. This avoids resending full records and reduces propagation latency.
+    - list down popular PIMs, MDM((Master Data Management)) / Enterprise catalog systems , Feed/Marketplace Syndication & Channel Managers, 
+    - then explain some papers form popular players. algorithms used
+
+
+
+
